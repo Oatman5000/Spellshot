@@ -1,0 +1,21 @@
+{
+  "Layers": [
+    {
+      "Looping": true,
+      "Files": [
+        "Sounds/Misc/BombFallin.ogg"
+      ],
+      "Volume": 1,
+      "RandomSettings": {
+        "MinVolume": -5.6,
+        "MaxVolume": 0.64,
+        "MinPitch": -1.056,
+        "MaxPitch": 1.872
+      }
+    }
+  ],
+  "Volume": -18.16,
+  "PreventSoundInterruption": false,
+  "MaxDistance": 16,
+  "Pitch": -8.736
+}

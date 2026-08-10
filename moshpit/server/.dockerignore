@@ -1,0 +1,10 @@
+hyboot.conf
+.gitignore
+logs/
+assetEditor/
+*.bak
+bans.json
+permissions.json
+whitelist.json
+universe/memories*
+universe/players/

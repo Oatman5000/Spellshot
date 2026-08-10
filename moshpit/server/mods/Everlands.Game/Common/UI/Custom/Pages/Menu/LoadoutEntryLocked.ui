@@ -1,0 +1,32 @@
+@LoadoutBoxBottom = 100;
+@LoadoutBoxWidth = 370;
+@LoadoutBoxHeight = 160;
+@LoadoutBoxHorizontalPadding = 10;
+
+Group {
+  Anchor: (Width: @LoadoutBoxWidth, Height: @LoadoutBoxHeight, Bottom: @LoadoutBoxBottom);
+  Padding: (Horizontal: @LoadoutBoxHorizontalPadding);
+
+  Group {
+    LayoutMode: Top;
+    Label {
+      Text: "";
+      Padding: (Bottom: 6);
+    }
+    Button {
+      Anchor: (Height: @LoadoutBoxHeight);
+      // SlotLocked rather than Slot: same octagon, desaturated frame, so a locked
+      // card no longer glows cyan as if it were selectable.
+      Style: (
+        Default: (Background: (TexturePath: "../../Images/Hextech/SlotLocked.png", Border: 24)),
+      );
+      Group {
+        LayoutMode: CenterMiddle;
+        Label {
+          Style: (TextColor: #8FA3B8(0.4), FontSize: 18, RenderBold: true, RenderUppercase: true);
+          Text: "LOCKED";
+        }
+      }
+    }
+  }
+}

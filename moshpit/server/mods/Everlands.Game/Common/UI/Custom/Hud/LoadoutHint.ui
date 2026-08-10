@@ -1,0 +1,41 @@
+// "Open your inventory to access your loadout", centred under the match header.
+//
+// Its own HUD layer on purpose: GunSelectUI drops this layer once the player has
+// selected a loadout, which it could not do while the markup lived inside
+// Hud/Ammo.ui.
+//
+// The header block (team plates + timer) is anchored at Top 44 and runs to
+// roughly Top 110, so 130 clears it. Centring uses the same idiom as
+// Hardpoint.ui: a root Group with LayoutMode: Center, whose child carries the
+// vertical Anchor -- there is no horizontal-centre anchor property.
+
+@MenuTextPaddingBottom = 3;
+
+Group {
+  LayoutMode: Center;
+
+  // Height is required, not cosmetic. Without it the group runs from Top to the
+  // bottom of the screen, and the labels' VerticalAlignment: End then pins the
+  // text to the bottom edge. VerticalAlignment: End is kept so the 18px and 23px
+  // labels share a baseline; it aligns them within this 30px box instead.
+  Group {
+    Anchor: (Top: 130, Height: 30);
+    LayoutMode: Left;
+
+    Label {
+      Padding: (Bottom: @MenuTextPaddingBottom);
+      Text: "Open your";
+      Style: (TextColor: #8FA3B8(0.75), FontSize: 18, RenderBold: true, VerticalAlignment: End);
+    }
+    Label {
+      Padding: (Left: 6, Right: 6);
+      Text: "inventory";
+      Style: (TextColor: #00D4FF, FontSize: 23, RenderBold: true, RenderUppercase: true, VerticalAlignment: End);
+    }
+    Label {
+      Padding: (Bottom: @MenuTextPaddingBottom);
+      Text: "to access your loadout";
+      Style: (TextColor: #8FA3B8(0.75), FontSize: 18, RenderBold: true, VerticalAlignment: End);
+    }
+  }
+}

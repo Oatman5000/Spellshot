@@ -1,0 +1,20 @@
+$C = "../Common.ui";
+
+Group {
+  LayoutMode: CenterMiddle;
+  Anchor: (Width: 1000, Height: 200, Bottom: 20);
+  Padding: (Vertical: 10);
+  Background: "../Images/BlurredBackground.png";
+
+  Group {
+    LayoutMode: Top;
+    Label #KilledBy {
+      Text: "KILLED BY burnboy";
+      Style: (TextColor: #d38088(0.8), FontSize: 25, RenderBold: true, RenderUppercase: true, Alignment: Center);
+    }
+    Label #Countdown {
+      Text: "Respawning in 03...";
+      Style: (TextColor: #abb0a1(0.8), FontSize: 20, RenderBold: true, RenderUppercase: true, Alignment: Center);
+    }
+  }
+}

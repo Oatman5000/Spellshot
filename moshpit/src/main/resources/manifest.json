@@ -1,0 +1,15 @@
+{
+  "Group": "Everlands",
+  "Name": "Moshpit",
+  "Version": "0.1.0",
+  "Description": "Everlands Moshpit",
+  "Main": "net.everlands.moshpit.MoshpitPlugin",
+  "ServerVersion": "^0.5.7",
+  "Authors": [{ "Name": "XiaBit" }],
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "SubPlugins": []
+}

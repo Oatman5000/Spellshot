@@ -1,0 +1,30 @@
+{
+  "Type": "CheckAmmo",
+  "CheckType": "FULL",
+  "RunTime": 0.1,
+  "CancelOnItemChange": true,
+  "Next": {
+    "Type": "Serial",
+    "Interactions": [
+      {
+        "Type": "Serial",
+        "Interactions": [
+          "Remington870_Reload_Single",
+          "Remington870_Reload_Single",
+          "Remington870_Reload_Single",
+          "Remington870_Reload_Single",
+          "Remington870_Reload_Single"
+        ]
+      },
+      {
+        "Type": "Simple",
+        "Effects": {
+          "Type": "Simple",
+          "LocalSoundEventId": "SFX_Remington870_Pump_Local",
+          "ItemPlayerAnimationsId": "Remington870",
+          "ItemAnimationId": "Pump"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+$C = "../Common.ui";
+$H = "../Hextech.ui";
+
+// One ranked row.
+//
+// Keeps the original's stat-icon idea (skull / dead / division) but on the
+// hextech plate rather than the old brown LeaderboardEntry.png, so it sits with
+// the rest of the menus.
+
+@Stat = Group {
+  LayoutMode: Left;
+  Padding: (Right: 22);
+  Group #Icon {
+    Anchor: (Width: 20, Height: 20);
+    Background: "../Images/Skull.png";
+  }
+  Label #Value {
+    Text: "0";
+    Style: (FontSize: 15, TextColor: #8FA3B8, VerticalAlignment: Center, RenderBold: true);
+    Padding: (Top: 1, Left: 6);
+  }
+};
+
+Group {
+  Padding: (Top: 6);
+  Group #Row {
+    Anchor: (Width: 1360, Height: 48);
+    Background: $H.@SlotSmallBg;
+
+    Group {
+      LayoutMode: Left;
+      Label #Rank {
+        Text: "#1";
+        Style: (FontSize: 16, TextColor: #00D4FF, VerticalAlignment: Center, RenderBold: true);
+        Padding: (Left: 22);
+      }
+      Label #Name {
+        Text: "";
+        Style: (FontSize: 16, TextColor: #FFFFFF, VerticalAlignment: Center, RenderBold: true);
+        Padding: (Left: 24);
+      }
+    }
+
+    Group {
+      LayoutMode: Right;
+      Padding: (Right: 24);
+
+      // #Score, not #Value: the @Stat template below already defines #Value
+      // three times over (Kills/Deaths/KD). A bare "#Entries[n] #Value" selector
+      // cannot tell them apart, so the headline number was binding ambiguously
+      // and the Wins board -- where the headline IS the stat -- showed nothing.
+      Label #Score {
+        Text: "0";
+        Style: (FontSize: 17, TextColor: #00D4FF, VerticalAlignment: Center, RenderBold: true);
+        Padding: (Right: 28);
+      }
+
+      @Stat #Kills {
+        #Icon { Background: "../Images/Skull.png"; }
+      }
+      @Stat #Deaths {
+        #Icon { Background: "../Images/Dead.png"; }
+      }
+      @Stat #KD {
+        #Icon { Background: "../Images/Division.png"; }
+      }
+    }
+  }
+}

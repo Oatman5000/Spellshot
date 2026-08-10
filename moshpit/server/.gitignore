@@ -1,0 +1,23 @@
+hyboot.conf
+server.jar
+logs/
+assetEditor/
+*.bak
+bans.json
+permissions.json
+whitelist.json
+universe/memories*
+universe/players/
+*.db
+*.tmp
+auth.enc
+hyboot.jar
+config/
+
+# The arena world IS committed. `universe/*` used to blanket-exclude it, which
+# silently beat the root .gitignore's intent -- ignore everything under
+# universe/ except the world itself and the warp table. The players/ and
+# memories* rules above still apply and are what keep player data out.
+universe/*
+!universe/worlds/
+!universe/warps.json

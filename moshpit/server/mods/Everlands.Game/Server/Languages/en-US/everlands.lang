@@ -1,0 +1,29 @@
+# Keys here are UNPREFIXED. The I18n module prefixes every entry with the file's
+# own name, so "items.AR14.name" in everlands.lang becomes the full key
+# "everlands.items.AR14.name" -- which is what the item defs reference.
+#
+# Proof, if you ever doubt it: vanilla ships Server/Languages/en-US/server.lang
+# containing the line "items.Armor_Copper_Head.name = Copper Helm", and our
+# armour defs reference "server.items.Armor_Copper_Head.name". The "server."
+# comes from the filename.
+#
+# So do NOT write "everlands.items.AR14.name" below -- that resolves to
+# "everlands.everlands.items.AR14.name" and nothing will find it.
+#
+# The right-hand side must match TranslationProperties.Name in the item's json
+# under Server/Item/Items, minus the everlands. prefix.
+
+items.AR14.name=AR-14
+items.Famas.name=Famas
+items.Thompson.name=Thompson
+items.FAMP10.name=FAMP-10
+items.Remington870.name=Remington 870
+items.DoubleBarrel.name=Double Barrel
+items.M40.name=M40
+items.M1911.name=M1911
+items.Revolver.name=Revolver
+items.CombatKnife.name=Combat Knife
+items.FragGrenade.name=Frag Grenade
+items.ImpactGrenade.name=Impact Grenade
+items.Syringe.name=Syringe
+items.Airstrike.name=Airstrike

@@ -1,0 +1,21 @@
+{
+  "Type": "CheckAmmo",
+  "CheckType": "FULL",
+  "Next": {
+    "Type": "Simple",
+    "Next": {
+      "Type": "Reload",
+      "Ammo": 5,
+      "AmmoOperation": "ADDITIVE",
+      "AmmoItemId": "Weapon_Arrow_Crude"
+    },
+    "RunTime": 0.7,
+    "Effects": {
+      "ItemPlayerAnimationsId": "DoubleBarrel",
+      "ItemAnimationId": "ReloadInsert",
+      "ClearAnimationOnFinish": false,
+      "LocalSoundEventId": "SFX_ShellInsert_Local"
+    }
+  },
+  "RunTime": 0
+}

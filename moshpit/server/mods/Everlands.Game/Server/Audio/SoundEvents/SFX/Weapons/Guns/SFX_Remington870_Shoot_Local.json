@@ -1,0 +1,21 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Guns/Remington870_Shoot.ogg"
+      ],
+      "RandomSettings": {
+        "MinPitch": 0,
+        "MaxPitch": 5,
+        "MinVolume": 0,
+        "MaxVolume": 10
+      },
+      "Volume": 1
+    }
+  ],
+  "MaxInstance": 30,
+  "Volume": 10,
+  "PreventSoundInterruption": true,
+  "Pitch": 1,
+  "AmbientDuckingVolume": 0
+}

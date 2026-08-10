@@ -1,0 +1,22 @@
+{
+  "Animations": {
+    "Equip": {
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/GenericPistol/EquipGenericPistol.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/GenericPistol/EquipFPGenericPistol.blockyanim",
+      "Speed": 1.2,
+      "ThirdPersonMoving": "Characters/Animations/Items/Main_Handed/GenericPistol/EquipGenericPistol.blockyanim"
+    }
+  },
+  "WiggleWeights": {
+    "Pitch": 2,
+    "PitchDeceleration": 0.1,
+    "Roll": 2,
+    "RollDeceleration": 0.5,
+    "X": 0.1,
+    "XDeceleration": 0.2,
+    "Y": 0.1,
+    "YDeceleration": 0.2,
+    "Z": 0.1,
+    "ZDeceleration": 0.2
+  }
+}

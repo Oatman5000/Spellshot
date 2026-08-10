@@ -1,0 +1,21 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Guns/Remington870_Reload_World.ogg"
+      ],
+      "Probability": 100,
+      "RandomSettings": {
+        "MinVolume": -2,
+        "MinPitch": -2,
+        "MaxPitch": 2,
+        "MaxVolume": 1
+      },
+      "Volume": 1
+    }
+  ],
+  "MaxInstance": 30,
+  "Volume": -2,
+  "PreventSoundInterruption": true,
+  "Pitch": -6
+}

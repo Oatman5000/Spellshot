@@ -1,0 +1,64 @@
+{
+  "Type": "Serial",
+  "Interactions": [
+    {
+      "Type": "Charging",
+      "HorizontalSpeedMultiplier": 0.8,
+      "FailOnDamage": false,
+      "DisplayProgress": false,
+      "Effects": {
+        "WaitForAnimationToFinish": false,
+        "CameraEffect": "Battleaxe_Swing_Vertical",
+        "WorldSoundEventId": "SFX_Blunderbuss_Load",
+        "ClearAnimationOnFinish": true,
+        "ItemPlayerAnimationsId": "Revolver",
+        "ItemAnimationId": "Charge",
+        "ClearSoundEventOnFinish": true,
+        "LocalSoundEventId": "SFX_Blunderbuss_Load"
+      },
+      "CancelOnItemChange": true,
+      "CancelOnOtherClick": false,
+      "AllowIndefiniteHold": false,
+      "Next": {
+        "0.4": "Revolver_Shoot"
+      },
+      "RunTime": 0.4,
+      "Camera": {
+        "FirstPerson": [
+          {
+            "Rotation": {
+              "Pitch": 0,
+              "Roll": 0,
+              "Yaw": 0
+            },
+            "Time": 0.05
+          },
+          {
+            "Time": 0.2,
+            "Rotation": {
+              "Pitch": 0,
+              "Yaw": -0.2,
+              "Roll": 0.5
+            }
+          },
+          {
+            "Time": 0.4,
+            "Rotation": {
+              "Pitch": 0.3,
+              "Yaw": 0.2,
+              "Roll": 0.8
+            }
+          },
+          {
+            "Time": 0.6,
+            "Rotation": {
+              "Pitch": 0.2,
+              "Yaw": 0,
+              "Roll": 0.3
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

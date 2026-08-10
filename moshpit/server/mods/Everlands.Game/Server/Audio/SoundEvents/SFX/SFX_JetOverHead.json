@@ -1,0 +1,14 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/Jet_OverHead.ogg"
+      ],
+      "Volume": 1
+    }
+  ],
+  "Volume": 3,
+  "PreventSoundInterruption": true,
+  "MaxDistance": 180,
+  "Pitch": 0
+}

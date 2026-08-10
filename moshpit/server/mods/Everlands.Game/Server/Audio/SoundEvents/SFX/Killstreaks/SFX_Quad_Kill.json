@@ -1,0 +1,11 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/Killstreaks/Quad.ogg"
+      ]
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 10
+}

@@ -1,0 +1,60 @@
+$H = "../Hextech.ui";
+
+// Ammo readout, lower-right, sitting under the weapon selector.
+//
+// #Ammo is written by AmmoEntitySystem as "current/max" -- keep that id.
+//
+// #AmmoPlate and #AmmoCaption wrap the plate and its label so the whole block
+// can be hidden when the held item has no ammo (knife, grenade, syringe).
+// Blanking #Ammo alone would leave an empty plate floating on screen.
+// Both start hidden: the system shows them on the first tick holding a gun.
+//
+// Sized to the text rather than to the old 190-wide plate, which left most of
+// the frame empty. The widest reading is "30/30": 5 glyphs at FontSize 21 plus
+// 4 x 3.5 tracking is roughly 72px. The plate is wider than that on purpose --
+// fixed rather than auto-width, because
+// the element is right-anchored, so an auto width would make the left edge
+// twitch every time the count crossed 10.
+//
+// Uses @SlotSmallBg (border 12) rather than @SlotBg (border 24): a 24px border
+// forces a 48px minimum height, and that was most of the vertical dead space.
+// Border 12 allows 24, so 42 leaves generous room around the 21px text.
+Group #AmmoPlate {
+  Visible: false;
+  Anchor: (Right: 28, Bottom: 158, Width: 142, Height: 42);
+  Background: $H.@SlotSmallBg;
+
+  // Readout styled like a lit digital display: cyan, widely tracked, with a
+  // dark outline so it reads as glowing against the plate.
+  //
+  // Hytale only exposes two font faces to .ui documents -- "Default" and
+  // "Secondary" -- and the actual .ttf files live in the client install, not
+  // the asset pack, so a real seven-segment face cannot be shipped by a mod.
+  // LetterSpacing does most of the work instead.
+  Label #Ammo {
+    Text: "";
+    Style: (
+      FontName: "Secondary",
+      TextColor: #00D4FF,
+      OutlineColor: #001A22(0.9),
+      FontSize: 21,
+      LetterSpacing: 3.5,
+      RenderBold: true,
+      Alignment: Center
+    );
+  }
+}
+
+Group #AmmoCaption {
+  Visible: false;
+  // Width tracks the plate so "AMMO" stays centred under it.
+  Anchor: (Right: 28, Bottom: 142, Width: 142, Height: 15);
+  Label {
+    Text: "Ammo";
+    Style: (TextColor: #00D4FF, FontSize: 12, RenderBold: true, RenderUppercase: true, Alignment: Center);
+  }
+}
+
+// The "open your inventory" hint used to live here. It now has its own layer,
+// Hud/LoadoutHint.ui, so it can be torn down once a loadout has been picked
+// without taking the ammo readout with it.

@@ -1,0 +1,21 @@
+$C = "../Common.ui";
+$H = "../Hextech.ui";
+
+// One tab in the leaderboard strip. Uses the small hextech frame; #Active is
+// toggled by LeaderboardPage to show which board is being viewed.
+
+Group {
+  Padding: (Horizontal: 4);
+  Button #Button {
+    Anchor: (Width: 150, Height: 38);
+    Style: (
+      Default: (Background: $H.@SlotSmallBg),
+      Hovered: (Background: $H.@SlotSmallHoverBg),
+      Sounds: $C.@ButtonSounds
+    );
+    Label #Title {
+      Text: "GLOBAL";
+      Style: (FontSize: 13, TextColor: #8FA3B8, Alignment: Center, VerticalAlignment: Center, RenderBold: true, RenderUppercase: true);
+    }
+  }
+}

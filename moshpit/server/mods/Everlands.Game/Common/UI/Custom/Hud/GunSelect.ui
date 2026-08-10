@@ -1,0 +1,161 @@
+$H = "../Hextech.ui";
+
+// Weapon selector, right edge of the screen. Replaces the vanilla hotbar
+// (hidden server-side via HudComponent.Hotbar).
+//
+// Four slots matching the loadout model: primary, secondary, melee, utility.
+// Each slot stacks two frames -- the resting one and a lit one -- and the
+// server toggles #ActiveN.Visible to move the highlight. Toggling visibility
+// keeps both 9-slices intact; swapping a Background path would lose the border.
+//
+// Slot key numbers sit at Left 18 / Top 14 rather than 8/4: the chamfered
+// corner cuts across the old position and clipped the digits.
+//
+// Slot.png is a chamfered octagon with corner brackets rather than a plain
+// rectangle -- the frame is deliberately open on the edges so the column reads
+// as less boxy. Border 24 fits a 70px slot (must be <= half the rendered size),
+// and the brackets sit wholly inside the 24px corner so the stretched edge
+// strips stay constant.
+
+@SlotW = 76;
+@SlotH = 70;
+
+// The killstreak slot is deliberately smaller than the four loadout slots --
+// it is a temporary reward, not part of your class.
+@ExtraW = 56;
+@ExtraH = 52;
+
+// Bottom-anchored so the column sits directly above the ammo plate rather than
+// floating at screen centre. Ammo occupies Bottom 142..206, so 212 clears it.
+Group {
+  Anchor: (Right: 28, Bottom: 212, Width: @SlotW, Height: 290);
+  LayoutMode: Top;
+
+  // ---------- slot 1: primary ----------
+  Group #Slot0 {
+    Anchor: (Width: @SlotW, Height: @SlotH);
+    Group {
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/Slot.png", Border: 24);
+    }
+    Group #Active0 {
+      Visible: false;
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/SlotHovered.png", Border: 24);
+    }
+    ItemIcon #Icon0 {
+      Anchor: (Width: 44, Height: 44);
+      ItemId: "";
+    }
+    Label #Key0 {
+      Text: "1";
+      Anchor: (Left: 18, Top: 14);
+      Style: (TextColor: #8FA3B8, FontSize: 12, RenderBold: true);
+    }
+  }
+
+  // ---------- slot 2: secondary ----------
+  Group #Slot1 {
+    Anchor: (Width: @SlotW, Height: @SlotH);
+    Group {
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/Slot.png", Border: 24);
+    }
+    Group #Active1 {
+      Visible: false;
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/SlotHovered.png", Border: 24);
+    }
+    ItemIcon #Icon1 {
+      Anchor: (Width: 44, Height: 44);
+      ItemId: "";
+    }
+    Label #Key1 {
+      Text: "2";
+      Anchor: (Left: 18, Top: 14);
+      Style: (TextColor: #8FA3B8, FontSize: 12, RenderBold: true);
+    }
+  }
+
+  // ---------- slot 3: melee ----------
+  Group #Slot2 {
+    Anchor: (Width: @SlotW, Height: @SlotH);
+    Group {
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/Slot.png", Border: 24);
+    }
+    Group #Active2 {
+      Visible: false;
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/SlotHovered.png", Border: 24);
+    }
+    ItemIcon #Icon2 {
+      Anchor: (Width: 44, Height: 44);
+      ItemId: "";
+    }
+    Label #Key2 {
+      Text: "3";
+      Anchor: (Left: 18, Top: 14);
+      Style: (TextColor: #8FA3B8, FontSize: 12, RenderBold: true);
+    }
+  }
+
+  // ---------- slot 4: utility ----------
+  Group #Slot3 {
+    Anchor: (Width: @SlotW, Height: @SlotH);
+    Group {
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/Slot.png", Border: 24);
+    }
+    Group #Active3 {
+      Visible: false;
+      Anchor: (Width: @SlotW, Height: @SlotH);
+      Background: (TexturePath: "../Images/Hextech/SlotHovered.png", Border: 24);
+    }
+    ItemIcon #Icon3 {
+      Anchor: (Width: 44, Height: 44);
+      ItemId: "";
+    }
+    Label #Key3 {
+      Text: "4";
+      Anchor: (Left: 18, Top: 14);
+      Style: (TextColor: #8FA3B8, FontSize: 12, RenderBold: true);
+    }
+  }
+}
+
+// ---------- killstreak slot (hotbar index 4) ----------
+//
+// Sits to the LEFT of slot 4, clear of the killstreak meter at x 118..125.
+// Hidden unless the player is actually carrying an airstrike -- GunSelectEntitySystem
+// toggles #Slot4.Visible, so an empty fifth slot never appears.
+//
+// Separate from the column above rather than a fifth entry in it: that group is
+// bottom-anchored with LayoutMode: Top, so appending would shove slots 1-4 upward
+// every time a streak was earned.
+//
+// TUNING: move with the two Right/Bottom values below. Border 24 needs the slot
+// to stay at least 48x48.
+Group #Slot4 {
+  Visible: false;
+  Anchor: (Right: 140, Bottom: 212, Width: @ExtraW, Height: @ExtraH);
+
+  Group {
+    Anchor: (Width: @ExtraW, Height: @ExtraH);
+    Background: (TexturePath: "../Images/Hextech/Slot.png", Border: 24);
+  }
+  Group #Active4 {
+    Visible: false;
+    Anchor: (Width: @ExtraW, Height: @ExtraH);
+    Background: (TexturePath: "../Images/Hextech/SlotHovered.png", Border: 24);
+  }
+  ItemIcon #Icon4 {
+    Anchor: (Width: 32, Height: 32);
+    ItemId: "";
+  }
+  Label #Key4 {
+    Text: "5";
+    Anchor: (Left: 15, Top: 11);
+    Style: (TextColor: #8FA3B8, FontSize: 11, RenderBold: true);
+  }
+}

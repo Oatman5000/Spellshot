@@ -1,0 +1,21 @@
+{
+  "Type": "CheckAmmo",
+  "CheckType": "FULL",
+  "Next": {
+    "Type": "Simple",
+    "Next": {
+      "Type": "Reload",
+      "Ammo": 5,
+      "AmmoOperation": "ADDITIVE",
+      "AmmoItemId": "Weapon_Arrow_Crude"
+    },
+    "RunTime": 0.5,
+    "Effects": {
+      "ItemPlayerAnimationsId": "Remington870",
+      "ItemAnimationId": "Reload",
+      "ClearAnimationOnFinish": false,
+      "LocalSoundEventId": "SFX_ShellInsert_Local"
+    }
+  },
+  "RunTime": 0
+}

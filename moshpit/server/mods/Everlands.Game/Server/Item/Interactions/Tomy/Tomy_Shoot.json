@@ -1,0 +1,99 @@
+{
+  "Type": "Shoot",
+  "Ammo": 15,
+  "BulletSpread": 0.07,
+  "BulletsPerShot": 1,
+  "MaxDistance": 50,
+  "Effects": {
+    "Particles": [
+      {
+        "SystemId": "Shoot",
+        "RotationOffset": {
+          "Pitch": 90
+        },
+        "PositionOffset": {
+          "Z": 1,
+          "Y": 0.15
+        },
+        "DetachedFromModel": false,
+        "Color": "#ffffff",
+        "Scale": 0.5
+      }
+    ],
+    "WorldSoundEventId": "SFX_Rifle_Fire",
+    "WaitForAnimationToFinish": false,
+    "ItemPlayerAnimationsId": "AR14",
+    "ItemAnimationId": "Shoot",
+    "ClearAnimationOnFinish": false,
+    "ClearSoundEventOnFinish": true,
+    "LocalSoundEventId": "SFX_Rifle_Fire_Local"
+  },
+  "RunTime": 0.08,
+  "HeadDamage": 23,
+  "ChestDamage": 22,
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.2,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ],
+    "ThirdPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.2,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ]
+  },
+  "LegDamage": 20,
+  "Next": {
+    "Type": "ChangeStat",
+    "StatModifiers": {
+      "GunAmmo": -1
+    }
+  }
+}

@@ -1,0 +1,53 @@
+$C = "../Common.ui";
+$H = "../Hextech.ui";
+
+// One card in the server selector.
+//
+// The icon is a plain Group with a Background, NOT an ItemIcon. ItemIcon can
+// only draw items that exist on the server rendering it, and the weapons live
+// in moshpit's asset pack -- so an ItemId of "AR14" drew nothing here.
+//
+// Width 340 and Wrap on the description: the mode list was being truncated to
+// "FFA, TDM, Hardpoint, OitC, El..." at the old 200px. Note the property is
+// `Wrap: true` -- TextWrapping is the Noesis XAML spelling and does nothing in
+// a .ui document.
+
+Group {
+  Padding: (Full: 10);
+  Button #Button {
+    LayoutMode: Top;
+    Anchor: (Width: 340);
+    Padding: (Vertical: 22);
+    Style: (
+      Default: (
+        Background: $H.@SlotBg
+      ),
+      Hovered: (
+        Background: $H.@SlotHoverBg
+      ),
+      Sounds: $C.@ButtonSounds,
+    );
+
+    Group #Icon {
+      Anchor: (Width: 56, Height: 56);
+      Background: "../Images/Skull.png";
+    }
+
+    Label #Name {
+      Padding: (Horizontal: 10, Bottom: 6, Top: 14);
+      Style: (TextColor: #FFFFFF, FontSize: 19, Alignment: Center, RenderBold: true, RenderUppercase: true);
+      Text: "Server";
+    }
+
+    Group {
+      Anchor: (Width: 160, Height: 11);
+      Background: "../Images/Hextech/Rule.png";
+    }
+
+    Label #Description {
+      Text: "";
+      Padding: (Horizontal: 18, Top: 10);
+      Style: (TextColor: #8FA3B8, FontSize: 12, Alignment: Center, Wrap: true);
+    }
+  }
+}

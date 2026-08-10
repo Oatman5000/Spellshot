@@ -1,0 +1,260 @@
+{
+  "WiggleWeights": {
+    "Pitch": 1,
+    "PitchDeceleration": 0.2,
+    "Roll": 0.1,
+    "RollDeceleration": 0.2,
+    "X": 1,
+    "XDeceleration": 0.2,
+    "Y": 0.1,
+    "YDeceleration": 0.2,
+    "Z": 0.1,
+    "ZDeceleration": 0.2
+  },
+  "Animations": {
+    "Idle": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.5,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Walk": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1.0,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "WalkBackward": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1.0,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Run": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.9,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "RunBackward": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.9,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Sprint": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/SprintFPSyringe.blockyanim",
+      "Speed": 2,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Crouch": {
+      "BlendingDuration": 0.1,
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.5,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "CrouchWalk": {
+      "BlendingDuration": 0.1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Speed": 0.8,
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Looping": true
+    },
+    "CrouchWalkBackward": {
+      "BlendingDuration": 0.1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Speed": 0.8,
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Looping": true
+    },
+    "Jump": {
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": false,
+      "KeepPreviousFirstPersonAnimation": true
+    },
+    "JumpWalk": {
+      "Speed": 0.8,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": false,
+      "KeepPreviousFirstPersonAnimation": true
+    },
+    "JumpRun": {
+      "Speed": 0.8,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": false,
+      "KeepPreviousFirstPersonAnimation": true
+    },
+    "Fall": {
+      "BlendingDuration": 0.4,
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true,
+      "KeepPreviousFirstPersonAnimation": true
+    },
+    "FallFar": {
+      "BlendingDuration": 0.4,
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true,
+      "KeepPreviousFirstPersonAnimation": true
+    },
+    "FlyIdle": {
+      "Speed": 0.5,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true,
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Fly/Fly_Idle_FPS.blockyanim"
+    },
+    "Fly": {
+      "Looping": true,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Fly/Fly_FPS.blockyanim"
+    },
+    "FlyBackward": {
+      "Looping": true,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Fly/Fly_Backward_FPS.blockyanim"
+    },
+    "FlyFast": {
+      "Looping": true,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Fly/Fly_Fast_FPS.blockyanim"
+    },
+    "SwimIdle": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Idle_FPS.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Swim": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "SwimBackward": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "SwimFast": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "SwimJump": {
+      "BlendingDuration": 0.1,
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.8,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": false
+    },
+    "SwimFloat": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "SwimSink": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Sink_FPS.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Sink.blockyanim",
+      "Looping": true
+    },
+    "SwimDive": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive_FPS.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive.blockyanim",
+      "Looping": true
+    },
+    "SwimDiveBackward": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive_Backward_FPS.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive_Backward.blockyanim",
+      "Looping": true
+    },
+    "SwimDiveFast": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive_Fast_FPS.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Swim/Swim_Dive_Fast.blockyanim",
+      "Looping": true
+    },
+    "FluidIdle": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Idle_FPS.blockyanim",
+      "Speed": 0.3,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Idle.blockyanim",
+      "Looping": true
+    },
+    "FluidWalk": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Walk_FPS.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Walk.blockyanim",
+      "Looping": true
+    },
+    "FluidWalkBackward": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Handgun/Walk_Backward_FPS.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Handgun/Walk_Backward.blockyanim",
+      "Looping": true
+    },
+    "FluidRun": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.6,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "ClimbIdle": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 0.5,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "ClimbUp": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "ClimbDown": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "ClimbLeft": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "ClimbRight": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "Looping": true
+    },
+    "Interact": {
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleSyringe.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/IdleFPSyringe.blockyanim",
+      "Speed": 1,
+      "BlendingDuration": 0.1
+    },
+    "Use": {
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/UseSyringe.blockyanim",
+      "ThirdPersonMoving": "Characters/Animations/Items/Main_Handed/Syringe/UseSyringe.blockyanim",
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/UseFPSyringe.blockyanim",
+      "Speed": 2
+    },
+    "Equip": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/Syringe/EquipFPSyringe.blockyanim",
+      "Speed": 1.5,
+      "BlendingDuration": 0.1,
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/Syringe/EquipSyringe.blockyanim",
+      "KeepPreviousFirstPersonAnimation": false
+    }
+  }
+}

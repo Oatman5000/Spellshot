@@ -1,0 +1,50 @@
+Group {
+  Group {
+    Padding: (Vertical: 3);
+    Button #Button {
+      Anchor: (Width: 300, Height: 60);
+      Style: (
+        Default: (Background: (TexturePath: "../../Images/Hextech/Slot.png", Border: 24)),
+      );
+      Group {
+        Padding: (Horizontal: 28);
+        Label #Name {
+          Text: "Primary";
+          Style: (VerticalAlignment: Center, TextColor: #8FA3B8, RenderBold: true);
+        }
+        Group #PrimaryIcon {
+          Visible: false;
+          Anchor: (Width: 100, Height: 100, Right: 0);
+          Background: "../../Images/Guns/AR14.png";
+        }
+        Group #SecondaryIcon {
+          Visible: true;
+          Anchor: (Width: 50, Height: 50, Right: 0);
+          Background: "../../Images/Guns/AR14.png";
+        }
+        Group #MeleeIcon {
+          Visible: true;
+          Anchor: (Width: 40, Height: 40, Right: 0);
+          Background: "../../Images/Guns/AR14.png";
+        }
+        Group #UtilityIcon {
+          Visible: true;
+          Anchor: (Width: 35, Height: 35, Right: 0);
+          Background: "../../Images/Guns/AR14.png";
+        }
+      }
+    }
+    // Was a flat #000000(0.5) rectangle, whose square corners poked out past the
+    // chamfer once the row became an octagon. SlotLocked.png is the same 9-slice
+    // shape with a desaturated frame and a ~50% interior, so it dims the icon
+    // exactly as before while following the outline.
+    Group #LockedLayer {
+      Anchor: (Width: 300, Height: 60);
+      Background: (TexturePath: "../../Images/Hextech/SlotLocked.png", Border: 24);
+      Label #Requirement {
+        Text: "LVL 5";
+        Style: (TextColor: #8FA3B8(0.8), RenderBold: true, FontSize: 20, VerticalAlignment: Center, HorizontalAlignment: Center);
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "Layers": [
+    {
+      "Looping": false,
+      "Files": [
+        "Sounds/Misc/Select.ogg"
+      ],
+      "Volume": 1
+    }
+  ],
+  "PreventSoundInterruption": false,
+  "Volume": 2
+}

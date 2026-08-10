@@ -1,0 +1,18 @@
+{
+  "Layers": [
+    {
+      "RoundRobinHistorySize": 1,
+      "Files": [
+        "Sounds/Grenades/FragGrenade2.ogg"
+      ],
+      "Volume": 10,
+      "RandomSettings": {
+        "MinVolume": 0,
+        "MaxVolume": 10
+      }
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 6.04,
+  "MaxDistance": 30
+}

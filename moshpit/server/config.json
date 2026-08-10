@@ -1,0 +1,40 @@
+{
+  "Version": 4,
+  "ServerName": "Moshpit",
+  "MOTD": "",
+  "Password": "",
+  "MaxPlayers": 20,
+  "MaxViewRadius": 32,
+  "Defaults": {
+    "World": "Moshpit",
+    "GameMode": "Adventure"
+  },
+  "ConnectionTimeouts": {},
+  "RateLimit": {},
+  "Modules": {
+    "PathPlugin": {
+      "Modules": {}
+    }
+  },
+  "LogLevels": {},
+  "Mods": {
+    "Hytale:Portals": {
+      "Enabled": true
+    },
+    "Hytale:CreativeHub": {
+      "Enabled": true
+    }
+  },
+  "DefaultModsEnabled": true,
+  "DisplayTmpTagsInStrings": false,
+  "PlayerStorage": {
+    "Type": "Hytale"
+  },
+  "AuthCredentialStore": {
+    "Type": "Memory"
+  },
+  "Update": {
+    "Enabled": false
+  },
+  "Backup": {}
+}

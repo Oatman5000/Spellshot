@@ -1,0 +1,34 @@
+{
+  "Model": "Missile",
+  "SpawnRotationOffset": {
+    "Pitch": 0,
+    "Yaw": 0,
+    "Roll": 0
+  },
+  "Physics": {
+    "Type": "Standard",
+    "Gravity": 150,
+    "TerminalVelocityAir": 40,
+    "TerminalVelocityWater": 15,
+    "RotationMode": "None",
+    "Bounciness": 0,
+    "AllowRolling": false,
+    "SticksVertically": true,
+    "RollingFrictionFactor": 0.8
+  },
+  "LaunchForce": 2,
+  "SpawnOffset": {
+    "X": 0,
+    "Y": 0,
+    "Z": 0.0
+  },
+  "Interactions": {
+    "ProjectileSpawn": {
+      "Interactions": [
+        {
+          "Type": "Simple"
+        }
+      ]
+    }
+  }
+}

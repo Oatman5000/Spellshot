@@ -1,0 +1,35 @@
+{
+  "Model": "Jet",
+  "SpawnRotationOffset": {
+    "Roll": 0,
+    "Pitch": 0,
+    "Yaw": 0
+  },
+  "Physics": {
+    "Type": "Standard",
+    "Gravity": 0,
+    "TerminalVelocityAir": 1000,
+    "TerminalVelocityWater": 15,
+    "RotationMode": "None",
+    "Bounciness": 0,
+    "AllowRolling": false,
+    "SticksVertically": true,
+    "RollingFrictionFactor": 0.8,
+    "DensityAir": 10
+  },
+  "LaunchForce": 40,
+  "SpawnOffset": {
+    "X": 0,
+    "Y": 0,
+    "Z": 0.0
+  },
+  "Interactions": {
+    "ProjectileSpawn": {
+      "Interactions": [
+        {
+          "Type": "Simple"
+        }
+      ]
+    }
+  }
+}

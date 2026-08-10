@@ -1,0 +1,101 @@
+@LoadoutBoxBottom = 100;
+@LoadoutBoxWidth = 370;
+@LoadoutBoxHeight = 160;
+@LoadoutBoxHorizontalPadding = 10;
+
+@ButtonSounds = (
+  MouseHover: (
+    SoundPath: "../../Sounds/UI_Button_Hover.ogg",
+    Volume: 0.15
+  )
+);
+
+@LoadoutBoxDefaultStyle = (
+  Default: (Background: (TexturePath: "../../Images/Hextech/Slot.png", Border: 24)),
+  Hovered: (Background: (TexturePath: "../../Images/Hextech/SlotHovered.png", Border: 24)),
+  Sounds: @ButtonSounds
+);
+
+Group {
+  Anchor: (Width: @LoadoutBoxWidth, Height: @LoadoutBoxHeight, Bottom: @LoadoutBoxBottom);
+  Padding: (Horizontal: @LoadoutBoxHorizontalPadding);
+  Group {
+    LayoutMode: Top;
+    Label #Title {
+      Text: "LOADOUT #1";
+      Padding: (Bottom: 6);
+      Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+    }
+
+    Button #Button {
+      Style: @LoadoutBoxDefaultStyle;
+      Anchor: (Height: @LoadoutBoxHeight);
+      // Shown by LoadoutPage on whichever entry is currently equipped, so the
+      // active loadout is obvious without having to compare frame colours.
+      // Height must stay >= 24: SlotSmall carries a 12px border, which has to
+      // be <= half the rendered size.
+      Group #SelectedBadge {
+        Visible: false;
+        Anchor: (Width: 104, Height: 26, Top: 12, Right: 14);
+        Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+        Label {
+          Text: "Equipped";
+          Style: (TextColor: #00D4FF, FontSize: 11, RenderBold: true, RenderUppercase: true, Alignment: Center);
+        }
+      }
+
+      Group {
+        Group #Primary {
+          Anchor: (Width: 163, Height: 163, Left: 40);
+          Background: "../../Images/Guns/AR14.png";
+        }
+
+        Group #Secondary {
+          Anchor: (Width: 82, Height: 82, Right: 40);
+          Background: "../../Images/Guns/M1911.png";
+        }
+      }
+
+      Group {
+        LayoutMode: Bottom;
+        Padding: (Horizontal: 20, Bottom: 16);
+
+        Group {
+          LayoutMode: Right;
+          Group {
+            LayoutMode: Left;
+            Group {
+              Anchor: (Width: 18, Height: 18);
+              Background: "../../Images/MouseButtonLeft.png";
+            }
+            Label {
+              Padding: (Left: 5);
+              Text: "Select";
+              Style: (TextColor: #8FA3B8(0.5), FontSize: 12, RenderBold: true, RenderUppercase: true);
+            }
+          }
+          Group {
+            Padding: (Horizontal: 10);
+          }
+
+          Group {
+            LayoutMode: Left;
+            Group {
+              Anchor: (Width: 18, Height: 18);
+              Background: "../../Images/MouseButtonRight.png";
+            }
+            Label {
+              Padding: (Left: 5);
+              Text: "Edit";
+              Style: (TextColor: #8FA3B8(0.5), FontSize: 12, RenderBold: true, RenderUppercase: true);
+            }
+          }
+
+
+        }
+
+      }
+
+    }
+  }
+}

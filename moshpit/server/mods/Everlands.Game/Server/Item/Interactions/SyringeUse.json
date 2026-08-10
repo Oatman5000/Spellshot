@@ -1,0 +1,35 @@
+{
+  "Type": "Serial",
+  "Interactions": [
+    {
+      "Type": "Charging",
+      "HorizontalSpeedMultiplier": 0.6,
+      "FailOnDamage": false,
+      "Next": {
+        "1": {
+          "Type": "ModifyInventory",
+          "AdjustHeldItemQuantity": -1,
+          "Next": {
+            "Type": "ApplyEffect",
+            "EffectId": "SyringeSpeed",
+            "RunTime": 0.1
+          }
+        }
+      },
+      "DisplayProgress": true,
+      "Effects": {
+        "ItemPlayerAnimationsId": "Syringe",
+        "ItemAnimationId": "Use",
+        "WaitForAnimationToFinish": false,
+        "CameraEffect": "Daggers_Dash_Side",
+        "WorldSoundEventId": "SFX_Effect_Poison_World",
+        "LocalSoundEventId": "SFX_Effect_Poison_Local",
+        "ClearAnimationOnFinish": true
+      },
+      "RunTime": 1,
+      "CancelOnItemChange": true,
+      "CancelOnOtherClick": false,
+      "AllowIndefiniteHold": true
+    }
+  ]
+}

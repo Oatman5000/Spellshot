@@ -1,0 +1,15 @@
+{
+  "Group": "Everlands",
+  "Name": "Lobby",
+  "Version": "0.1.0",
+  "Description": "Everlands lobby assets and UI",
+  "ServerVersion": "^0.5.7",
+  "Authors": [{ "Name": "XiaBit" }],
+  "Website": "",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "SubPlugins": []
+}

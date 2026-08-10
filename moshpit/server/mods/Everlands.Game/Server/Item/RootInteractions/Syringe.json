@@ -1,0 +1,11 @@
+{
+  "Interactions": [
+    {
+      "Type": "Simple",
+      "Effects": {
+        "LocalSoundEventId": "SFX_Drop_Items_Leather"
+      }
+    },
+    "SyringeUse"
+  ]
+}

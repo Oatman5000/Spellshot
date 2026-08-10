@@ -1,0 +1,64 @@
+$C = "../../Common.ui";
+$H = "../../Hextech.ui";
+
+// Sized so six maps fit on ONE row inside the 1600px container:
+//   usable width  = 1600 - 34 (container content padding) = 1566
+//   slot          = 228 card + 2 x 7 padding = 242
+//   6 x 242       = 1452  -> fits, no wrap
+// FFA offers six arenas (the five team maps plus Nuketown), so six is the
+// number that has to fit; wrapping pushed the last card out of the panel.
+Group {
+  Padding: (Full: 7);
+  Button #Button {
+    LayoutMode: Top;
+    Anchor: (Width: 228);
+    Padding: (Vertical: 14);
+    Style: (
+      Default: (
+        Background: $H.@SlotBg
+      ),
+      Hovered: (
+        Background: $H.@SlotHoverBg
+      ),
+      Sounds: $C.@ButtonSounds,
+    );
+
+    Group #Map {
+      LayoutMode: Left;
+      Anchor: (Width: 196, Height: 150);
+      Background: "../../Maps/hijacked.png";
+    }
+
+    Label #Name {
+      Padding: (Horizontal: 10, Bottom: 2, Top: 12);
+      Style: (TextColor: #FFFFFF, FontSize: 16, Alignment: Center, RenderBold: true, RenderUppercase: true);
+      Text: "FFA";
+    }
+
+    Label #Author {
+      Padding: (Horizontal: 10, Bottom: 8);
+      Style: (Alignment: Center, TextColor: #8FA3B8(0.6), FontSize: 12);
+      Text: "by AuthorName";
+    }
+
+    Group {
+      Anchor: (Width: 170, Height: 11);
+      Background: "../../Images/Hextech/Rule.png";
+    }
+
+    Group {
+      LayoutMode: Center;
+      Padding: (Top: 6);
+      Group {
+        LayoutMode: Left;
+        Anchor: (Width: 18, Height: 18, Right: 3);
+        Background: "../Icons/ServerUserGreen.png";
+      }
+
+      Label #Votes {
+        Text: "0 Votes";
+        Style: (TextColor: #00D4FF, FontSize: 14, RenderBold: true, RenderUppercase: true);
+      }
+    }
+  }
+}

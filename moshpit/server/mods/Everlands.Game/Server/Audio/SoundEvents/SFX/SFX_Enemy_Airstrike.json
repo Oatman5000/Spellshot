@@ -1,0 +1,11 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/EnemyAirstrike.ogg"
+      ]
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 10
+}

@@ -1,0 +1,53 @@
+$C = "../../Common.ui";
+$H = "../../Hextech.ui";
+
+$C.@PageOverlay {
+
+  $C.@DecoratedContainer {
+    // Height sized to one row of cards (~275) + title + countdown strip.
+    // At 600 the panel was mostly empty; the overflow was the wrap, not the height.
+    Anchor: (Width: 1600, Height: 500);
+
+    #Title {
+      Group {
+        $C.@Title #TitleLabel {
+          @Text = "Vote for next game";
+        }
+      }
+    }
+    #Content {
+      LayoutMode: Full;
+      Group {
+        FlexWeight: 1;
+        LayoutMode: MiddleCenter;
+        Anchor: (Bottom: 46, Top: 0);
+        Group #Games {
+          Visible: true;
+          LayoutMode: LeftCenterWrap;
+        }
+        Group #Maps {
+          Visible: false;
+          LayoutMode: LeftCenterWrap;
+        }
+      }
+
+      Group {
+        Anchor: (Bottom: 0, Height: 46);
+        LayoutMode: Top;
+
+        Group {
+          Anchor: (Width: 256, Height: 11);
+          Background: "../../Images/Hextech/Rule.png";
+        }
+
+        Label #Countdown {
+          Text: "Voting ends in 00:30";
+          Padding: (Top: 8);
+          Style: $H.@Accent;
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}

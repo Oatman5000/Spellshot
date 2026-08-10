@@ -1,0 +1,11 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/Killstreaks/Monster.ogg"
+      ]
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 10
+}

@@ -1,0 +1,93 @@
+{
+  "Type": "Shoot",
+  "Ammo": 15,
+  "BulletSpread": 0,
+  "BulletsPerShot": 1,
+  "MaxDistance": 80,
+  "Effects": {
+    "Particles": [
+      {
+        "SystemId": "Shoot",
+        "RotationOffset": {
+          "Pitch": 90
+        },
+        "PositionOffset": {
+          "Z": 0.5,
+          "Y": 0.05
+        },
+        "DetachedFromModel": false,
+        "Color": "#ffffff",
+        "Scale": 0.5
+      }
+    ],
+    "WorldSoundEventId": "SFX_Blunderbuss_Fire",
+    "WaitForAnimationToFinish": false,
+    "ItemPlayerAnimationsId": "Revolver",
+    "ItemAnimationId": "Shoot",
+    "ClearAnimationOnFinish": true,
+    "ClearSoundEventOnFinish": false,
+    "MovementEffects": {
+      "DisableForward": false,
+      "DisableAll": false
+    },
+    "LocalSoundEventId": "SFX_Blunderbuss_Fire_Local"
+  },
+  "RunTime": 0.8,
+  "HeadDamage": 150,
+  "ChestDamage": 85,
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.1,
+        "Rotation": {
+          "Pitch": 7,
+          "Yaw": 0.5
+        }
+      },
+      {
+        "Time": 0.4,
+        "Rotation": {
+          "Pitch": 4.5,
+          "Yaw": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.8,
+        "Rotation": {
+          "Roll": 0
+        }
+      }
+    ],
+    "ThirdPerson": [
+      {
+        "Time": 0.1,
+        "Rotation": {
+          "Pitch": 7,
+          "Yaw": 0.5
+        }
+      },
+      {
+        "Time": 0.4,
+        "Rotation": {
+          "Pitch": 4.5,
+          "Yaw": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.8,
+        "Rotation": {
+          "Roll": 0
+        }
+      }
+    ]
+  },
+  "LegDamage": 60,
+  "Next": {
+    "Type": "ChangeStat",
+    "StatModifiers": {
+      "GunAmmo": -1
+    }
+  }
+}

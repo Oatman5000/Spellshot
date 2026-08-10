@@ -1,0 +1,17 @@
+Group #ScoreboardRow {
+    LayoutMode: Center;
+    Padding: (Vertical: 2);
+    Label #Placement {
+      Text: "#1";
+      Style: (TextColor: #00D4FF, FontSize: 15, RenderBold: true);
+    }
+    Label #Name {
+      Text: "#1 burnboy";
+      Padding: (Left: 20, Right: 20);
+      Style: (TextColor: #FFFFFF, FontSize: 14, FontName: "Secondary");
+    }
+    Label #Kills {
+      Text: "#1 burnboy";
+      Style: (TextColor: #8FA3B8, FontSize: 14, FontName: "Secondary");
+    }
+}

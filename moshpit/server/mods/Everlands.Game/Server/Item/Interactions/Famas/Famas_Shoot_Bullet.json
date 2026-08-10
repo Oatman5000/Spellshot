@@ -1,0 +1,98 @@
+{
+  "Type": "Shoot",
+  "RunTime": 0.08,
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.2,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ],
+    "ThirdPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.2,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ]
+  },
+  "Next": {
+    "Type": "ChangeStat",
+    "StatModifiers": {
+      "GunAmmo": -1
+    }
+  },
+  "BulletsPerShot": 1,
+  "BulletSpread": 0.02,
+  "MaxDistance": 60,
+  "HeadDamage": 48,
+  "ChestDamage": 29,
+  "LegDamage": 24,
+  "Effects": {
+    "Particles": [
+      {
+        "SystemId": "Shoot",
+        "RotationOffset": {
+          "Pitch": 90
+        },
+        "PositionOffset": {
+          "Z": 1.1,
+          "Y": 0.12
+        },
+        "DetachedFromModel": false,
+        "Color": "#ffffff",
+        "Scale": 0.5
+      }
+    ],
+    "WorldSoundEventId": "SFX_Famas_Shoot_Local",
+    "WaitForAnimationToFinish": false,
+    "ItemPlayerAnimationsId": "Famas",
+    "ItemAnimationId": "Shoot",
+    "ClearAnimationOnFinish": false,
+    "ClearSoundEventOnFinish": true,
+    "LocalSoundEventId": "SFX_Famas_Shoot_Local"
+  }
+}

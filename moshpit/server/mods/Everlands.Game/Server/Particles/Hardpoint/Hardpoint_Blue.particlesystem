@@ -1,0 +1,15 @@
+{
+  "Spawners": [
+    {
+      "SpawnerId": "Hardpoint_Blue_CircleLine",
+      "PositionOffset": {
+        "Z": 0
+      },
+      "FixedRotation": false,
+      "StartDelay": 0
+    }
+  ],
+  "CullDistance": 100,
+  "$Comment": "spawn of the effect",
+  "LifeSpan": 1
+}

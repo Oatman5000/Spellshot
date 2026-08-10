@@ -1,0 +1,105 @@
+@TitleTopSpacing = 40;
+@TabSpacing = 50;
+
+@ButtonSounds = (
+  Activate: (
+    SoundPath: "../Sounds/UI_Button_Click.ogg",
+    Volume: 0.15
+  ),
+  MouseHover: (
+    SoundPath: "../Sounds/UI_Button_Hover.ogg",
+    Volume: 0.15
+  )
+);
+
+@TabEntry = Button {
+  Anchor: (Width: 320, Height: 60);
+  Style: (
+    Default: (Background: (TexturePath: "../Images/TabItem.png", Border: 20)),
+    Hovered: (Background: (TexturePath: "../Images/TabItemHighlighted.png", Border: 20)),
+    Sounds: @ButtonSounds
+  );
+
+  LayoutMode: Center;
+  Label #Title {
+    Text: "GLOBAL";
+    Style: (FontSize: 22, TextColor: #a87b50, VerticalAlignment: Center, RenderBold: true, RenderUppercase: true);
+  }
+};
+
+
+
+
+Group #Leaderboard {
+  LayoutMode: CenterMiddle;
+  Group {
+    Anchor: (Width: 1600, Height: 900);
+    Background: (TexturePath: "../Images/MenuBackground.png", Border: 20);
+    LayoutMode: Top;
+    Group {
+      LayoutMode: Full;
+      Group {
+        Padding: (Left: 40);
+        Anchor: (Top: @TitleTopSpacing);
+        Label {
+          Text: "Leaderboard";
+          Style: (FontSize: 24, TextColor: #808080, RenderBold: true, RenderUppercase: true, VerticalAlignment: Start);
+        }
+      }
+      Group {
+        Padding: (Right: 50);
+        LayoutMode: Right;
+        Anchor: (Top: @TitleTopSpacing);
+        Label #RefreshTimer {
+          Text: "REFRESH IN: 00:00";
+          Style: (FontSize: 22, TextColor: #808080, VerticalAlignment: Start);
+        }
+      }
+    }
+
+    Group {
+      Padding: (Top: 40);
+      LayoutMode: Center;
+      @TabEntry #GLOBAL {
+        #Title {
+          Text: "GLOBAL";
+        }
+      }
+      Group {
+        Anchor: (Width: @TabSpacing);
+      }
+      @TabEntry #FFA {
+        #Title {
+          Text: "FFA";
+          Style: (FontSize: 22, TextColor: #a87468, VerticalAlignment: Center, RenderBold: true, RenderUppercase: true);
+        }
+      }
+      Group {
+        Anchor: (Width: @TabSpacing);
+      }
+      @TabEntry #HARDPOINT {
+        #Title {
+          Text: "HARDPOINT";
+          Style: (FontSize: 22, TextColor: #6280a8, VerticalAlignment: Center, RenderBold: true, RenderUppercase: true);
+        }
+      }
+      Group {
+        Anchor: (Width: @TabSpacing);
+      }
+      @TabEntry {
+        #Title {
+          Text: "BATTLEROYALE (SOON)";
+          Style: (FontSize: 22, TextColor: #90a852, VerticalAlignment: Center, RenderBold: true, RenderUppercase: true);
+        }
+      }
+    }
+
+    Group #Entries {
+      LayoutMode: TopScrolling;
+      Padding: (Left: 39, Top: 20);
+
+    }
+
+
+  }
+}

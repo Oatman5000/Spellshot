@@ -1,0 +1,10 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/Death.ogg"
+      ]
+    }
+  ],
+  "PreventSoundInterruption": true
+}

@@ -1,0 +1,8 @@
+{
+  "Type": "EntityStat",
+  "EntityStat": "Health",
+  "HitboxOffset": {
+    "X": 20,
+    "Y": -1000
+  }
+}

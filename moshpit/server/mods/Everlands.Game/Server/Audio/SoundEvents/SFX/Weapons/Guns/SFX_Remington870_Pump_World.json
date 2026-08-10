@@ -1,0 +1,22 @@
+{
+  "Layers": [
+    {
+      "Probability": 100,
+      "RandomSettings": {
+        "MinVolume": -2,
+        "MinPitch": -2,
+        "MaxPitch": 2,
+        "MaxVolume": 1
+      },
+      "Volume": 1,
+      "StartDelay": 0.1,
+      "Files": [
+        "Sounds/Guns/Remington870_Pump_World.ogg"
+      ]
+    }
+  ],
+  "MaxInstance": 30,
+  "Volume": 1.0,
+  "PreventSoundInterruption": true,
+  "Pitch": -6
+}

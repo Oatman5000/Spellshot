@@ -1,0 +1,92 @@
+{
+  "Type": "Shoot",
+  "BulletsPerShot": 9,
+  "BulletSpread": 0.36,
+  "MaxDistance": 30,
+  "HeadDamage": 28,
+  "ChestDamage": 26,
+  "LegDamage": 23,
+  "RunTime": 1.2,
+  "Effects": {
+    "Particles": [
+      {
+        "SystemId": "Shoot",
+        "RotationOffset": {
+          "Pitch": 90
+        },
+        "PositionOffset": {
+          "Z": 1.2,
+          "Y": 0.2
+        },
+        "DetachedFromModel": false,
+        "Color": "#ffffff",
+        "Scale": 0.5
+      }
+    ],
+    "WaitForAnimationToFinish": false,
+    "ItemPlayerAnimationsId": "Remington870",
+    "ItemAnimationId": "Shoot",
+    "ClearAnimationOnFinish": true,
+    "ClearSoundEventOnFinish": false,
+    "MovementEffects": {
+      "DisableForward": false,
+      "DisableAll": false
+    },
+    "WorldSoundEventId": "SFX_Remington870_Shoot_Local",
+    "LocalSoundEventId": "SFX_Remington870_Shoot_Local"
+  },
+  "Next": {
+    "Type": "ChangeStat",
+    "StatModifiers": {
+      "GunAmmo": -1
+    }
+  },
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.1,
+        "Rotation": {
+          "Pitch": 7,
+          "Yaw": 0.5
+        }
+      },
+      {
+        "Time": 0.4,
+        "Rotation": {
+          "Pitch": 4.5,
+          "Yaw": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.8,
+        "Rotation": {
+          "Roll": 0
+        }
+      }
+    ],
+    "ThirdPerson": [
+      {
+        "Time": 0.1,
+        "Rotation": {
+          "Pitch": 7,
+          "Yaw": 0.5
+        }
+      },
+      {
+        "Time": 0.4,
+        "Rotation": {
+          "Pitch": 4.5,
+          "Yaw": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.8,
+        "Rotation": {
+          "Roll": 0
+        }
+      }
+    ]
+  }
+}

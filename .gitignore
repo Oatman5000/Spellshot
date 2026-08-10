@@ -1,0 +1,69 @@
+# --- build output ---
+build/
+*/build/
+.gradle/
+*/.gradle/
+build.log
+run.txt
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.kotlin/
+.vscode/
+
+# --- server runtime: never commit these ---
+# Credentials. auth.enc/auth.key authenticate the server to Hytale's session
+# service; treat them like passwords.
+auth.enc
+auth.key
+*.pem
+.env
+
+# Player data. everlands/users.json is the progression store (levels, stats,
+# saved loadouts); universe/players holds Hytale's own per-player saves.
+#
+# The `**/` prefixes matter. A pattern containing a slash is anchored to the
+# directory holding the .gitignore, so a bare `universe/players/` here only ever
+# matched a universe/ at the repo root -- it did NOT cover
+# lobby/server/universe/players/ or moshpit/server/universe/players/. Those only
+# stayed out because one had its own .gitignore and the other happened to be
+# empty. Now that the worlds are committed, these have to match at any depth.
+everlands/
+**/universe/players/
+**/universe/memories*
+users.json*
+
+# Server-local config and moderation lists
+bans.json
+whitelist.json
+permissions.json
+logs/
+.cache/
+backups/
+updater/
+
+# --- world data ---
+# Both worlds ship in EXTRACTED form (moshpit/server/universe/ and
+# lobby/server/universe/); the archives they came from do not. See the note in
+# README on the arenas -- they are recreations of maps from other games and are
+# not covered by this project's licence.
+*.zip
+!*/src/**/*.zip
+
+# The moshpit arena world IS published, in extracted form under
+# moshpit/server/universe/. The zip it came from is not: committing both would
+# double 55 MB for nothing, and the zip additionally contains the 8,451 player
+# save files from the original Everlands server. The extracted copy deliberately
+# omits those -- the `universe/players/` and `universe/memories*` rules above
+# keep them out even if someone re-extracts the archive in place.
+moshpit/server/universe.zip
+
+# lobby-universe/ is just an extraction of lobby-universe.zip; the canonical
+# copy is lobby/server/universe/. Committing both doubles 8 MB for nothing.
+lobby/lobby-universe/

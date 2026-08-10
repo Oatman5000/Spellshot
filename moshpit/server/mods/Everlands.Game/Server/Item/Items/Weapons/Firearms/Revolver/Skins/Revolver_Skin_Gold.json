@@ -1,0 +1,17 @@
+{
+  "Texture": "Items/Revolver/Skins/Revolver_Skin_Gold.png",
+  "IconProperties": {
+    "Scale": 0.7,
+    "Rotation": [
+      335,
+      68,
+      14
+    ],
+    "Translation": [
+      -3,
+      -16
+    ]
+  },
+  "Parent": "Revolver",
+  "Icon": "Icons/ItemsGenerated/Revolver_Skin_Gold.png"
+}

@@ -1,0 +1,20 @@
+{
+  "Type": "Serial",
+  "Interactions": [
+    "Famas_Shoot_Bullet",
+    {
+      "Type": "Simple",
+      "RunTime": 0.001
+    },
+    "Famas_Shoot_Bullet",
+    {
+      "Type": "Simple",
+      "RunTime": 0.001
+    },
+    "Famas_Shoot_Bullet",
+    {
+      "Type": "Simple",
+      "RunTime": 0.001
+    }
+  ]
+}

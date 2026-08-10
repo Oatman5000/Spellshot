@@ -1,0 +1,85 @@
+$LoadoutEntry = "LoadoutEntry.ui";
+$LoadoutEntryLocked = "LoadoutEntryLocked.ui";
+$C = "MenuCommon.ui";
+$Stats = "Stats.ui";
+
+Group {
+  LayoutMode: Full;
+  Background: "../../Images/GradientBackground.png";
+
+  Group #Loadouts {
+    Padding: (Horizontal: 100);
+    LayoutMode: Left;
+  }
+
+  Group #Edit {
+    Padding: (Horizontal: 100, Top: 150);
+    LayoutMode: Left;
+    Group {
+      LayoutMode: Top;
+      Label #EditLabel {
+        Text: "EDITING: LOADOUT #1";
+        Padding: (Bottom: 6);
+        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+      }
+      $C.@ListItem #Primary {}
+      $C.@ListItem #Secondary {
+        #Type {
+          Text: "Secondary";
+        }
+        #Icon {
+          Background: "../../Images/Guns/M1911.png";
+          Anchor: (Width: 50, Height: 50, Right: 0);
+        }
+      }
+      $C.@ListItem #Melee {
+        #Type {
+          Text: "Melee";
+        }
+        #Icon {
+          Background: "../../Images/Melee/CombatKnife.png";
+          Anchor: (Width: 40, Height: 40, Right: 0);
+        }
+      }
+
+      $C.@ListItem #Utility {
+        #Type {
+          Text: "Utility";
+        }
+        #Icon {
+          Background: "../../Images/Utility/FragGrenade.png";
+          Anchor: (Width: 35, Height: 35, Right: 0);
+        }
+      }
+    }
+    Group #ItemSelection {
+      LayoutMode: Top;
+      Padding: (Left: 20);
+      Label #Title {
+        Text: "SELECT YOUR PRIMARY WEAPON";
+        Padding: (Bottom: 6);
+        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+      }
+      Group #Items {
+        LayoutMode: Top;
+      }
+    }
+
+
+    Group #ItemSkins {
+      LayoutMode: Top;
+      Padding: (Left: 20);
+      Label {
+        Text: "SELECT SKIN";
+        Padding: (Bottom: 6);
+        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+      }
+      Group #Skins {
+        LayoutMode: Top;
+      }
+    }
+  }
+  $Stats.@StatsContainer {}
+
+}
+

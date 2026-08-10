@@ -1,0 +1,61 @@
+{
+  "TranslationProperties": {
+    "Name": "everlands.items.Airstrike.name"
+  },
+  "Categories": [
+    "Items.Weapons"
+  ],
+  "Quality": "Epic",
+  "ItemLevel": 20,
+  "PlayerAnimationsId": "Item",
+  "Interactions": {
+    "Primary": {
+      "RequireNewClick": true,
+      "Interactions": [
+        {
+          "Type": "RequestAirstrike",
+          "Range": 40,
+          "Duration": 10,
+          "AmountPerSecond": 25,
+          "YOffset": 40,
+          "Delay": 1500
+        },
+        {
+          "Type": "ModifyInventory",
+          "Effects": {
+            "LocalSoundEventId": "SFX_RequestingAirstrike"
+          },
+          "ItemToRemove": {
+            "Id": "RequestAirstrike"
+          }
+        }
+      ]
+    }
+  },
+  "MaxStack": 1,
+  "IconProperties": {
+    "Scale": 1.1,
+    "Rotation": [
+      0,
+      27,
+      0
+    ],
+    "Translation": [
+      0,
+      -11
+    ]
+  },
+  "Model": "Items/Radio/radio.blockymodel",
+  "Texture": "Items/Radio/radio.png",
+  "Icon": "Icons/ItemsGenerated/RequestAirstrike.png",
+  "Tags": {
+    "Type": [
+      "Weapon"
+    ],
+    "Family": [
+      "Bomb"
+    ]
+  },
+  "Weapon": {},
+  "Scale": 1.1
+}

@@ -1,0 +1,146 @@
+@ButtonSounds = (
+  Activate: (
+    SoundPath: "../../Sounds/UI_Button_Click.ogg",
+    Volume: 0.15
+  ),
+  MouseHover: (
+    SoundPath: "../../Sounds/UI_Button_Hover.ogg",
+    Volume: 0.15
+  )
+);
+
+@StatsBox = Group {
+  Padding: (Vertical: 3);
+  LayoutMode: Right;
+  Group #Background {
+    Anchor: (Width: 250, Height: 40);
+    Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+    Group {
+      Label #Title {
+        Anchor: (Left: 22);
+        Text: "Kills";
+        Style: (FontSize: 14, TextColor: #8FA3B8, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+      }
+    }
+
+    Group {
+      LayoutMode: Right;
+      Label #Amount {
+        Anchor: (Right: 26);
+        Text: "0";
+        Style: (FontSize: 16, TextColor: #FFFFFF, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+      }
+    }
+    Group #Content {
+
+    }
+  }
+};
+
+@StatsContainer = Group {
+  LayoutMode: Right;
+  FlexWeight: 0;
+  Group {
+    LayoutMode: Top;
+    Anchor: (Height: 250);
+
+    @StatsBox #Level {
+      #Title {
+        Padding: (Top: 10);
+        Text: "Level";
+        Style: (FontSize: 14, TextColor: #8FA3B8, RenderBold: true, RenderUppercase: true);
+      }
+      #Amount {
+        Padding: (Top: 10);
+        Style: (FontSize: 16, TextColor: #FFFFFF, RenderBold: true, RenderUppercase: true);
+      }
+      #Background {
+        Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+        Anchor: (Width: 200, Height: 55);
+      }
+      #Content {
+        LayoutMode: Bottom;
+        Padding: (Bottom: 10);
+        Group {
+          LayoutMode: Left;
+          Padding: (Top: 5);
+          Group {
+            Anchor: (Height: 10, Left: 16);
+            LayoutMode: Center;
+
+            Group {
+              LayoutMode: Left;
+              Anchor: (Width: 170, Height: 10);
+              Background: (TexturePath: "../../Images/ProgressBackground.png");
+              ProgressBar #Bar {
+                Anchor: (Width: 170, Height: 10);
+                BarTexturePath: "../../Images/ProgressBar.png";
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+
+    @StatsBox #Prestige {
+      #Title {
+        Text: "Prestige";
+      }
+      #Background {
+        Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+        Anchor: (Width: 200, Height: 40);
+      }
+    }
+
+    Group #PrestigeLevelUpContainer {
+      Visible: false;
+      Anchor: (Width: 200, Height: 35);
+      Padding: (Top: 10);
+      LayoutMode: Right;
+      Button #Button {
+        Style: (
+          Default: (Background: (TexturePath: "../../Images/IncreasePrestigeButton.png", Border: 10)),
+          Hovered: (Background: (TexturePath: "../../Images/IncreasePrestigeButtonHighlighted.png", Border: 10)),
+          Sounds: @ButtonSounds
+        );
+        Anchor: (Width: 150, Height: 35);
+        LayoutMode: Center;
+        Label {
+          Text: "LEVEL UP PRESTIGE";
+          Style: (FontSize: 12, TextColor: #FFFFFF, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center, HorizontalAlignment: Center);
+        }
+      }
+    }
+
+
+    Group #Spacer {
+      Anchor: (Height: 20);
+    }
+
+    @StatsBox #Kills {}
+    @StatsBox #Deaths {
+      #Title {
+        Text: "Deaths";
+      }
+      #Background {
+        Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+      }
+    }
+
+    @StatsBox #KD {
+      #Title {
+
+        Text: "K/D";
+      }
+      #Amount {
+        Text: "0.00";
+      }
+      #Background {
+        Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+      }
+    }
+  }
+
+};

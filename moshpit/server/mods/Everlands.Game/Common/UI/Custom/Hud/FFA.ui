@@ -1,0 +1,54 @@
+$TimeLeft = "TimeLeft.ui";
+$H = "../Hextech.ui";
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Top: 5);
+  Group {
+    Anchor: (Right: 5, Height: 288, Width: 248);
+    Background: $H.@SlotBg;
+    LayoutMode: Top;
+    Padding: (Top: 12);
+
+    // free-standing sigil - fixed size, so it is never stretched
+    Group {
+      Anchor: (Width: 64, Height: 34);
+      Background: "../Images/Hextech/Crest.png";
+    }
+
+    Group {
+      Padding: (Top: 15, Bottom: 6);
+      FlexWeight: 0;
+      LayoutMode: Center;
+      Label #Placement {
+        Text: "Rank";
+        Style: (TextColor: #00D4FF, FontSize: 14, RenderBold: true, RenderUppercase: true);
+      }
+      Label #Name {
+        Text: "Name";
+        Padding: (Left: 20, Right: 20);
+        Style: (TextColor: #8FA3B8, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+      Label #Kills {
+        Text: "Kills";
+        Style: (TextColor: #8FA3B8, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+    }
+
+    Group #Seperator {
+      Background: "../Images/Hextech/Rule.png";
+      Anchor: (Width: 224, Height: 11);
+    }
+
+    Group #Rows {
+      FlexWeight: 1;
+      LayoutMode: Top;
+      Padding: (Top: 10, Bottom: 10);
+    }
+  }
+}
+
+Group {
+  Anchor: (Width: 190, Height: 44, Top: 44);
+  $TimeLeft.@TimeLeftLabel #Time {}
+}

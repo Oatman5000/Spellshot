@@ -1,0 +1,21 @@
+{
+  "Layers": [
+    {
+      "RoundRobinHistorySize": 1,
+      "Files": [
+        "Sounds/Bullet/Hit/Headshot_1.ogg",
+        "Sounds/Bullet/Hit/Headshot_2.ogg",
+        "Sounds/Bullet/Hit/Headshot_3.ogg"
+      ],
+      "Volume": -8,
+      "RandomSettings": {
+        "MinVolume": -2,
+        "MaxVolume": 2,
+        "MinPitch": -2,
+        "MaxPitch": 1
+      }
+    }
+  ],
+  "PreventSoundInterruption": false,
+  "Volume": 0
+}

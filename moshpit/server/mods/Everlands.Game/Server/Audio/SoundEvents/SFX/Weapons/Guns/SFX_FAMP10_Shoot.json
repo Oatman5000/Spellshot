@@ -1,0 +1,20 @@
+{
+  "Volume": 5,
+  "MaxDistance": 16,
+  "PreventSoundInterruption": true,
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Guns/FAMP10_Shoot.ogg"
+      ],
+      "RandomSettings": {
+        "MaxVolume": 0,
+        "MaxPitch": 1.632,
+        "MinPitch": -1.2,
+        "MinVolume": 0
+      },
+      "Volume": 2
+    }
+  ],
+  "MusicDuckingVolume": 0
+}

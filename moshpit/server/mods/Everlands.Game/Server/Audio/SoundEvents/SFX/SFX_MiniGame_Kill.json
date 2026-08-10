@@ -1,0 +1,12 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/Kill.ogg"
+      ],
+      "Volume": 10
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 10
+}

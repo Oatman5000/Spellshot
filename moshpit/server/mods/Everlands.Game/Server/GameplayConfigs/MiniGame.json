@@ -1,0 +1,23 @@
+{
+  "Death": {
+    "ItemsLossMode": "None"
+  },
+  "World": {
+    "AllowBlockBreaking": true,
+    "AllowBlockGathering": true,
+    "AllowBlockPlacement": true
+  },
+  "WorldMap": {
+    "DisplaySpawn": false,
+    "DisplayHome": false,
+    "DisplayWarps": false,
+    "DisplayDeathMarker": false,
+    "DisplayPlayers": false,
+    "CanTrackPlayersInCompass": false,
+    "CanTogglePlayersInMap": false
+  },
+  "ShowItemPickupNotifications": false,
+  "Player": {
+    "ArmorVisibilityOption": "None"
+  }
+}

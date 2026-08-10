@@ -1,0 +1,84 @@
+{
+  "Type": "Simple",
+  "Next": {
+    "Type": "Reload",
+    "Ammo": 4,
+    "AmmoItemId": "Weapon_Arrow_Crude"
+  },
+  "Effects": {
+    "ItemPlayerAnimationsId": "Revolver",
+    "ItemAnimationId": "Reload",
+    "ClearAnimationOnFinish": true,
+    "ClearSoundEventOnFinish": true,
+    "WaitForAnimationToFinish": false,
+    "LocalSoundEventId": "SFX_Hand_Crossbow_T2_Reload_Start_Local",
+    "WorldSoundEventId": "SFX_Hand_Crossbow_T2_Reload_Start"
+  },
+  "CancelOnItemChange": true,
+  "RunTime": 2,
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.1,
+        "Rotation": {
+          "Pitch": 0
+        }
+      },
+      {
+        "Time": 0.2,
+        "Rotation": {
+          "Pitch": 2,
+          "Yaw": 1,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.4,
+        "Rotation": {
+          "Pitch": -1,
+          "Yaw": 0
+        }
+      },
+      {
+        "Time": 0.9,
+        "Rotation": {
+          "Yaw": 0
+        }
+      },
+      {
+        "Time": 1,
+        "Rotation": {
+          "Pitch": 1,
+          "Roll": -2,
+          "Yaw": 0
+        }
+      },
+      {
+        "Time": 1.1,
+        "Rotation": {
+          "Pitch": 1,
+          "Yaw": 0,
+          "Roll": -0.2
+        }
+      },
+      {
+        "Time": 1.4,
+        "Rotation": {
+          "Pitch": 0,
+          "Roll": 0,
+          "Yaw": 0
+        }
+      },
+      {
+        "Time": 1.5,
+        "Rotation": {
+          "Yaw": -2,
+          "Roll": -2
+        }
+      },
+      {
+        "Time": 2
+      }
+    ]
+  }
+}

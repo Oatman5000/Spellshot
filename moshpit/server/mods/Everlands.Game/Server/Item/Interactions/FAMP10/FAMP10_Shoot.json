@@ -1,0 +1,99 @@
+{
+  "Type": "Shoot",
+  "Ammo": 15,
+  "BulletSpread": 0.07,
+  "BulletsPerShot": 1,
+  "MaxDistance": 50,
+  "Effects": {
+    "Particles": [
+      {
+        "SystemId": "Shoot",
+        "RotationOffset": {
+          "Pitch": 90
+        },
+        "PositionOffset": {
+          "Z": 0.5,
+          "Y": 0.15
+        },
+        "DetachedFromModel": false,
+        "Color": "#ffffff",
+        "Scale": 0.5
+      }
+    ],
+    "WorldSoundEventId": "SFX_FAMP10_Shoot",
+    "WaitForAnimationToFinish": false,
+    "ItemPlayerAnimationsId": "FAMP10",
+    "ItemAnimationId": "Shoot",
+    "ClearAnimationOnFinish": true,
+    "ClearSoundEventOnFinish": true,
+    "LocalSoundEventId": "SFX_FAMP10_Shoot"
+  },
+  "RunTime": 0.1,
+  "HeadDamage": 23,
+  "ChestDamage": 19,
+  "Camera": {
+    "FirstPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 1,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.3,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ],
+    "ThirdPerson": [
+      {
+        "Time": 0.025,
+        "Rotation": {
+          "Pitch": 0.5,
+          "Roll": 1
+        }
+      },
+      {
+        "Time": 0.05,
+        "Rotation": {
+          "Pitch": 0.2,
+          "Roll": 0.75,
+          "Yaw": -0.2
+        }
+      },
+      {
+        "Time": 0.07,
+        "Rotation": {
+          "Pitch": 0.1,
+          "Roll": 0.5,
+          "Yaw": 0.2
+        }
+      },
+      {
+        "Time": 0.1
+      }
+    ]
+  },
+  "LegDamage": 17,
+  "Next": {
+    "Type": "ChangeStat",
+    "StatModifiers": {
+      "GunAmmo": -1
+    }
+  }
+}

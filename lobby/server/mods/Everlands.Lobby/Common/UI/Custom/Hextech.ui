@@ -1,0 +1,58 @@
+// Everlands - Hextech theme (arcane blue)
+//
+// Import and pull values through the handle:
+//   $H = "../Hextech.ui";
+//   Label { Style: $H.@Value; }
+//   Group { Background: $H.@PanelBg; }
+//
+// Texture paths resolve relative to THIS file (Common/UI/Custom/), matching how
+// the base game's Common.ui behaves, so they stay valid from any subfolder.
+//
+// Two syntax rules the parser enforces, learned the hard way:
+//   * alpha may only be applied to a colour LITERAL, never to a variable --
+//     "@Steel(0.75)" is invalid, "#8FA3B8(0.75)" is fine.
+//   * a stored background must be PatchStyle(...); a bare (TexturePath: ...)
+//     tuple is only legal inline on a Background: property.
+
+// ---- palette ---------------------------------------------------------------
+@Void       = #05070A;
+@Ink        = #080C12;
+@Cyan       = #00D4FF;
+@CyanDeep   = #0A6A80;
+@White      = #FFFFFF;
+@Steel      = #8FA3B8;
+@SteelDim   = #8FA3B8(0.75);
+@SteelFaint = #8FA3B8(0.6);
+@Danger     = #FF4D5A;
+@Locked     = #4A5563;
+
+// ---- chrome ----------------------------------------------------------------
+@PanelBg      = PatchStyle(TexturePath: "Images/Hextech/Panel.png", Border: 40);
+// VerticalBorder: 0 pins the full texture height, so the hex ends never stretch.
+@PlateBg      = PatchStyle(TexturePath: "Images/Hextech/Plate.png", HorizontalBorder: 40, VerticalBorder: 0);
+// Chamfered octagon with corner brackets -- the weapon selector's look, shared
+// so the ammo readout matches it. Border 24 must be <= HALF the rendered size,
+// so anything using this has to be at least 48x48.
+@SlotBg       = PatchStyle(TexturePath: "Images/Hextech/Slot.png", Border: 24);
+@SlotHoverBg  = PatchStyle(TexturePath: "Images/Hextech/SlotHovered.png", Border: 24);
+// Same octagon with the cyan desaturated out and a ~50% interior. Doubles as a
+// frame for locked entries and as an overlay that dims whatever sits beneath it
+// while still following the chamfer -- a flat rectangle would corner-poke.
+@SlotLockedBg = PatchStyle(TexturePath: "Images/Hextech/SlotLocked.png", Border: 24);
+// Small-border twin of @SlotBg, for elements under 48px tall (stats rows).
+@SlotSmallBg      = PatchStyle(TexturePath: "Images/Hextech/SlotSmall.png", Border: 12);
+@SlotSmallHoverBg = PatchStyle(TexturePath: "Images/Hextech/SlotSmallHovered.png", Border: 12);
+@CardBg       = PatchStyle(TexturePath: "Images/Hextech/Card.png", Border: 28);
+@CardHoverBg  = PatchStyle(TexturePath: "Images/Hextech/CardHovered.png", Border: 28);
+
+// ---- type scale ------------------------------------------------------------
+@H1           = (TextColor: #FFFFFF, FontSize: 34, RenderBold: true, RenderUppercase: true, Alignment: Center);
+@H2           = (TextColor: #00D4FF, FontSize: 18, RenderBold: true, RenderUppercase: true, Alignment: Center);
+@SectionLabel = (TextColor: #8FA3B8(0.75), FontSize: 15, RenderBold: true, RenderUppercase: true);
+
+@Value        = (TextColor: #FFFFFF, FontSize: 19, RenderBold: true, Alignment: Center);
+@ValueBig     = (TextColor: #FFFFFF, FontSize: 34, RenderBold: true, Alignment: Center);
+@Label        = (TextColor: #8FA3B8, FontSize: 14, RenderBold: true, RenderUppercase: true, Alignment: Center);
+@Accent       = (TextColor: #00D4FF, FontSize: 14, RenderBold: true, RenderUppercase: true, Alignment: Center);
+@Muted        = (TextColor: #8FA3B8(0.6), FontSize: 12, Alignment: Center);
+@Timer        = (TextColor: #00D4FF, FontSize: 21, RenderBold: true, Alignment: Center);

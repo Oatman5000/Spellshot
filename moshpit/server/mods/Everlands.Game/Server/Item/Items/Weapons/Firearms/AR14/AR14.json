@@ -1,0 +1,129 @@
+{
+  "Model": "Items/AR14/AR14.blockymodel",
+  "Icon": "Icons/ItemsGenerated/AR14.png",
+  "IconProperties": {
+    "Scale": 0.35,
+    "Rotation": [
+      221,
+      269,
+      178
+    ],
+    "Translation": [
+      -1,
+      -31
+    ]
+  },
+  "UsePlayerAnimations": true,
+  "PlayerAnimationsId": "AR14",
+  "Reticle": "FirearmReticle",
+  "Utility": {
+    "Usable": false
+  },
+  "MaxStack": 1,
+  "DropOnDeath": false,
+  "ClipsGeometry": false,
+  "Texture": "Items/AR14/AR14.png",
+  "TranslationProperties": {
+    "Name": "everlands.items.AR14.name"
+  },
+  "Quality": "Rare",
+  "Tags": {
+    "ammo": [
+      "30"
+    ],
+    "slot": [
+      "primary"
+    ]
+  },
+  "Interactions": {
+    "Primary": {
+      "Cooldown": {
+        "Cooldown": 0.001,
+        "SkipCooldownReset": true,
+        "InterruptRecharge": true
+      },
+      "RequireNewClick": false,
+      "Interactions": [
+        {
+          "Type": "StatsCondition",
+          "Costs": {
+            "GunAmmo": 1
+          },
+          "Next": "AR14_Shoot",
+          "Failed": "AR14_Reload"
+        }
+      ]
+    },
+    "Ability3": {
+      "Interactions": [
+        {
+          "Type": "CheckAmmo",
+          "CheckType": "FULL",
+          "Next": "AR14_Reload"
+        }
+      ]
+    },
+    "SwapTo": {
+      "Interactions": [
+        {
+          "Type": "Simple",
+          "Effects": {
+            "ItemPlayerAnimationsId": "GenericRifle",
+            "ItemAnimationId": "Equip",
+            "WaitForAnimationToFinish": false,
+            "LocalSoundEventId": "SFX_Drop_Items_Gadget"
+          },
+          "RunTime": 0.7,
+          "Camera": {
+            "FirstPerson": [
+              {
+                "Time": 0.1,
+                "Rotation": {
+                  "Pitch": 0
+                }
+              },
+              {
+                "Time": 0.2,
+                "Rotation": {
+                  "Pitch": -0.5,
+                  "Roll": 0.2
+                }
+              },
+              {
+                "Time": 0.3,
+                "Rotation": {
+                  "Pitch": 0.5,
+                  "Roll": 1
+                }
+              },
+              {
+                "Time": 0.5,
+                "Rotation": {
+                  "Pitch": 1,
+                  "Roll": 0.2
+                }
+              },
+              {
+                "Time": 0.6,
+                "Rotation": {
+                  "Pitch": 0.5
+                }
+              },
+              {
+                "Time": 0.7
+              }
+            ]
+          }
+        }
+      ],
+      "Rules": {
+        "InterruptedBy": [
+          "SwapFrom"
+        ]
+      }
+    }
+  },
+  "Categories": [
+    "Items.Weapons"
+  ]
+}

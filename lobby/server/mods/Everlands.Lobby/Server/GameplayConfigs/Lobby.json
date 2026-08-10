@@ -1,0 +1,22 @@
+{
+  "Parent": "Default",
+  "WorldMap": {
+    "DisplaySpawn": false,
+    "DisplayHome": false,
+    "DisplayWarps": false,
+    "DisplayDeathMarker": false,
+    "DisplayPlayers": false
+  },
+  "World": {
+    "AllowBlockBreaking": true,
+    "AllowBlockGathering": true,
+    "AllowBlockPlacement": true
+  },
+  "ShowItemPickupNotifications": false,
+  "Combat": {
+    "DisplayHealthBars": false,
+    "DisplayCombatText": false,
+    "DisableNPCIncomingDamage": true,
+    "DisablePlayerIncomingDamage": true
+  }
+}

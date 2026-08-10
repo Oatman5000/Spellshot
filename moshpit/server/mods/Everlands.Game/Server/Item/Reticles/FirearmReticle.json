@@ -1,0 +1,33 @@
+{
+  "Base": [
+    "UI/Reticles/Default.png"
+  ],
+  "ServerEvents": {
+    "OnHit": {
+      "Parts": [
+        "UI/Reticles/ServerEvents/OnHit/Default.png"
+      ],
+      "HideBase": false
+    },
+    "OnKill": {
+      "HideBase": true,
+      "Parts": [
+        "UI/Reticles/ServerEvents/OnKill/Default.png",
+        "UI/Reticles/ServerEvents/OnKill/Melee.png"
+      ]
+    }
+  },
+  "ClientEvents": {
+    "OnHit": {
+      "Parts": [
+        "UI/Reticles/ServerEvents/OnHit/Default.png"
+      ]
+    },
+    "Wielding": {
+      "HideBase": true,
+      "Parts": [
+        "UI/Reticles/ClientEvents/Wielding/Blocking.png"
+      ]
+    }
+  }
+}

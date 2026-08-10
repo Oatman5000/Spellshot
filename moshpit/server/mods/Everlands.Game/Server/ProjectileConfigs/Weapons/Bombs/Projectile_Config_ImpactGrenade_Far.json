@@ -1,0 +1,5 @@
+{
+  "Model": "ImpactGrenade",
+  "LaunchForce": 35,
+  "Parent": "Projectile_Config_ImpactGrenade"
+}

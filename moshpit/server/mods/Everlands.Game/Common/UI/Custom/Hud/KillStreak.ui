@@ -1,0 +1,64 @@
+// No Hextech.ui import: the plate background went with the numeric readout, and
+// the pip colours are literals.
+
+// Killstreak progress meter -- a vertical bar standing alongside the weapon
+// selector, filling bottom-to-top as the streak climbs.
+//
+// Screen budget on the right:
+//   weapon selector  x  28..104   y 212..502  (4 slots of 70 from y 212)
+//   ammo readout     x  28..170   y 142..200
+//   this meter       x 118..125   y 212..352  -- 14 clear of the selector
+//
+// There is deliberately no numeric readout: the milestone tints mark 5 and 10
+// kills, which is the whole ladder.
+//
+// Written by KillStreakEntitySystem -- keep the #Pip0..#Pip9 ids in sync with it.
+
+@PipW    = 7;
+@PipH    = 12;
+@PipGap  = 2;    // 10 * (12+2) = 140
+@MeterH  = 140;
+
+// LayoutMode: Top stacks children downwards, so the pips are declared in
+// REVERSE (#Pip9 first, #Pip0 last) to put the first kill at the bottom.
+// Renumbering them would break KillStreakEntitySystem, which lights #Pip0..N.
+//
+// All ten are always present so the meter keeps a fixed height and cannot shift
+// as the streak climbs; only the lit overlay toggles. Milestone pips (5 and 10
+// kills) carry a brighter resting tint so the next reward reads at a glance.
+Group {
+  Anchor: (Right: 118, Bottom: 212, Width: @PipW, Height: @MeterH);
+  LayoutMode: Top;
+
+  // milestone: 10 kills
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #00D4FF(0.35);
+    Group #Pip9 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip8 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip7 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip6 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip5 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  // milestone: 5 kills
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #00D4FF(0.35);
+    Group #Pip4 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip3 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip2 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip1 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+
+  Group { Anchor: (Width: @PipW, Height: @PipH); Padding: (Bottom: @PipGap); Background: #8FA3B8(0.18);
+    Group #Pip0 { Visible: false; Anchor: (Width: @PipW, Height: @PipH); Background: #00D4FF; } }
+}

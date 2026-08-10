@@ -1,0 +1,19 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Guns/Remington870_Reload.ogg"
+      ],
+      "Probability": 100,
+      "RandomSettings": {
+        "MinVolume": -2,
+        "MinPitch": -2,
+        "MaxPitch": 3.792,
+        "MaxVolume": 1
+      },
+      "Volume": 1
+    }
+  ],
+  "Volume": -2,
+  "MaxInstance": 30
+}

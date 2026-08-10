@@ -1,0 +1,38 @@
+{
+  "Type": "CheckAmmo",
+  "CheckType": "FULL",
+  "RunTime": 0.1,
+  "CancelOnItemChange": true,
+  "Next": {
+    "Type": "Serial",
+    "Interactions": [
+      {
+        "Type": "Simple",
+        "Effects": {
+          "ItemPlayerAnimationsId": "DoubleBarrel",
+          "ItemAnimationId": "ReloadOpen",
+          "LocalSoundEventId": "SFX_Hand_Crossbow_T2_Reload_Start_Local",
+          "ClearSoundEventOnFinish": true
+        },
+        "RunTime": 1
+      },
+      {
+        "Type": "Serial",
+        "Interactions": [
+          "DoubleBarrel_Reload_Single",
+          "DoubleBarrel_Reload_Single"
+        ]
+      },
+      {
+        "Type": "Simple",
+        "Effects": {
+          "Type": "Simple",
+          "ItemPlayerAnimationsId": "DoubleBarrel",
+          "ItemAnimationId": "ReloadClose",
+          "LocalSoundEventId": "SFX_Drop_Items_Gadget"
+        },
+        "RunTime": 0.5
+      }
+    ]
+  }
+}

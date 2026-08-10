@@ -1,0 +1,51 @@
+$C = "../../Common.ui";
+$H = "../../Hextech.ui";
+
+Group {
+  Padding: (Full: 10);
+  Button #Button {
+    LayoutMode: Top;
+    Anchor: (Width: 160);
+    Padding: (Vertical: 22);
+    Style: (
+      Default: (
+        Background: $H.@SlotBg
+      ),
+      Hovered: (
+        Background: $H.@SlotHoverBg
+      ),
+      Sounds: $C.@ButtonSounds,
+    );
+
+    ItemIcon #Icon {
+      Anchor: (Width: 64, Height: 64);
+      ItemId: "Armor_Copper_Head";
+    }
+
+    Label #Name {
+      Padding: (Horizontal: 10, Bottom: 6, Top: 16);
+      Style: (TextColor: #FFFFFF, FontSize: 17, Alignment: Center, RenderBold: true, RenderUppercase: true);
+      Text: "FFA";
+    }
+
+    Group {
+      Anchor: (Width: 120, Height: 11);
+      Background: "../../Images/Hextech/Rule.png";
+    }
+
+    Group {
+      LayoutMode: Center;
+      Padding: (Top: 8);
+      Group {
+        LayoutMode: Left;
+        Anchor: (Width: 20, Height: 20, Right: 3);
+        Background: "../Icons/ServerUserGreen.png";
+      }
+
+      Label #Votes {
+        Text: "0 Votes";
+        Style: (TextColor: #00D4FF, FontSize: 14, RenderBold: true, RenderUppercase: true);
+      }
+    }
+  }
+}

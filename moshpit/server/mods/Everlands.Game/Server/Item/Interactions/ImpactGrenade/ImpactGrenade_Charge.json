@@ -1,0 +1,97 @@
+{
+  "Type": "Serial",
+  "Interactions": [
+    {
+      "Type": "Charging",
+      "FailOnDamage": false,
+      "DisplayProgress": true,
+      "Effects": {
+        "WaitForAnimationToFinish": true,
+        "CameraEffect": "Battleaxe_Swing_Vertical",
+        "ClearAnimationOnFinish": true,
+        "ClearSoundEventOnFinish": true,
+        "LocalSoundEventId": "SFX_Spear_Throw_Charge_Local"
+      },
+      "CancelOnItemChange": true,
+      "CancelOnOtherClick": false,
+      "AllowIndefiniteHold": true,
+      "Next": {
+        "0.1": {
+          "Type": "Serial",
+          "Interactions": [
+            {
+              "Type": "Simple",
+              "RunTime": 0.25,
+              "Effects": {
+                "ItemAnimationId": "Throw",
+                "LocalSoundEventId": "SFX_Spear_Throw_Local",
+                "WorldSoundEventId": "SFX_Spear_Throw"
+              }
+            },
+            {
+              "Type": "ThrowExplosiveInteraction",
+              "ProjectileConfigId": "Projectile_Config_ImpactGrenade_Near",
+              "TimerInMillis": 3000,
+              "DamageRadius": 10,
+              "ExplosionSoundId": "FragGrenade_Explode",
+              "DamageFalloff": 32,
+              "DamageAmount": 250,
+              "ExplosionParticleId": "Explosion_Big",
+              "ExplosiveType": "Impact"
+            }
+          ]
+        },
+        "0.5": {
+          "Type": "Serial",
+          "Interactions": [
+            {
+              "Type": "Simple",
+              "RunTime": 0.25,
+              "Effects": {
+                "ItemAnimationId": "Throw",
+                "LocalSoundEventId": "SFX_Spear_Throw_Local",
+                "WorldSoundEventId": "SFX_Spear_Throw"
+              }
+            },
+            {
+              "Type": "ThrowExplosiveInteraction",
+              "ProjectileConfigId": "Projectile_Config_ImpactGrenade",
+              "TimerInMillis": 3000,
+              "DamageRadius": 10,
+              "ExplosionSoundId": "FragGrenade_Explode",
+              "DamageFalloff": 30,
+              "DamageAmount": 250,
+              "ExplosionParticleId": "Explosion_Big",
+              "ExplosiveType": "Impact"
+            }
+          ]
+        },
+        "0.9": {
+          "Type": "Serial",
+          "Interactions": [
+            {
+              "Type": "Simple",
+              "RunTime": 0.25,
+              "Effects": {
+                "ItemAnimationId": "Throw",
+                "LocalSoundEventId": "SFX_Spear_Throw_Local",
+                "WorldSoundEventId": "SFX_Spear_Throw"
+              }
+            },
+            {
+              "Type": "ThrowExplosiveInteraction",
+              "ProjectileConfigId": "Projectile_Config_ImpactGrenade_Far",
+              "TimerInMillis": 3000,
+              "DamageRadius": 10,
+              "ExplosionSoundId": "FragGrenade_Explode",
+              "DamageFalloff": 30,
+              "DamageAmount": 250,
+              "ExplosionParticleId": "Explosion_Big",
+              "ExplosiveType": "Impact"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

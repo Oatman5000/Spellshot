@@ -1,0 +1,19 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Guns/Famas_Shoot_Stereo.ogg"
+      ],
+      "Volume": 1,
+      "RandomSettings": {
+        "MaxVolume": 0,
+        "MaxPitch": 1.632,
+        "MinPitch": -0.528,
+        "MinVolume": 0
+      }
+    }
+  ],
+  "Volume": 1,
+  "PreventSoundInterruption": true,
+  "MaxDistance": 15
+}

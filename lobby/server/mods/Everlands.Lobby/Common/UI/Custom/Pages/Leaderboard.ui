@@ -1,0 +1,70 @@
+$C = "../Common.ui";
+$H = "../Hextech.ui";
+
+// Leaderboard, restyled onto the hextech theme so it matches the server
+// selector and the moshpit menus.
+//
+// Tabs are NOT declared here. The original hardcoded GLOBAL/FFA/HARDPOINT and a
+// "BATTLEROYALE (SOON)" placeholder, which meant every new mode needed a UI
+// edit -- and three of our six modes were missing. LeaderboardPage appends them
+// from the board list instead, so adding a mode is a code-free change here.
+//
+// LAYOUT NOTE: #Entries gets an explicit Top/Bottom anchor rather than
+// FlexWeight. FlexWeight only distributes space under a Full layout (see how
+// Vote/Menu.ui uses it); nested inside a `LayoutMode: Top` stack it resolved to
+// zero height, so rows were appended but drew nothing at all.
+
+$C.@PageOverlay {
+
+  $C.@DecoratedContainer {
+    Anchor: (Width: 1500, Height: 800);
+
+    #Title {
+      Group {
+        $C.@Title #TitleLabel {
+          @Text = "Leaderboard";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Full;
+
+      // Header: rule, tab strip, timestamp. Fixed height so the list below can
+      // anchor beneath it. 170 fits two wrapped rows of 38px tabs.
+      Group {
+        LayoutMode: Top;
+        Anchor: (Top: 0, Height: 170);
+
+        Group {
+          LayoutMode: CenterMiddle;
+          Anchor: (Width: 256, Height: 11);
+          Background: "../Images/Hextech/Rule.png";
+        }
+
+        Group #Tabs {
+          Padding: (Top: 10, Bottom: 6);
+          LayoutMode: LeftCenterWrap;
+        }
+
+        Label #Updated {
+          Text: "";
+          Style: (TextColor: #8FA3B8(0.6), FontSize: 12, Alignment: Center);
+        }
+      }
+
+      // The list. Anchored between the header and the back button.
+      Group {
+        LayoutMode: Top;
+        Anchor: (Top: 170, Bottom: $C.@DefaultButtonHeight);
+
+        Group #Entries {
+          LayoutMode: TopScrolling;
+          Padding: (Horizontal: 40);
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}

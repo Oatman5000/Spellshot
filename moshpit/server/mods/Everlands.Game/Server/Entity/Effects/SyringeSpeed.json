@@ -1,0 +1,11 @@
+{
+  "ApplicationEffects": {
+    "HorizontalSpeedMultiplier": 1.4,
+    "EntityTopTint": "#00d4ff",
+    "EntityBottomTint": "#80ecff",
+    "LocalSoundEventId": "SFX_Effect_Poison_Local"
+  },
+  "Duration": 8,
+  "OverlapBehavior": "Overwrite",
+  "StatusEffectIcon": "UI/StatusEffects/Stamina.png"
+}

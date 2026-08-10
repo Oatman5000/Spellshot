@@ -1,0 +1,11 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/Misc/RequestingAirstrike.ogg"
+      ]
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "Volume": 10
+}

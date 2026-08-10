@@ -1,0 +1,85 @@
+$TimeLeft = "TimeLeft.ui";
+$H = "../Hextech.ui";
+
+@BoxWidth = 190;
+@BoxHeight = 48;   // @SlotBg uses Border 24, which must be <= half the
+                   // rendered size, so 48 is the minimum height here
+@Top = 44;
+
+Group {
+  LayoutMode: Center;
+
+  // ---- ODA (left) ----
+  Group {
+    Anchor: (Top: @Top);
+    LayoutMode: Top;
+    Group {
+      LayoutMode: Center;
+      Group {
+        LayoutMode: Center;
+        Padding: (Right: 20);
+        Label #FirstTeamPlayers {
+          Text: "0";
+          Padding: (Right: 3);
+          Style: (TextColor: #8FA3B8, FontSize: 15, RenderBold: true, Alignment: Center);
+        }
+        Group {
+          Anchor: (Width: 18, Height: 18);
+          Background: "Icons/User.png";
+        }
+      }
+      Group {
+        Anchor: (Width: @BoxWidth, Height: @BoxHeight);
+        Background: $H.@SlotBg;
+        Label #FirstTeam {
+          Text: "BLUE: 0";
+          Style: (TextColor: #00D4FF, FontSize: 18, RenderBold: true, RenderUppercase: true, Alignment: Center);
+        }
+      }
+    }
+  }
+
+  // ---- centre: match timer + point rotation ----
+  Group {
+    Anchor: (Width: 320, Height: @BoxHeight, Top: @Top);
+    Padding: (Left: 50, Right: 50);
+    LayoutMode: Top;
+
+    $TimeLeft.@TimeLeftLabel #Time {}
+
+    Label #PointChangeTimeLeft {
+      Text: "point change in 0:00";
+      Style: (TextColor: #8FA3B8(0.8), FontSize: 13, RenderBold: true, RenderUppercase: true, Alignment: Center);
+    }
+  }
+
+  // ---- SENTINEL (right) ----
+  Group {
+    Anchor: (Top: @Top);
+    LayoutMode: Top;
+    Group {
+      LayoutMode: Center;
+      Group {
+        Anchor: (Width: @BoxWidth, Height: @BoxHeight);
+        Background: $H.@SlotBg;
+        Label #SecondTeam {
+          Text: "RED: 0";
+          Style: (TextColor: #FF4D5A, FontSize: 18, RenderBold: true, RenderUppercase: true, Alignment: Center);
+        }
+      }
+      Group {
+        LayoutMode: Center;
+        Padding: (Left: 20);
+        Group {
+          Anchor: (Width: 18, Height: 18);
+          Background: "Icons/User.png";
+        }
+        Label #SecondTeamPlayers {
+          Text: "0";
+          Padding: (Left: 3);
+          Style: (TextColor: #8FA3B8, FontSize: 15, RenderBold: true, Alignment: Center);
+        }
+      }
+    }
+  }
+}

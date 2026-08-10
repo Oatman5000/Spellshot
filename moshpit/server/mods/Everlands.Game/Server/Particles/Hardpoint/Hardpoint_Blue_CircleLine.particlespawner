@@ -1,0 +1,71 @@
+{
+  "RenderMode": "BlendLinear",
+  "ParticleRotationInfluence": "None",
+  "LinearFiltering": true,
+  "LightInfluence": 0,
+  "ParticleRotateWithSpawner": true,
+  "TrailSpawnerPositionMultiplier": 1,
+  "TrailSpawnerRotationMultiplier": 1,
+  "MaxConcurrentParticles": 2,
+  "SpawnRate": {
+    "Min": 0.7,
+    "Max": 0.7
+  },
+  "$Comment": "Rotating outer ring for the circle portal",
+  "Particle": {
+    "Texture": "Particles/Textures/HardPointCircle.png",
+    "ScaleRatioConstraint": "OneToOne",
+    "UVOption": "None",
+    "Animation": {
+      "0": {
+        "FrameIndex": {
+          "Min": 0,
+          "Max": 0
+        },
+        "Scale": {
+          "X": {
+            "Min": 0.5,
+            "Max": 0.5
+          }
+        },
+        "Opacity": 1.0,
+        "Color": "#7681ff"
+      },
+      "50": {
+        "Opacity": 1
+      },
+      "100": {
+        "Opacity": 0.5
+      },
+      "10": {
+        "Opacity": 1.0
+      }
+    },
+    "SoftParticles": "Disable",
+    "InitialAnimationFrame": {
+      "Rotation": {
+        "X": {
+          "Min": 90.0,
+          "Max": 90.0
+        },
+        "Z": {
+          "Min": 180.0,
+          "Max": 180.0
+        }
+      },
+      "Scale": {
+        "X": {
+          "Min": 1.0,
+          "Max": 1.0
+        }
+      },
+      "Opacity": 1.0,
+      "FrameIndex": {
+        "Min": 0,
+        "Max": 0
+      }
+    }
+  },
+  "CameraOffset": -0.2,
+  "SpawnBurst": true
+}

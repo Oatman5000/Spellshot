@@ -1,0 +1,8 @@
+{
+  "Type": "CameraShake",
+  "CameraShake": "ShootTomy",
+  "Intensity": {
+    "Value": 0.05,
+    "AccumulationMode": "Set"
+  }
+}

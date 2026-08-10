@@ -1,0 +1,5 @@
+{
+  "Model": "FragGrenade",
+  "LaunchForce": 30,
+  "Parent": "Projectile_Config_FragGrenade"
+}

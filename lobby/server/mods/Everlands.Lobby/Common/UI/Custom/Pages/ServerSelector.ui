@@ -1,0 +1,76 @@
+$C = "../Common.ui";
+$H = "../Hextech.ui";
+
+// Server picker, laid out exactly like the moshpit vote screen so the two feel
+// like one product: DecoratedContainer, title, cards wrapping in a centred row.
+//
+// LAYOUT NOTE: #ElementList is a DIRECT child of the MiddleCenter group, with
+// nothing between them. An earlier version nested it under an intermediate
+// `LayoutMode: Top` group alongside a decorative rule -- that made the rule and
+// the cards centre independently of each other and threw the single card off to
+// one side. Vote/Menu.ui does it this way and centres correctly.
+//
+// The "Leave Queue" button from the original is gone: there is no queue without
+// a coordinator, and it only ever sat there invisible.
+
+$C.@PageOverlay {
+
+  $C.@DecoratedContainer {
+    // One row of cards. Widen if the server list grows past four;
+    // LeftCenterWrap will wrap rather than overflow.
+    Anchor: (Width: 1100, Height: 420);
+
+    #Title {
+      Group {
+        $C.@Title #TitleLabel {
+          @Text = "Select Server";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Full;
+
+      Group {
+        FlexWeight: 1;
+        LayoutMode: MiddleCenter;
+        Anchor: (Bottom: $C.@DefaultButtonHeight, Top: 0);
+
+        // Center, not LeftCenterWrap.
+        //
+        // LeftCenterWrap left-aligns its children and only looks centred when
+        // they fill the row -- which is why it works for moshpit's six vote
+        // cards and left a single server card adrift here. It is also used
+        // exactly once in all of vanilla, so it is not a well-trodden path.
+        //
+        // Center is used ~59 times in vanilla and centres a row of children.
+        // The trade: no wrapping, so past about three cards at 360px they will
+        // overflow the 1100px panel rather than wrap. Widen the container or
+        // switch back to LeftCenterWrap if the server list grows.
+        Group #ElementList {
+          LayoutMode: Center;
+        }
+      }
+
+      Group {
+        LayoutMode: Left;
+        Anchor: (Height: $C.@DefaultButtonHeight, Bottom: 0);
+
+        Group {
+          FlexWeight: 1;
+        }
+
+        Button #DiscordButton {
+          Style: (...$C.@SecondaryButtonStyle);
+          Padding: (Horizontal: 10);
+          Group {
+            Anchor: (Height: 20, Width: 25);
+            Background: (TexturePath: "../Common/Discord.png");
+          }
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}

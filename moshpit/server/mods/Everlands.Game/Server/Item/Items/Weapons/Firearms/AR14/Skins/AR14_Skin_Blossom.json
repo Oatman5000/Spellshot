@@ -1,0 +1,17 @@
+{
+  "Parent": "AR14",
+  "Texture": "Items/AR14/Skins/AR14_Skin_Blossom.png",
+  "Icon": "Icons/ItemsGenerated/AR14_Skin_Blossom.png",
+  "IconProperties": {
+    "Scale": 0.37,
+    "Rotation": [
+      320,
+      82,
+      0
+    ],
+    "Translation": [
+      1,
+      -30
+    ]
+  }
+}
