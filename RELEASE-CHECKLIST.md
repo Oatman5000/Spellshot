@@ -40,10 +40,11 @@ Use AMP's **Stop**, not a kill — the world flushes on a clean shutdown.
 | From | To |
 |---|---|
 | `moshpit\build\libs\moshpit-plugin.jar` | `mods/moshpit-plugin.jar` |
-| `moshpit\server\universe\worlds\Moshpit\resources\MiniGameArenaResource.json` | same path under `universe/` |
 
-The marker file is 63 KB, six arenas, Nuketown with 51 markers. **Check the size
-after uploading** — if it reads ~19 bytes, something overwrote it.
+**Markers only if they are missing up there.** Do not copy
+`MiniGameArenaResource.json` into `universe/` on a running server — see below.
+
+
 
 ### Lobby instance
 
@@ -58,6 +59,48 @@ after uploading** — if it reads ~19 bytes, something overwrote it.
   AMP — only its markers were missing.
 - **The asset pack.** Nothing in it changed that the server needs. Twelve unused
   images were deleted locally for tidiness; leaving them on AMP is harmless.
+
+---
+
+## 3a. Arena markers — use `/arena import`, not a file copy
+
+Skip this unless `/arena entries` comes back empty.
+
+**Do not copy `MiniGameArenaResource.json` into `universe/` on a live server.** The
+server reads that file once, at world load, and holds it in memory until it stops.
+Dropping a new copy over it changes nothing — and the next world save writes the
+in-memory version straight back over your file. Doing it in the wrong order has
+destroyed this marker set twice, silently both times.
+
+Instead:
+
+1. Copy `moshpit\server\universe\worlds\Moshpit\resources\MiniGameArenaResource.json`
+   to the repo root as `arena-markers.json`. The build also drops a copy next to the
+   jar in `moshpit\build\libs\`.
+2. Upload it to `mods/arena-markers.json` — the same directory as the plugin jar, and
+   deliberately so: a bad jar upload fails loudly at boot, so it is the one path you
+   can confirm works. A misplaced marker file fails silently.
+3. In game: `/arena import`
+
+```
+Imported 295 markers from mods/arena-markers.json:
+ - mirage: 46
+ - dust2: 43
+ - raid: 54
+ - nuketown: 51
+ - rust: 54
+ - hijacked: 47
+```
+
+Spawns work immediately; there is nothing to overwrite and no ordering to get wrong.
+It merges rather than replaces, so markers placed by hand since the export survive.
+
+4. **Stop the instance cleanly.** That save writes the markers into the world, and the
+   import becomes one-time rather than every boot.
+
+- [ ] `/arena entries` lists six arenas
+- [ ] Died once and got teleported
+- [ ] Clean stop performed, so it persists
 
 ---
 

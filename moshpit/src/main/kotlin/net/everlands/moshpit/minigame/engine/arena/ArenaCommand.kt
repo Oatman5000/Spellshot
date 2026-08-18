@@ -31,6 +31,38 @@ class ArenaCommand(val manager: MiniGameArenaManager) : EverlandsCommand({
             }
         }
 
+        playerCommand("import", "Load markers from mods/arena-markers.json into this world") {
+            handle {
+                when (val result = ArenaMarkerImport.load()) {
+                    is ArenaMarkerImport.Result.NotFound -> {
+                        context.sendRawMessage("No marker file found. Looked for:")
+                        for (path in result.looked) context.sendRawMessage(" - $path")
+                        context.sendRawMessage("Upload MiniGameArenaResource.json to mods/ as 'arena-markers.json'.")
+                    }
+
+                    is ArenaMarkerImport.Result.Unreadable ->
+                        context.sendRawMessage("Could not read ${result.path}: ${result.reason}")
+
+                    is ArenaMarkerImport.Result.Empty ->
+                        context.sendRawMessage("${result.path} parsed but contains no markers.")
+
+                    is ArenaMarkerImport.Result.Parsed -> {
+                        // Merge, not replace: an import should never silently drop a
+                        // marker someone placed by hand since the file was exported.
+                        val written = world.arenaResource.importEntries(result.arenas, replace = false)
+                        context.sendRawMessage("Imported $written markers from ${result.path}:")
+                        for ((arenaId, locations) in result.arenas) {
+                            context.sendRawMessage(" - $arenaId: ${locations.size}")
+                        }
+                        context.sendRawMessage(
+                            "Live now - spawns work immediately. They reach disk on the next " +
+                                "world save, so stop the server cleanly to make it permanent."
+                        )
+                    }
+                }
+            }
+        }
+
         playerCommand("debug", "Visualize arena locations") {
             val idArg = required<String>("id", "ID of the arena")
             handle {

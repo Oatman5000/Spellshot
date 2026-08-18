@@ -60,6 +60,35 @@ fun MiniGameArenaResource.setLocation(arenaId: String, name: String, transform: 
     entries = newEntries
 }
 
+/**
+ * Bulk-writes whole arenas in one copy, for `/arena import`.
+ *
+ * [setLocation] copies both maps on every call, so importing ~300 markers through it
+ * would do ~300 full map copies. This does one.
+ *
+ * When [replace] is true an incoming arena wholly replaces the existing one; otherwise
+ * incoming markers are merged over it, keeping any local markers not in the import.
+ * Arenas absent from [incoming] are never touched either way -- an import can only add.
+ *
+ * Returns the number of markers written.
+ */
+fun MiniGameArenaResource.importEntries(
+    incoming: Map<String, Map<String, Transform>>,
+    replace: Boolean,
+): Int {
+    val newEntries = LinkedHashMap<String, MiniGameArenaEntry>(entries)
+    var written = 0
+    for ((arenaId, locations) in incoming) {
+        val merged = LinkedHashMap<String, Transform>()
+        if (!replace) merged.putAll(newEntries[arenaId]?.locations ?: emptyMap())
+        merged.putAll(locations)
+        newEntries[arenaId] = MiniGameArenaEntry(merged)
+        written += locations.size
+    }
+    entries = newEntries
+    return written
+}
+
 /** Removes a marker. Returns false if the arena or the marker did not exist. */
 fun MiniGameArenaResource.removeLocation(arenaId: String, name: String): Boolean {
     val existing = entries[arenaId] ?: return false

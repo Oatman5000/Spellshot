@@ -283,3 +283,74 @@ map has water or a kill floor.
 | Missiles land off-map | pos1/pos2 are corners of the *playable* area, not the world |
 | Everything vanished after restart | Server was killed rather than stopped cleanly |
 | Power-up crash on spawn | Type is not exactly `HEALTH` or `SPEED` |
+
+---
+
+## Moving markers between servers
+
+Markers live inside the world, at
+`universe/worlds/<world>/resources/MiniGameArenaResource.json`. The server reads that
+file once at world load and holds it in memory until shutdown, when it writes the
+in-memory copy back out.
+
+Two consequences, both of which have cost real data here:
+
+* Copying a marker file onto a **running** server does nothing. The running server
+  never re-reads it.
+* The next world save **overwrites** whatever you copied in, with whatever the server
+  has in memory. If that memory is empty, the file is now empty too.
+
+So the file route only works as: stop → upload → start, in that order, with no save in
+between. Any slip reverts silently.
+
+### `/arena import` — the route that cannot go wrong
+
+```
+/arena import
+```
+
+Reads a marker file from disk and writes it into the **live** world through the same
+path `/arena loc set` uses. Nothing to overwrite, no restart, no ordering.
+
+Searched in order, relative to the server's working directory:
+
+1. `mods/arena-markers.json`
+2. `mods/MiniGameArenaResource.json`
+3. `arena-markers.json`
+
+`mods/` comes first on purpose. It is the directory operators upload to routinely, and
+a bad upload there fails loudly at boot — whereas a marker file in the wrong place
+fails with no message at all.
+
+Merges rather than replaces: markers you placed by hand since the export are kept, and
+arenas missing from the import are never touched. Import can only add.
+
+Afterwards, **stop the server cleanly** so the save persists it. Until then the markers
+exist only in memory.
+
+### Exporting
+
+```powershell
+copy moshpit\server\universe\worlds\Moshpit\resources\MiniGameArenaResource.json arena-markers.json
+```
+
+### When an arena reports no markers
+
+`MiniGameArena.locations` names the cause distinctly, at ERROR:
+
+```
+Arena 'dust2' (Dust2) has no usable markers: not present in the marker store on
+world 'Moshpit', which holds 0 arena(s): []
+```
+
+That line carries the world the server actually resolved and the arena ids the store
+holds — enough to separate an empty file from a wrong world from a wrong arena id. A
+healthy load logs once per arena instead:
+
+```
+Arena 'nuketown' loaded 51 markers from world 'Moshpit'
+```
+
+Neither existed before; the first sign of trouble used to be
+`NoSuchElementException: Collection is empty` thrown from a spawn strategy several
+frames away, naming neither the arena nor the world.
