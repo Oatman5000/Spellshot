@@ -13,7 +13,6 @@ import com.hypixel.hytale.server.core.util.TargetUtil
 import net.everlands.core.framework.InteractionBinder
 import net.everlands.core.ext.playerRefOrNull
 import net.everlands.core.ext.property
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -39,9 +38,9 @@ class ThrowExplosiveInteraction(
         val buffer = context.commandBuffer ?: return
         val lookVec = TargetUtil.getLook(ref, buffer)
         val projectileConfig = ProjectileConfig.getAssetMap().getAsset(projectileConfigId) ?: return
-        if (timerInMillis == null) {
-            return
-        }
+        // Bound to a local so it smart-casts. Checking the property and then reading it
+        // again below needed a !!, because this is a `var` on the interaction config.
+        val fuseMillis = timerInMillis ?: return
         val itemContext = context.createHeldItemContext() ?: return
         val item = itemContext.itemStack
         if (item.quantity > 1) {
@@ -54,7 +53,7 @@ class ThrowExplosiveInteraction(
         buffer.addComponent(
             projectile, ThrowExplosiveComponent.componentType, ThrowExplosiveComponent(
                 damager = playerRef.uuid,
-                explodeAt = Instant.now().plusMillis(timerInMillis!!),
+                explodeAt = Instant.now().plusMillis(fuseMillis),
                 explosionParticleId = explosionParticleId,
                 explosionSoundId = explosionSoundId,
                 damageRadius = damageRadius,
@@ -105,8 +104,4 @@ class ThrowExplosiveInteraction(
                 )
         }
     )
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(ThrowExplosiveInteraction::class.java)
-    }
 }

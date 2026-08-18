@@ -9,7 +9,6 @@ import com.hypixel.hytale.server.core.universe.PlayerRef
 import kotlinx.serialization.json.Json
 import net.everlands.core.framework.Users.userOrNull
 import net.everlands.core.framework.EverlandsUser
-import net.everlands.core.framework.launchGlobal
 import net.everlands.core.ext.referenceOrNull
 import net.everlands.moshpit.item.ammo.AmmoProvider
 import net.everlands.moshpit.progression.ProgressionManager
@@ -123,9 +122,16 @@ class LoadoutService(
         }
 
         player.inventory.clear()
+        // Resolved once, with a message. `hotbar!!` gave a bare NullPointerException
+        // per item, from inside a runCatching that only reported "null".
+        val hotbar = player.inventory.hotbar
+        if (hotbar == null) {
+            logger.error("No hotbar container for ${playerRef.username}; loadout not given")
+            return
+        }
         for (id in items) {
             runCatching {
-                player.inventory.hotbar!!.addItemStack(interceptGunItemStack(ItemStack(id)))
+                hotbar.addItemStack(interceptGunItemStack(ItemStack(id)))
             }.onFailure {
                 // One bad item must not cost the player the rest of their kit.
                 logger.warn("Could not give $id to ${playerRef.username}: ${it.message}")
@@ -296,14 +302,16 @@ class LoadoutService(
 
     private fun giveStarterLoadout(player: Player) {
         val loadout = starterLoadout.value
-        loadout.armor.forEach {
-            if (it.value > 0) player.inventory.armor!!.addItemStack(interceptGunItemStack(ItemStack(it.key, it.value)))
+        // Each container resolved once and skipped if absent, rather than three !!
+        // that would each throw a bare NullPointerException mid-kit.
+        loadout.armor.forEach { (id, qty) ->
+            if (qty > 0) player.inventory.armor?.addItemStack(interceptGunItemStack(ItemStack(id, qty)))
         }
-        loadout.hotbar.forEach {
-            if (it.value > 0) player.inventory.hotbar!!.addItemStack(interceptGunItemStack(ItemStack(it.key, it.value)))
+        loadout.hotbar.forEach { (id, qty) ->
+            if (qty > 0) player.inventory.hotbar?.addItemStack(interceptGunItemStack(ItemStack(id, qty)))
         }
-        loadout.storage.forEach {
-            if (it.value > 0) player.inventory.storage!!.addItemStack(interceptGunItemStack(ItemStack(it.key, it.value)))
+        loadout.storage.forEach { (id, qty) ->
+            if (qty > 0) player.inventory.storage?.addItemStack(interceptGunItemStack(ItemStack(id, qty)))
         }
     }
 

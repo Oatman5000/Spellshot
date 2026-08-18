@@ -106,7 +106,7 @@ class OITCMiniGameSession(
     val oitcConfig: OITCConfig.Binder,
 ) : MiniGameSession(game, arena) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override val teamStrategy: TeamStrategy = SingleTeamPerPlayerTeamStrategy(
         this, participantProvider = { OITCParticipant(it) }
@@ -234,7 +234,7 @@ class OITCMiniGameSession(
         player.inventory.clear()
         val hotbar = player.inventory.hotbar
         if (hotbar == null) {
-            log.warn("no hotbar for ${playerRef.username}, cannot give OitC kit")
+            logger.warn("no hotbar for ${playerRef.username}, cannot give OitC kit")
             player.heal()
             return
         }
@@ -245,10 +245,10 @@ class OITCMiniGameSession(
             hotbar.addItemStack(
                 ammoProvider.buildItemStackWithAmmo(ItemStack(config.gunItemId), config.startingBullets)
             )
-        }.onFailure { log.warn("Could not give ${config.gunItemId} to ${playerRef.username}: ${it.message}") }
+        }.onFailure { logger.warn("Could not give ${config.gunItemId} to ${playerRef.username}: ${it.message}") }
         runCatching {
             hotbar.addItemStack(ItemStack(config.meleeItemId))
-        }.onFailure { log.warn("Could not give ${config.meleeItemId} to ${playerRef.username}: ${it.message}") }
+        }.onFailure { logger.warn("Could not give ${config.meleeItemId} to ${playerRef.username}: ${it.message}") }
 
         val ref = player.referenceOrNull
         if (ref != null) ammoProvider.setClientAmmo(ref, config.startingBullets)
@@ -313,14 +313,14 @@ class OITCMiniGameSession(
                         ammoProvider.buildItemStackWithAmmo(ItemStack(config.gunItemId), owed)
                     )
                     ref?.let { ammoProvider.setClientAmmo(it, owed) }
-                }.onFailure { log.warn("Could not return the gun to ${playerRef.username}: ${it.message}") }
+                }.onFailure { logger.warn("Could not return the gun to ${playerRef.username}: ${it.message}") }
             } else {
                 val cap = config.maxBullets ?: (ammoProvider.getMaxAmmo(current) ?: DEFAULT_MAX_BULLETS)
                 val next = ((ammoProvider.getAmmo(current) ?: 0) + owed).coerceAtMost(cap)
                 runCatching {
                     ammoProvider.setAmmo(hotbar, slot.toShort(), current, next)
                     ref?.let { ammoProvider.setClientAmmo(it, next) }
-                }.onFailure { log.warn("Could not credit a bullet to ${playerRef.username}: ${it.message}") }
+                }.onFailure { logger.warn("Could not credit a bullet to ${playerRef.username}: ${it.message}") }
             }
             return
         }
@@ -332,7 +332,7 @@ class OITCMiniGameSession(
         val ammo = ammoProvider.getAmmo(current) ?: return
         if (ammo <= 0) {
             runCatching { hotbar.removeItemStackFromSlot(slot.toShort()) }
-                .onFailure { log.warn("Could not remove the empty gun: ${it.message}") }
+                .onFailure { logger.warn("Could not remove the empty gun: ${it.message}") }
             return
         }
 

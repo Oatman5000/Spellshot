@@ -107,7 +107,7 @@ class GunGameMiniGameSession(
     val gunGameConfig: GunGameConfig.Binder,
 ) : MiniGameSession(game, arena) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override val teamStrategy: TeamStrategy = SingleTeamPerPlayerTeamStrategy(
         this, participantProvider = { GunGameParticipant(it) }
@@ -230,12 +230,12 @@ class GunGameMiniGameSession(
         val tier = participant?.tier ?: 0
         val weapon = config.weaponFor(tier)
         if (weapon == null) {
-            log.warn("Gun Game ladder is empty, cannot arm ${playerRef.username}")
+            logger.warn("Gun Game ladder is empty, cannot arm ${playerRef.username}")
             return
         }
         val hotbar = player.inventory.hotbar
         if (hotbar == null) {
-            log.warn("no hotbar for ${playerRef.username}, cannot give tier weapon")
+            logger.warn("no hotbar for ${playerRef.username}, cannot give tier weapon")
             return
         }
         player.inventory.clear()
@@ -248,7 +248,7 @@ class GunGameMiniGameSession(
             hotbar.addItemStack(if (maxAmmo != null) ammoProvider.buildItemStackWithAmmo(stack, maxAmmo) else stack)
             val ref = player.referenceOrNull
             if (ref != null && maxAmmo != null) ammoProvider.setClientAmmo(ref, maxAmmo)
-        }.onFailure { log.warn("Could not give $weapon to ${playerRef.username}: ${it.message}") }
+        }.onFailure { logger.warn("Could not give $weapon to ${playerRef.username}: ${it.message}") }
     }
 
     override fun addParticipant(playerRef: PlayerRef, teleport: Boolean): MiniGameTeam? {

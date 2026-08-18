@@ -1,21 +1,19 @@
+# hyboot is deliberately absent. It was Spookline's platform -- coordinator,
+# matchmaking and cross-server user store -- and this port replaced all of it with
+# standalone equivalents (see "Differences from upstream" in the README). The
+# version and its two library entries lingered here long after the last reference
+# was removed from every build script.
+
 [versions]
 kotlin = "2.3.0"
 kotlinSpring = "2.3.0-RC3"
 kotlinxSerialization = "1.9.0"
 springBoot = "4.0.0"
 shadow = "9.3.1"
-# PORT NOTE: hyboot 0.4.5 targets the Hytale 0.4.x (Update 4) server API.
-# hyboot tracks the game's minor version, so Update 6 (EA-1.5 / 0.6.x) needs the
-# matching 0.6.x release. Confirm the exact published version against
-# https://repo.averix.tech/repository/maven-public/com/spookline/hyboot/hyboot-hytale/
-# before building -- this value is the expected line, not a verified one.
-hyboot = "0.6.0"
 slf4j = "2.0.9"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-hyboot = { module = "com.spookline.hyboot:hyboot-hytale", version.ref = "hyboot" }
-hybootSpringbootpplication = { module = "com.spookline.hyboot:hyboot-springboot-application", version.ref = "hyboot" }
 slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 springBoot = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }

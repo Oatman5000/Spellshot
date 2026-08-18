@@ -26,12 +26,12 @@ class PlayerDisconnectListener(val plugin: JavaPlugin, val composer: HUDComposer
             // null. Cleaning up HUD state for a player who has left is a no-op anyway,
             // so this stays non-fatal -- but at debug rather than discarded, because
             // this listener is also where a genuine off-thread access would surface.
-            log.debug("No HUD cleanup for {}: {}", event.playerRef.username, ex.message)
+            logger.debug("No HUD cleanup for {}: {}", event.playerRef.username, ex.message)
         }
     }
 
     private companion object {
-        private val log = LoggerFactory.getLogger(PlayerDisconnectListener::class.java)
+        private val logger = LoggerFactory.getLogger(PlayerDisconnectListener::class.java)
     }
 }
 

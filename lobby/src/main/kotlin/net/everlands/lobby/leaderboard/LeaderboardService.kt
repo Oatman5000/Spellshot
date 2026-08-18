@@ -28,7 +28,7 @@ class LeaderboardService(
     private val lobbyConfig: LobbyConfig.Binder,
 ) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     // Backing field plus a read-only accessor, rather than `var ... private set`.
     // The Spring compiler plugin makes @Service classes open, and Kotlin forbids
@@ -60,12 +60,12 @@ class LeaderboardService(
     @OnStart
     fun start() {
         if (!enabled) {
-            log.info("Leaderboard disabled - no Redis host configured")
+            logger.info("Leaderboard disabled - no Redis host configured")
             return
         }
         launchGlobal {
             while (true) {
-                runCatching { refresh() }.onFailure { log.warn("Leaderboard refresh failed: ${it.message}") }
+                runCatching { refresh() }.onFailure { logger.warn("Leaderboard refresh failed: ${it.message}") }
                 delay(lobbyConfig.value.leaderboardRefreshSeconds * 1000L)
             }
         }

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
  * These were `println` calls, which bypass the log config entirely: no level, no
  * timestamp, and no way to turn them off on a busy server.
  */
-private val log = LoggerFactory.getLogger("everlands.powerups")
+private val logger = LoggerFactory.getLogger("everlands.powerups")
 
 enum class PowerUpType(
     val respawnTimeInSeconds: Long, val componentModifier: (holder: Holder<EntityStore>) -> Unit = {},
@@ -33,9 +33,9 @@ enum class PowerUpType(
     }, execute = { playerRef, player ->
         playerRef.play2DSound("SFX_Potion_Drink_Success", pitchMultiplier = 12f)
         playerRef.changeBaseSpeedMultiplier(1.4f)
-        log.debug("Speed boost applied to {}", playerRef.username)
+        logger.debug("Speed boost applied to {}", playerRef.username)
         HytaleServer.SCHEDULED_EXECUTOR.schedule({
-            log.debug("Speed boost expired for {}", playerRef.username)
+            logger.debug("Speed boost expired for {}", playerRef.username)
             if (!playerRef.isValid) return@schedule
             playerRef.referenceOrErr.store.externalData.world.execute {
                 playerRef.resetMovement()

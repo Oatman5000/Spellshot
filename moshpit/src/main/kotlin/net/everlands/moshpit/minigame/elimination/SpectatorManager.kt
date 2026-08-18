@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object SpectatorManager {
 
-    private val log = LoggerFactory.getLogger("Spectator")
+    private val logger = LoggerFactory.getLogger("Spectator")
 
     /** spectator uuid -> uuid of the player their camera is currently attached to. */
     private val watching = ConcurrentHashMap<UUID, UUID>()
@@ -50,7 +50,7 @@ object SpectatorManager {
                     HudComponent.Health,
                     HudComponent.Stamina
                 )
-            }.onFailure { log.warn("could not hide HUD for spectator ${spectator.username}: ${it.message}") }
+            }.onFailure { logger.warn("could not hide HUD for spectator ${spectator.username}: ${it.message}") }
         }
         retargetOne(spectator, team)
     }
@@ -88,12 +88,12 @@ object SpectatorManager {
             runCatching { cameraReset(spectator) }
                 // A failed reset leaves the player welded to a dead team-mate's view
                 // with no way out but reconnecting, so it must not pass unnoticed.
-                .onFailure { log.warn("could not release spectator camera for ${spectator.username}: ${it.message}") }
+                .onFailure { logger.warn("could not release spectator camera for ${spectator.username}: ${it.message}") }
             return
         }
         watching[spectator.uuid] = next.playerRef.uuid
         runCatching { cameraLookAt(spectator, next.playerRef) }
-            .onFailure { log.warn("could not attach spectator camera for ${spectator.username}: ${it.message}") }
+            .onFailure { logger.warn("could not attach spectator camera for ${spectator.username}: ${it.message}") }
     }
 
     /**
@@ -110,7 +110,7 @@ object SpectatorManager {
         runCatching { cameraReset(spectator) }
             // Same again: this is the round-end path, so a silent failure here strands
             // the player in spectator view for the whole of the next round.
-            .onFailure { log.warn("could not release spectator camera for ${spectator.username}: ${it.message}") }
+            .onFailure { logger.warn("could not release spectator camera for ${spectator.username}: ${it.message}") }
         runCatching {
             val player = spectator.playerOrNull ?: return@runCatching
             // Re-assert the Everlands set, NOT showHudComponents. Switching the
@@ -119,7 +119,7 @@ object SpectatorManager {
             if (player.gameMode != GameMode.Creative) {
                 applyEverlandsHud(player, spectator)
             }
-        }.onFailure { log.debug("could not restore HUD for ${spectator.username}: ${it.message}") }
+        }.onFailure { logger.debug("could not restore HUD for ${spectator.username}: ${it.message}") }
     }
 
     /** Drops everyone out of spectator mode -- used when the match ends. */

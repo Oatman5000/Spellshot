@@ -44,7 +44,7 @@ data class LobbyConfig(
         "Sent to chat when the Discord button is clicked. Nothing can open a " +
             "browser from here -- the client exposes no link-opening action to " +
             "server-driven UI -- so the invite is printed for the player to copy. " +
-            "Blank hides the button's message. Prefer EVERLANDS_DISCORD_INVITE."
+            "Blank tells the player none is configured. Set EVERLANDS_DISCORD_INVITE."
     )
     val discordInvite: String = "",
 
@@ -54,9 +54,10 @@ data class LobbyConfig(
             id = "moshpit",
             name = "PVP",
             description = "FFA  ·  TDM  ·  Hardpoint  ·  OitC  ·  Elimination  ·  Gun Game",
-            // Blank on purpose -- see LobbyServerEntry.effectiveHost. This used to
-            // name a specific public server, so anyone cloning the repo ran a lobby
-            // that referred their players onto somebody else's instance.
+            // Deliberately blank. Set EVERLANDS_GAME_HOST on the lobby instance, or
+            // put your own address here -- see the table in lobby/DEPLOY.md. Shipping
+            // a real host as the default means anyone who clones this repo runs a
+            // lobby that refers their players onto somebody else's server.
             host = "",
             // Moshpit moved to 5524; the lobby itself now sits on 5523.
             port = 5524,
@@ -141,13 +142,16 @@ data class LobbyServerEntry(
     val icon: String = "Images/Skull.png",
 ) {
     /**
-     * The host actually used, after the environment override.
+     * The host actually used, after the optional environment override.
      *
      *   EVERLANDS_GAME_HOST   overrides host
      *   EVERLANDS_GAME_PORT   overrides port
      *
-     * These apply to every entry, which is fine while the selector lists one
-     * server. Give a second entry a literal host if that ever changes.
+     * Neither is required — [host] already carries a working default. They exist so a
+     * running deployment can be repointed by restarting instead of rebuilding.
+     *
+     * They apply to every entry, which is fine while the selector lists one server.
+     * Give a second entry a literal host if that ever changes.
      */
     val effectiveHost: String get() = env("EVERLANDS_GAME_HOST") ?: host
     val effectivePort: Int get() = env("EVERLANDS_GAME_PORT")?.toIntOrNull() ?: port

@@ -36,7 +36,7 @@ data class BlockRaycastResult(val lastPos: org.joml.Vector3d, val hitPos: org.jo
  */
 object BlockBoxRaycaster {
 
-    private val log = LoggerFactory.getLogger("BlockBoxRaycaster")
+    private val logger = LoggerFactory.getLogger("BlockBoxRaycaster")
 
     /** Fallback when a block's hitbox asset cannot be resolved: assume a full cube. */
     private val FULL_CUBE = arrayOf(Box(0.0, 0.0, 0.0, 1.0, 1.0, 1.0))
@@ -69,7 +69,7 @@ object BlockBoxRaycaster {
         try {
             BlockIterator.iterate(origin, dir, maxDistance, probe)
         } catch (ex: Exception) {
-            log.warn("block raycast failed: ${ex.message}")
+            logger.warn("block raycast failed: ${ex.message}")
             return BlockRaycastResult(end, null)
         }
 
@@ -165,7 +165,7 @@ object BlockBoxRaycaster {
 
 object Raycasts {
 
-    private val log = LoggerFactory.getLogger("Raycasts")
+    private val logger = LoggerFactory.getLogger("Raycasts")
 
     /**
      * Entity hit volume: an upright box standing ON the entity position.
@@ -218,7 +218,7 @@ object Raycasts {
                 }
             }, { filter(it) })
         } catch (ex: Exception) {
-            log.warn("raycastEntity failed: " + ex.message)
+            logger.warn("raycastEntity failed: " + ex.message)
         }
         return RaycastResult(best, bestPoint, if (best != null) bestT else 0.0)
     }
@@ -245,7 +245,7 @@ object Raycasts {
         color: Any?,
         durationMs: Int = 0
     ) {
-        log.debug("debugBoundingBox - no-op in this build")
+        logger.debug("debugBoundingBox - no-op in this build")
     }
 
     /**

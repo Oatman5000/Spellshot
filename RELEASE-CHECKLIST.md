@@ -1,147 +1,172 @@
 # Release checklist
 
-Everything needed to get this version live. Roughly 20 minutes.
+Getting this build onto AMP. Roughly 15 minutes.
 
-Order matters in one place only: **set the environment variables before restarting the
-AMP instances**, or the first restart comes up with handoff disabled.
+**Three things go up:** two jars and one world file. No AMP configuration --
+addresses are baked into the jars you build (step 4 explains how).
 
 ---
 
-## 1. Build — 5 min
+## 1. Build
 
 ```powershell
-cd C:\Users\dkibb\Downloads\everlands-update6-verified\everlands-main
+cd path\to\Spellshot
 .\gradlew :moshpit:shadowJar :lobby:shadowJar
 ```
-
-Both jars are needed. This release changes `:core`, which is shaded into each.
 
 - [ ] `moshpit\build\libs\moshpit-plugin.jar` — timestamp is from this build
 - [ ] `lobby\build\libs\lobby-plugin.jar` — same
 
-If the build fails, stop here and send the error. Nothing in this release has been
-compiled — it was written without a working compiler available.
+Both are needed: this release changes `:core`, which is shaded into each.
 
 ---
 
-## 2. Publish to GitHub — 5 min
+## 2. Stop the moshpit instance ⚠
+
+**Before uploading anything.** A running server saves its world on shutdown and
+will overwrite the marker file you are about to upload. That is exactly how the
+previous Nuketown markers were lost.
+
+Use AMP's **Stop**, not a kill — the world flushes on a clean shutdown.
+
+- [ ] Moshpit instance stopped
+
+---
+
+## 3. Upload
+
+### Moshpit instance
+
+| From | To |
+|---|---|
+| `moshpit\build\libs\moshpit-plugin.jar` | `mods/moshpit-plugin.jar` |
+| `moshpit\server\universe\worlds\Moshpit\resources\MiniGameArenaResource.json` | same path under `universe/` |
+
+The marker file is 63 KB, six arenas, Nuketown with 51 markers. **Check the size
+after uploading** — if it reads ~19 bytes, something overwrote it.
+
+### Lobby instance
+
+| From | To |
+|---|---|
+| `lobby\build\libs\lobby-plugin.jar` | `mods/lobby-plugin.jar` |
+
+### Do NOT upload
+
+- **World chunk files.** AMP's copy is authoritative; the local `.region.bin`
+  files have been modified by local testing. The Nuketown *build* is already on
+  AMP — only its markers were missing.
+- **The asset pack.** Nothing in it changed that the server needs. Twelve unused
+  images were deleted locally for tidiness; leaving them on AMP is harmless.
+
+---
+
+## 4. Addresses — nothing to do on AMP
+
+**AMP has no per-instance environment variable setting.** It is an open feature
+request ([CubeCoders/AMP#1321](https://github.com/CubeCoders/AMP/issues/1321));
+the environment variables AMP documents are for installing AMP itself and for
+Docker deployments, not for game instances.
+
+So the addresses live in the working tree instead, and are held out of every
+commit with `skip-worktree`:
+
+| File | Local value | Committed value |
+|---|---|---|
+| `lobby/.../LobbyConfig.kt` | your host + invite | blank |
+| `moshpit/.../LobbyReferral.kt` | your host | blank |
 
 ```powershell
-cd C:\Users\dkibb\Downloads\everlands-update6-verified\everlands-main
-git add -A
-git commit -m "Fix .gitignore excluding all source; command DSL, arena writes, cleanup"
-git push --force origin main
+git ls-files -v | Select-String "^S"     # confirm both are still protected
 ```
 
-**Force is required.** The previous commit was missing all 161 Kotlin source files, so
-history has to be replaced rather than added to.
+`git status` will not show these as modified, and `git add -A` will not stage
+them. Build from this working tree and the jars carry your addresses; the repo
+stays clean.
 
-Then confirm on github.com/Oatman5000/Spellshot:
+**If you ever need to edit those files for real:**
 
-- [ ] `core/src/main/kotlin/...` exists and contains `.kt` files
-- [ ] File count is ~688, not ~529
-- [ ] Search the repo for `oathosting` → **no results**
-- [ ] `Settings → Emails` lists `oatman5k@gmail.com`, or the commit shows as unlinked
+```powershell
+git update-index --no-skip-worktree <path>   # unprotect
+# ...make the change, commit it...
+git update-index --skip-worktree <path>      # protect again
+```
 
----
+Two things to know about this arrangement: a `git pull` that changes either file
+will fail with a confusing message until you unprotect it, and a fresh clone of
+your own repo will have blanks and need the values re-entered.
 
-## 3. Set environment variables — 5 min ⚠
-
-**This is the step that breaks things if skipped.** Addresses no longer ship with
-working defaults.
-
-AMP → each instance → *Configuration* → *Environment Variables*.
-
-### Lobby instance
-
-| Variable | Value |
-|---|---|
-| `EVERLANDS_GAME_HOST` | `play.oathosting.com` |
-| `EVERLANDS_DISCORD_INVITE` | `https://discord.gg/6CpNPdDRE` |
-
-### Moshpit instance
-
-| Variable | Value |
-|---|---|
-| `EVERLANDS_LOBBY_HOST` | `play.oathosting.com` |
-
-Ports already default correctly — moshpit 5524, lobby 5523 — so `EVERLANDS_GAME_PORT`
-and `EVERLANDS_LOBBY_PORT` are only needed if those change.
-
-- [ ] Lobby: both variables set
-- [ ] Moshpit: variable set
+`EVERLANDS_GAME_HOST`, `EVERLANDS_LOBBY_HOST` and `EVERLANDS_DISCORD_INVITE`
+still work if you ever run somewhere that can set them — they win over the
+compiled value.
 
 ---
 
-## 4. Upload — 5 min
+## 5. Start and verify
 
-### Moshpit instance
+### Moshpit console
 
-- [ ] `moshpit-plugin.jar` → `mods/`
-- [ ] `MiniGame.json` → `mods/Everlands.Game/Server/GameplayConfigs/`
-      *(the only asset change this release — adds `Player.MovementConfig`)*
+- [ ] No `Failed to setup plugin Everlands:Moshpit`
+- [ ] **`Arena marker store registered`** — the one that matters. If you see
+      `ARENAS ARE DISABLED` instead, **stop the server immediately**, before it
+      saves and overwrites the marker file with an empty one.
+- [ ] `/lobby will refer players to <your lobby host>:5523`
 
-### Lobby instance
-
-- [ ] `lobby-plugin.jar` → `mods/`
-
-No world files changed. No other assets changed.
-
----
-
-## 5. Restart and verify — 5 min
-
-Restart both instances. **Stop cleanly rather than killing** — the moshpit world holds
-arena markers that flush on save.
-
-### Console, on the moshpit instance
-
-- [ ] Boots without `Failed to setup plugin Everlands:Moshpit`
-- [ ] `/lobby will refer players to play.oathosting.com:5523`
-      *(if it says "referral disabled", step 3 was missed)*
-
-### Console, on the lobby instance
+### Lobby console
 
 - [ ] `Registered interaction codec 'LeaderboardInteraction'`
 - [ ] No `has no host` warning
 
 ### In game
 
-- [ ] `/arena entries` lists the five arenas — nuketown reappears once you place a marker
-- [ ] `/arena loc set nuketown spawn:1` replies with the coordinates it recorded
-      *(this is the fix that took four deploys; it should now confirm in chat)*
-- [ ] Navigator sends you to the moshpit server
-- [ ] `/lobby` sends you back
-- [ ] **Sprint works** — this tells us whether `MovementConfig` was silently broken
-      before or was always fine
+- [ ] `/arena entries` lists all six arenas
+- [ ] `/arena info nuketown` reports 51 markers
+- [ ] Die once — you get teleported to a spawn
+- [ ] Disconnect and rejoin — no `Assert not in thread!` in the console
+- [ ] Navigator sends you to moshpit; `/lobby` sends you back
+- [ ] Tab opens the loadout page
 - [ ] Leaderboard opens and shows data
 
 ---
 
-## 6. Then — the new Nuketown
+## 6. Optional — `MiniGame.json`
 
-`moshpit/ARENAS.md` is the walkthrough. The short version:
+Not needed for anything above. It adds `Player.MovementConfig: "Default"` to the
+moshpit gameplay config — the setting whose absence broke sprinting in the lobby.
+Moshpit has the same omission but sprint appears to work, so this is either a
+no-op or a fix for something subtly wrong that nobody noticed.
 
-1. Paste the prefab in its final position.
-2. Clear the old markers — the script is in section 2 of that document. **Do not skip
-   this**; leftover markers point into the old build and players will spawn there
-   mid-match.
-3. `/moshpit leave` so the session stops respawning you.
-4. Place ~46 markers. `/arena info nuketown` to audit by prefix before trusting it.
-5. Stop the server cleanly so the markers flush.
-6. If you added team spawns, add `"nuketown"` to `TEAM_READY_ARENAS` in
-   `MoshpitConfig.kt` and rebuild.
+| From | To |
+|---|---|
+| `moshpit\server\mods\Everlands.Game\Server\GameplayConfigs\MiniGame.json` | same path under `mods/` |
+
+- [ ] Uploaded, restarted, sprint still behaves
+
+---
+
+## Publishing to GitHub *(independent of the deployment)*
+
+```powershell
+git push --force origin main
+```
+
+Force is required — history was replaced. Your host and Discord invite are not in
+the published source; `skip-worktree` keeps them local (step 4).
 
 ---
 
 ## If something breaks
 
-Roll back by re-uploading the previous jars from git:
-
 ```powershell
-git stash          # if you have uncommitted work
+git stash                      # if you have uncommitted work
 git checkout HEAD~1 -- .
 .\gradlew :moshpit:shadowJar :lobby:shadowJar
 ```
 
-The environment variables are harmless to leave set — the old jars ignore them.
+`git checkout HEAD~1 -- .` will not touch the two address files — they are
+`skip-worktree`, so your values survive a rollback.
+
+**If the arena markers are ever wiped again**, the recovery copies are on disk at
+`moshpit\server\universe\worlds\Moshpit\resources\` as
+`MiniGameArenaResource.json.with-old-nuketown` (the pre-rebuild set) — and the
+current 51-marker set is in git.

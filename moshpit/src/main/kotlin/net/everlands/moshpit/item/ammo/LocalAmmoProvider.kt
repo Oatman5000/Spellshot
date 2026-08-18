@@ -52,18 +52,9 @@ class LocalAmmoProvider : AmmoProvider {
     }
 
     override fun getMaxAmmo(stack: ItemStack): Int? {
-        val item = stack.item
-        if (item.data == null) return null
-        if (item.data.rawTags.containsKey("ammo")) {
-            val tags = item.data.rawTags["ammo"]!!
-            if (tags.size > 0) {
-                val ammo = tags[0].toIntOrNull()
-                if (ammo != null) {
-                    return ammo
-                }
-            }
-        }
-        return null
+        // One lookup, not a containsKey followed by an unchecked get.
+        val tags = stack.item.data?.rawTags?.get("ammo") ?: return null
+        return tags.firstOrNull()?.toIntOrNull()
     }
 
 }

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object UserStore {
 
-    private val log = LoggerFactory.getLogger("everlands.users")
+    private val logger = LoggerFactory.getLogger("everlands.users")
 
     /**
      * The server's working directory is the devserver root -- it writes ./logs,
@@ -62,7 +62,7 @@ object UserStore {
     fun load() {
         if (!loaded.compareAndSet(false, true)) return
         if (!Files.exists(file)) {
-            log.info("No saved progression at {} - starting fresh", file)
+            logger.info("No saved progression at {} - starting fresh", file)
             return
         }
         runCatching {
@@ -77,17 +77,17 @@ object UserStore {
                 }
                 records[uuid] = Record(username, data)
             }
-            log.info("Loaded progression for {} players from {}", records.size, file)
+            logger.info("Loaded progression for {} players from {}", records.size, file)
         }.onFailure {
             // Never let a corrupt file stop the server booting; keep the bad file
             // aside so it can be inspected rather than silently overwritten.
-            log.error("Failed to read {} - starting fresh, old file kept as .broken", file, it)
+            logger.error("Failed to read {} - starting fresh, old file kept as .broken", file, it)
             runCatching {
                 Files.move(file, file.resolveSibling("users.json.broken"), StandardCopyOption.REPLACE_EXISTING)
             }.onFailure { move ->
                 // If the rename fails the corrupt file stays where it is and the next
                 // save overwrites it, destroying the only copy of whatever went wrong.
-                log.error("Could not set {} aside - it will be overwritten on next save", file, move)
+                logger.error("Could not set {} aside - it will be overwritten on next save", file, move)
             }
         }
     }
@@ -97,7 +97,7 @@ object UserStore {
         load()
         val record = records[user.uuid] ?: return
         for ((path, value) in record.data) user.customData.putRaw(path, value)
-        log.info(
+        logger.info(
             "Restored {} (level {}, prestige {})",
             user.username,
             user.customData.getInt("level") ?: 1,
@@ -143,20 +143,20 @@ object UserStore {
                         // silently, everything since the previous flush is gone with no
                         // trace -- which reads to players as lost levels after a restart.
                         runCatching { saveNow() }
-                            .onFailure { log.error("Shutdown save failed - progression since the last flush is lost", it) }
+                            .onFailure { logger.error("Shutdown save failed - progression since the last flush is lost", it) }
                     }, "everlands-userstore-shutdown")
                 )
             }.onFailure {
                 // Thrown if the JVM is already shutting down. Worth a line, since it
                 // means the final save will not happen at all.
-                log.warn("Could not install the shutdown save hook: {}", it.message)
+                logger.warn("Could not install the shutdown save hook: {}", it.message)
             }
         }
         flusher = Executors.newSingleThreadScheduledExecutor { r ->
             Thread(r, "everlands-userstore").apply { isDaemon = true }
         }.also {
             it.scheduleWithFixedDelay(
-                { runCatching { saveIfDirty() }.onFailure { e -> log.error("Auto-save failed", e) } },
+                { runCatching { saveIfDirty() }.onFailure { e -> logger.error("Auto-save failed", e) } },
                 intervalSeconds, intervalSeconds, TimeUnit.SECONDS
             )
         }
@@ -208,8 +208,8 @@ object UserStore {
                 Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING)
             }.getOrThrow()
             dirty.set(false)
-            log.debug("Saved progression for {} players", root.size)
-        }.onFailure { log.error("Failed to save progression to {}", file, it) }
+            logger.debug("Saved progression for {} players", root.size)
+        }.onFailure { logger.error("Failed to save progression to {}", file, it) }
     }
 
     // ------------------------------------------------------------ conversion

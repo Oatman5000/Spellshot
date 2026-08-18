@@ -6,7 +6,6 @@ import net.everlands.core.ext.teleport
 import net.everlands.moshpit.minigame.engine.arena.MiniGameArena
 import net.everlands.moshpit.minigame.engine.model.MiniGameParticipant
 import net.everlands.moshpit.minigame.engine.model.MiniGameTeam
-import org.slf4j.LoggerFactory
 
 class TeamSpawnStrategy(val arena: MiniGameArena) :
     SpawnStrategy {
@@ -34,9 +33,5 @@ class TeamSpawnStrategy(val arena: MiniGameArena) :
     override fun getSpawn(team: MiniGameTeam, participant: MiniGameParticipant): Transform {
         return spawns[team.id]?.random()
             ?: error("Team ${team.id} not found in arena ${arena.id} spawns! Or no spawns defined")
-    }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(TeamSpawnStrategy::class.java)
     }
 }

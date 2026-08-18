@@ -34,7 +34,7 @@ class ServerSelectorInteraction : SimpleInstantInteraction() {
         val config = LobbyInteractions.configBinder ?: return
         runCatching {
             player.pageManager.openCustomPage(ref, ref.store, ServerSelectorPage(playerRef, config))
-        }.onFailure { LobbyInteractions.log.warn("could not open server selector: ${it.message}") }
+        }.onFailure { LobbyInteractions.logger.warn("could not open server selector: ${it.message}") }
     }
 
     companion object {
@@ -59,7 +59,7 @@ class LeaderboardInteraction : SimpleInstantInteraction() {
         val service = LobbyInteractions.leaderboardService ?: return
         runCatching {
             player.pageManager.openCustomPage(ref, ref.store, LeaderboardPage(player, playerRef, service))
-        }.onFailure { LobbyInteractions.log.warn("could not open leaderboard: ${it.message}") }
+        }.onFailure { LobbyInteractions.logger.warn("could not open leaderboard: ${it.message}") }
     }
 
     companion object {
@@ -92,21 +92,21 @@ class LobbyInteractions(
                     ServerSelectorInteraction::class.java,
                     ServerSelectorInteraction.CODEC
                 )
-                log.info("Registered interaction codec 'ServerSelectorInteraction'")
-            }.onFailure { log.error("Failed to register ServerSelectorInteraction", it) }
+                logger.info("Registered interaction codec 'ServerSelectorInteraction'")
+            }.onFailure { logger.error("Failed to register ServerSelectorInteraction", it) }
             runCatching {
                 plugin.getCodecRegistry(Interaction.CODEC).register(
                     "LeaderboardInteraction",
                     LeaderboardInteraction::class.java,
                     LeaderboardInteraction.CODEC
                 )
-                log.info("Registered interaction codec 'LeaderboardInteraction'")
-            }.onFailure { log.error("Failed to register LeaderboardInteraction", it) }
+                logger.info("Registered interaction codec 'LeaderboardInteraction'")
+            }.onFailure { logger.error("Failed to register LeaderboardInteraction", it) }
         }
     }
 
     companion object {
-        internal val log = LoggerFactory.getLogger(LobbyInteractions::class.java)
+        internal val logger = LoggerFactory.getLogger(LobbyInteractions::class.java)
 
         /** The interactions are built by the codec, not by Spring, so they read these here. */
         internal var configBinder: LobbyConfig.Binder? = null

@@ -1,6 +1,5 @@
 package net.everlands.moshpit.loadout.ui
 
-import net.everlands.core.ext.playerRefOrNull
 
 import com.hypixel.hytale.codec.Codec
 import com.hypixel.hytale.codec.builder.BuilderCodec
@@ -26,8 +25,6 @@ import net.everlands.core.ext.play2DSound
 import net.everlands.core.ext.sendEventTitle
 import net.everlands.core.ext.sendRawMessage
 import net.everlands.moshpit.loadout.*
-import net.everlands.moshpit.minigame.engine.MiniGameEngine
-import net.everlands.moshpit.minigame.engine.model.MiniGameSession
 import org.slf4j.LoggerFactory
 
 class LoadoutPage(val player: Player, val ref: PlayerRef, val user: EverlandsUser, val loadoutService: LoadoutService) :

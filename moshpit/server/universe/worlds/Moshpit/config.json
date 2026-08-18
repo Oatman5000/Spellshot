@@ -21,7 +21,7 @@
   "IsFallDamageEnabled": true,
   "IsGameTimePaused": true,
   "GameTime": "0001-01-02T09:01:10.000095708Z",
-  "ForcedWeather": "Dungeon_Cursed_Crypt_Graveyard",
+  "ForcedWeather": "Cave_Deep",
   "ClientEffects": {
     "SunHeightPercent": 100.0,
     "SunAngleDegrees": 0.0,
@@ -32,6 +32,7 @@
     "SunshaftScaleFactor": 4.0
   },
   "RequiredPlugins": {},
+  "GameMode": "Adventure",
   "IsSpawningNPC": true,
   "IsSpawnMarkersEnabled": true,
   "IsAllNPCFrozen": false,
@@ -44,6 +45,7 @@
   "IsObjectiveMarkersEnabled": true,
   "DeleteOnUniverseStart": false,
   "DeleteOnRemove": false,
+  "DisabledFluidTickers": [],
   "ResourceStorage": {
     "Type": "Hytale"
   },

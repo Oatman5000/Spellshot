@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 
 abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
 
-    private val log = LoggerFactory.getLogger("everlands")
+    private val logger = LoggerFactory.getLogger("everlands")
 
     lateinit var context: AnnotationConfigApplicationContext
         private set
@@ -30,7 +30,7 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         context.classLoader = pluginLoader
         context.beanFactory.beanClassLoader = pluginLoader
         val scanned = registerJarComponents(context, javaClass, pluginLoader)
-        log.info("Everlands: registered {} component classes", scanned)
+        logger.info("Everlands: registered {} component classes", scanned)
         val previousTccl = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = pluginLoader
         try { context.refresh() } finally { Thread.currentThread().contextClassLoader = previousTccl }
@@ -40,16 +40,16 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         registerCommands()
         dispatch(OnSetup::class.java, "@OnSetup")
         context.getBeansOfType(HytaleService::class.java).values.forEach { svc ->
-            svc.setupCallbacks.forEach { cb -> runCatching { cb() }.onFailure { log.error("onSetup failed", it) } }
+            svc.setupCallbacks.forEach { cb -> runCatching { cb() }.onFailure { logger.error("onSetup failed", it) } }
         }
 
-        log.info("Everlands: {} beans initialised", context.beanDefinitionCount)
+        logger.info("Everlands: {} beans initialised", context.beanDefinitionCount)
     }
 
     override fun start() {
         dispatch(OnStart::class.java, "@OnStart")
         context.getBeansOfType(HytaleService::class.java).values.forEach { svc ->
-            svc.startCallbacks.forEach { cb -> runCatching { cb() }.onFailure { log.error("onStarted failed", it) } }
+            svc.startCallbacks.forEach { cb -> runCatching { cb() }.onFailure { logger.error("onStarted failed", it) } }
         }
         UserStore.startAutoSave()
     }
@@ -58,7 +58,7 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         // Save first: a hard kill still loses at most one auto-save interval,
         // but an orderly shutdown should never lose progress at all.
         UserStore.stopAutoSave()
-        runCatching { UserStore.saveNow() }.onFailure { log.error("Final progression save failed", it) }
+        runCatching { UserStore.saveNow() }.onFailure { logger.error("Final progression save failed", it) }
         if (this::context.isInitialized) context.close()
         INSTANCE = null
     }
@@ -66,7 +66,7 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
     private fun registerComponents() {
         for (descriptor in ComponentDescriptors.all()) {
             runCatching { descriptor.register(this) }
-                .onFailure { log.error("component registration failed: {}", descriptor.name, it) }
+                .onFailure { logger.error("component registration failed: {}", descriptor.name, it) }
         }
     }
 
@@ -75,20 +75,20 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
             runCatching {
                 @Suppress("UNCHECKED_CAST")
                 entityStoreRegistry.registerSystem(bean as ISystem<EntityStore>)
-                log.info("system: {}", bean.javaClass.simpleName)
-            }.onFailure { log.error("system registration failed: {}", bean.javaClass.name, it) }
+                logger.info("system: {}", bean.javaClass.simpleName)
+            }.onFailure { logger.error("system registration failed: {}", bean.javaClass.name, it) }
         }
     }
 
     private fun registerCommands() {
         for (bean in context.getBeansOfType(AbstractCommand::class.java).values) {
             runCatching { commandRegistry.registerCommand(bean) }
-                .onFailure { log.error("command registration failed: {}", bean.javaClass.name, it) }
+                .onFailure { logger.error("command registration failed: {}", bean.javaClass.name, it) }
         }
         for (bean in context.getBeansOfType(net.everlands.core.framework.dsl.EverlandsCommand::class.java).values) {
             for (cmd in bean.commands()) {
                 runCatching { commandRegistry.registerCommand(cmd) }
-                    .onFailure { log.error("command registration failed: {}", cmd.javaClass.name, it) }
+                    .onFailure { logger.error("command registration failed: {}", cmd.javaClass.name, it) }
             }
         }
     }
@@ -101,7 +101,7 @@ abstract class EverlandsPlugin(init: JavaPluginInit) : JavaPlugin(init) {
                 runCatching {
                     method.isAccessible = true
                     method.invoke(bean)
-                }.onFailure { log.error("{} failed: {}.{}", label, target.simpleName, method.name, it) }
+                }.onFailure { logger.error("{} failed: {}.{}", label, target.simpleName, method.name, it) }
             }
         }
     }

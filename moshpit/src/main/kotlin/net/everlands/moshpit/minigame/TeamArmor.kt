@@ -5,7 +5,7 @@ import com.hypixel.hytale.server.core.inventory.ItemStack
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import org.slf4j.LoggerFactory
 
-private val log = LoggerFactory.getLogger("everlands.armour")
+private val logger = LoggerFactory.getLogger("everlands.armour")
 
 /**
  * Equips the team-coloured armour set. Shared by TDM and Hardpoint, which had
@@ -19,7 +19,7 @@ private val log = LoggerFactory.getLogger("everlands.armour")
 fun equipTeamArmor(player: Player, playerRef: PlayerRef, armorPrefix: String) {
     val armor = player.inventory.armor
     if (armor == null) {
-        log.warn("No armour container for {}", playerRef.username)
+        logger.warn("No armour container for {}", playerRef.username)
         return
     }
     armor.clear()
@@ -38,7 +38,7 @@ fun equipTeamArmor(player: Player, playerRef: PlayerRef, armorPrefix: String) {
         try {
             armor.addItemStack(ItemStack(id))
         } catch (e: Exception) {
-            log.warn("Could not add {} for {}: {}", id, playerRef.username, e.message)
+            logger.warn("Could not add {} for {}: {}", id, playerRef.username, e.message)
         }
     }
 
@@ -46,7 +46,7 @@ fun equipTeamArmor(player: Player, playerRef: PlayerRef, armorPrefix: String) {
     val contents = (0 until capacity).joinToString(", ") { slot ->
         runCatching { armor.getItemStack(slot.toShort())?.itemId }.getOrNull() ?: "-"
     }
-    log.info(
+    logger.info(
         "team armour {} for {}: capacity={} contents=[{}]",
         armorPrefix, playerRef.username, capacity, contents
     )

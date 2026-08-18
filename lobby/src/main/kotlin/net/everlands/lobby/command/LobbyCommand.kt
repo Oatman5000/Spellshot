@@ -50,7 +50,7 @@ class LobbyCommand(
             // Silently doing nothing is the worst outcome here: /servers is the only
             // way off the lobby, so a failure has to say so rather than look like a
             // command that does not exist.
-            log.error("Could not open the server selector for ${ref.username}", it)
+            logger.error("Could not open the server selector for ${ref.username}", it)
             ref.sendRawMessage("Could not open the server list. Ask an admin to check the console.")
         }
     }
@@ -58,6 +58,6 @@ class LobbyCommand(
     override fun canGeneratePermission(): Boolean = false
 
     private companion object {
-        private val log = LoggerFactory.getLogger(LobbyCommand::class.java)
+        private val logger = LoggerFactory.getLogger(LobbyCommand::class.java)
     }
 }

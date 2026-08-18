@@ -92,7 +92,9 @@ class KillstreakManager(val plugin: JavaPlugin, val killStreakConfig: KillStreak
         val itemId = streakConfig.itemId
         val quantity = streakConfig.quantity
         if (itemId != null && quantity != null) {
-            player.inventory.hotbar!!.addItemStack(ItemStack(itemId, quantity))
+            // Skipped rather than asserted: a missing hotbar should cost the reward,
+            // not throw a bare NullPointerException out of the kill handler.
+            player.inventory.hotbar?.addItemStack(ItemStack(itemId, quantity))
         }
         logger.info("Awarded killstreak reward ${streakConfig.itemId} x${streakConfig.quantity} to ${player.playerRefOrNull?.username} for ${entry.amount} kills")
         val streakMessage = streakConfig.message

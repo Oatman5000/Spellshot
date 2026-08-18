@@ -2,13 +2,9 @@ package net.everlands.moshpit.item
 
 import com.hypixel.hytale.server.core.asset.type.item.config.Item
 
-fun Item.existsTag(key: String, value: String): Boolean {
-    if (data.rawTags.containsKey(key)) {
-        val tags = data.rawTags[key]!!
-        return tags.contains(value)
-    }
-    return false
-}
+/** One lookup, not a `containsKey` followed by an unchecked get. */
+fun Item.existsTag(key: String, value: String): Boolean =
+    data.rawTags[key]?.contains(value) == true
 
 fun isPrimaryGun(itemId: String): Boolean {
     val item = Item.getAssetMap().getAsset(itemId) ?: return false

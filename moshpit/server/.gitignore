@@ -14,6 +14,12 @@ auth.enc
 hyboot.jar
 config/
 
+# Runtime state the server writes into mods/, not source. Both are rejected on
+# every boot with "missing or invalid manifest.json" because they are plugin data
+# directories, not asset packs.
+mods/Hytale_Shop/
+mods/spark_spark/
+
 # The arena world IS committed. `universe/*` used to blanket-exclude it, which
 # silently beat the root .gitignore's intent -- ignore everything under
 # universe/ except the world itself and the warp table. The players/ and

@@ -7,7 +7,6 @@ import com.hypixel.hytale.component.Ref
 import com.hypixel.hytale.component.RemoveReason
 import com.hypixel.hytale.math.shape.Box
 import org.joml.Vector3d
-import org.joml.Vector3f
 import com.hypixel.hytale.server.core.asset.util.ColorParseUtil
 import com.hypixel.hytale.server.core.entity.UUIDComponent
 import com.hypixel.hytale.server.core.entity.entities.ProjectileComponent
@@ -30,16 +29,44 @@ class MiniGameArenaManager(val plugin: JavaPlugin, val config: MiniGameArenasCon
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    /** Guards against a repeat call. See [setup]. */
+    private var registered = false
+
+    /**
+     * Registers the chunk-store resource that holds every arena's markers.
+     *
+     * Idempotent. This used to be called TWICE on every boot -- once by the `@OnSetup`
+     * annotation, and again explicitly from `MiniGameEngine.setup()`. The duplicate
+     * call has since been removed, but the guard stays: the failure mode is severe and
+     * silent enough that it should not depend on nobody re-adding it.
+     *
+     * That mattered more than it looked. If registration does not complete,
+     * [MiniGameArenaResource.resourceType] is `lateinit` and stays unset, every
+     * `World.arenaResource` access throws, [MiniGameArena.locations] swallows that and
+     * returns an empty map -- and then a world save writes those empty entries back
+     * over the file, destroying every marker on disk. Nothing teleports, and the
+     * arena data is gone.
+     */
     @OnSetup
     fun setup() {
+        if (registered) return
         try {
             MiniGameArenaResource.resourceType = plugin.chunkStoreRegistry.registerResource(
                 MiniGameArenaResource::class.java,
                 "MiniGameArenaResource",
                 MiniGameArenaResource.CODEC
             )
+            registered = true
+            logger.info("Arena marker store registered")
         } catch (e: Exception) {
-            logger.warn("Failed to register MiniGameArenaResource: ${e.message}")
+            logger.error(
+                "ARENAS ARE DISABLED. Could not register MiniGameArenaResource: {}. " +
+                    "Every arena will report zero markers: players will not be teleported on " +
+                    "spawn, death or round start, and A WORLD SAVE WILL OVERWRITE THE MARKER " +
+                    "FILE WITH AN EMPTY ONE. Stop the server before it saves.",
+                e.message,
+                e
+            )
         }
     }
 

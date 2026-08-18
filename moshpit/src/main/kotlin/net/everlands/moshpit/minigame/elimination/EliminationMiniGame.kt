@@ -117,7 +117,7 @@ class EliminationMiniGameSession(
     val loadoutService: LoadoutService,
 ) : MiniGameSession(eliminationGame, arena) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     /** 1-based round counter within the series. */
     private var roundNumber: Int = 1
@@ -180,7 +180,7 @@ class EliminationMiniGameSession(
                 // and pretending otherwise would just be a misleading line.
                 world.execute {
                     runCatching { player.inventory.clear() }
-                        .onFailure { log.warn("could not clear inventory for spectator: ${it.message}") }
+                        .onFailure { logger.warn("could not clear inventory for spectator: ${it.message}") }
                     SpectatorManager.beginSpectating(
                         participant.playerRef,
                         event.team as? EliminationTeam ?: return@execute
@@ -327,7 +327,7 @@ class EliminationMiniGameSession(
                 runCatching {
                     giveLoadout(player, p.playerRef)
                     spawnStrategy.teleport(eliminationTeam, p)
-                }.onFailure { log.warn("Could not revive ${p.playerRef.username}: ${it.message}") }
+                }.onFailure { logger.warn("Could not revive ${p.playerRef.username}: ${it.message}") }
             }
         }
         roundActive = true

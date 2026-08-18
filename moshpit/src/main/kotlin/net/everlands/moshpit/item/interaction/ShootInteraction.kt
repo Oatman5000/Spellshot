@@ -87,7 +87,11 @@ class ShootInteraction(
                     val isCrouching = movementState.movementStates.crouching
                     val headDistance = if (isCrouching) 0.98 else 1.38
                     val chestDistance = if (isCrouching) 0.31 else 0.8
-                    val distance = hitPos!!.distance(transform.position)
+                    // Skipped rather than asserted. The raycast can report a hit entity
+                    // with no hit position, and `!!` here meant a NullPointerException
+                    // mid-shot; the two lines above already skip on a missing component.
+                    val hit = hitPos ?: continue
+                    val distance = hit.distance(transform.position)
                     val damage = when {
                         distance >= headDistance -> headDamage ?: 3f
                         distance >= chestDistance -> chestDamage ?: 2f
@@ -107,7 +111,7 @@ class ShootInteraction(
                 } catch (ex: Exception) {
                     // Per pellet, per shot. Keep it to one line -- a full trace here
                     // during a shotgun burst buries everything else in the console.
-                    log.warn("Damage application failed: {}", ex.message)
+                    logger.warn("Damage application failed: {}", ex.message)
                 }
             }
             if (entity != null && hitPos != null) {
@@ -124,7 +128,7 @@ class ShootInteraction(
 
 
     companion object {
-        private val log = org.slf4j.LoggerFactory.getLogger(ShootInteraction::class.java)
+        private val logger = org.slf4j.LoggerFactory.getLogger(ShootInteraction::class.java)
 
         val headshotSoundIndex by lazy(LazyThreadSafetyMode.NONE) {
             SoundEvent.getAssetMap().getIndex("Bullet_Headshot")

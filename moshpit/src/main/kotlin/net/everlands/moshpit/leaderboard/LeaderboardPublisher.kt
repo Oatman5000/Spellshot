@@ -54,12 +54,12 @@ class LeaderboardPublisher(
     private val redisConfig: net.everlands.core.leaderboard.RedisConfig.Binder,
 ) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @OnStart
     fun start() {
         if (!redisConfig.value.enabled) {
-            log.info("Leaderboard publishing disabled - no Redis host configured")
+            logger.info("Leaderboard publishing disabled - no Redis host configured")
             return
         }
         launchGlobal {
@@ -68,7 +68,7 @@ class LeaderboardPublisher(
             delay(10_000)
             while (true) {
                 runCatching { publishOnce() }
-                    .onFailure { log.warn("Leaderboard publish failed: ${it.message}") }
+                    .onFailure { logger.warn("Leaderboard publish failed: ${it.message}") }
                 delay(config.value.intervalSeconds * 1000L)
             }
         }
@@ -125,7 +125,7 @@ class LeaderboardPublisher(
 
         val snapshot = LeaderboardSnapshot(System.currentTimeMillis(), boards)
         if (redis.publish(snapshot)) {
-            log.debug("Published leaderboard: {} players, {} boards", rows.size, boards.size)
+            logger.debug("Published leaderboard: {} players, {} boards", rows.size, boards.size)
         }
     }
 

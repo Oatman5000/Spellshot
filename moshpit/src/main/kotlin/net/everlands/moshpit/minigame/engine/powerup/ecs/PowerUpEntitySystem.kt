@@ -21,8 +21,12 @@ class PowerUpEntitySystem(val engine: MiniGameEngine) : DelayedEntitySystem<Enti
         buffer: CommandBuffer<EntityStore>
     ) {
         val component = chunk.getComponent(index, PowerUpComponent.componentType) ?: return
-        if (component.gameSessionId == null || component.powerUpType == null) return
-        if (engine.doesSessionExistsById(component.gameSessionId!!)) return
+        // Bound to a local so Kotlin can smart-cast it. Checking the property and then
+        // asserting on it needed a !!, because a property of another object can change
+        // between the two reads as far as the compiler is concerned.
+        val sessionId = component.gameSessionId ?: return
+        if (component.powerUpType == null) return
+        if (engine.doesSessionExistsById(sessionId)) return
         val ref = chunk.getReferenceTo(index)
         buffer.removeEntity(ref, RemoveReason.REMOVE)
     }

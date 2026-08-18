@@ -3,7 +3,6 @@ package net.everlands.moshpit.minigame.engine.powerup
 import com.hypixel.hytale.component.AddReason
 import com.hypixel.hytale.logger.HytaleLogger
 import org.joml.Vector3d
-import org.joml.Vector3f
 import com.hypixel.hytale.server.core.HytaleServer
 import com.hypixel.hytale.server.core.entity.UUIDComponent
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation

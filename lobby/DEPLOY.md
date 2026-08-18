@@ -7,7 +7,7 @@ port.
 ## Build
 
 ```powershell
-cd C:\Users\dkibb\Downloads\everlands-update6-verified\everlands-main
+cd path/to/Spellshot
 .\gradlew.bat :lobby:shadowJar --console=plain
 ```
 
@@ -47,33 +47,43 @@ nobody gets winded walking around.
 
 ## Configure your servers
 
-**Addresses ship blank and must be set, or nothing hands off.** They used to
-default to a specific public server, which meant anyone cloning this repo ran a
-lobby that referred their players onto somebody else's instance.
+> **Addresses ship blank and must be set**, or nothing hands off. A real host is
+> deliberately kept out of the published source.
 
-Set them as environment variables on the AMP instance — no rebuild, and the two
-instances can be repointed by restarting:
+**Edit the source and rebuild.** Two fields:
+
+| File | Field |
+|---|---|
+| `lobby/src/main/kotlin/net/everlands/lobby/LobbyConfig.kt` | `servers[0].host`, and `discordInvite` |
+| `moshpit/src/main/kotlin/net/everlands/moshpit/moshpit/LobbyReferral.kt` | `host` |
+
+To keep your address out of commits while still building with it, mark both files
+`skip-worktree` after editing:
+
+```powershell
+git update-index --skip-worktree lobby/src/main/kotlin/net/everlands/lobby/LobbyConfig.kt
+git update-index --skip-worktree moshpit/src/main/kotlin/net/everlands/moshpit/moshpit/LobbyReferral.kt
+```
+
+Git then ignores your local edits entirely — `git status` stays clean and pushes
+carry the blanks. Undo with `--no-skip-worktree`. Be aware that a `git pull`
+which changes either file will fail until you unprotect it.
+
+**Runtime overrides** exist and win over the compiled value, but note that **AMP
+provides no way to set environment variables on a game instance**
+([CubeCoders/AMP#1321](https://github.com/CubeCoders/AMP/issues/1321)) — these
+are only usable if you launch the server yourself or run it under Docker:
 
 | Instance | Variable | What it does |
 |---|---|---|
 | **Lobby** | `EVERLANDS_GAME_HOST` | Where the Navigator sends players |
 | **Lobby** | `EVERLANDS_GAME_PORT` | Defaults to 5524 |
-| **Lobby** | `EVERLANDS_DISCORD_INVITE` | Printed by the Discord button; blank hides it |
+| **Lobby** | `EVERLANDS_DISCORD_INVITE` | Printed by the Discord button |
 | **Moshpit** | `EVERLANDS_LOBBY_HOST` | Where `/lobby` sends players back to |
 | **Moshpit** | `EVERLANDS_LOBBY_PORT` | Defaults to 5523 |
 
-In AMP: *Configuration → Environment Variables* on each instance, then restart.
-
-Without these you get, and the console says the same:
-
-```
-Navigator  ->  "PVP has no address configured. Set EVERLANDS_GAME_HOST."
-/lobby     ->  "This server is standalone - there is nowhere to return to."
-```
-
-The literal values are still editable in `LobbyConfig` and `LobbyReferralConfig`
-if you would rather bake them in, but the environment overrides win and keep the
-addresses out of the published source.
+Blank the host deliberately and the lobby says the server has no address, while
+`/lobby` reports the game server is standalone. Both log it too.
 
 ## What players get
 
@@ -83,39 +93,29 @@ addresses out of the published source.
 * No damage, no item drops, no building.
 * Falling into water or below Y=0 returns them to spawn.
 
-## The handoff — read this
+## The handoff
 
-Picking a server **does not connect you to it.** The Hytale protocol has no
-transfer packet: `packets/connection` contains only Connect, Ping/Pong and the
-two Disconnect packets, and `ServerDisconnect` carries a message and a
-`DisconnectType` — no address. The original Everlands did this by calling
-`matchmakingService.joinQueue(...)` against Spookline's coordinator, which owned
-both servers and moved players from outside the game.
+Picking a server **does** connect you to it. Hytale has native player referral:
 
-So the selector hands over the address and tells the player to use Direct
-Connect.
+```kotlin
+PlayerRef.referToServer(host, port)
+```
 
-### The one thing worth testing
+The server sends a referral packet naming the target and the client opens a new
+connection to it. No proxy, no coordinator, nothing to type. See "Multiserver
+Architecture" in the Hytale Server Manual. `/lobby` on the game server sends
+players back the same way.
 
-`HytaleServerConfig` has a `fallbackServer` field (`HostAddress { host, port }`,
-config key `FallbackServer`) that is shipped to the client at setup inside the
-`ServerInfo` packet. It is clearly meant for "if this server drops you, go
-here". Whether the client follows it on a *clean* disconnect is unverified.
+> This section previously claimed the protocol had no transfer packet and that the
+> selector could only print an address for Direct Connect. That was wrong — the
+> conclusion came from grepping `PlayerRef` for *disconnect* and *kick* and never
+> for *refer*. The other [HandoffMode] values (`Message`, `Disconnect`,
+> `DropConnection`) are diagnostics kept from working that out; `Refer` is the one
+> to use.
 
-To test:
-
-1. Add to the lobby instance's `config.json`:
-   `"FallbackServer": { "Host": "your-moshpit-host", "Port": 25565 }`
-2. Connect to the lobby, then stop the lobby instance from AMP.
-3. See whether the client lands in moshpit or at the main menu.
-
-If it reconnects, set `disconnectOnSelect = true` in `LobbyConfig` and picking a
-server becomes a real handoff. If it drops to the menu, leave it `false` — it
-would only strand people.
-
-Worth doing regardless: set `FallbackServer` on the **moshpit** instance
-pointing at the **lobby**, so a game-server restart returns players to the lobby
-instead of the main menu. That is the direction the field is unambiguously for.
+Disconnect Fallback — `FallbackServer` in `config.json` — is documented as
+"Coming Soon" and is not implemented in 0.5.7. A dropped player lands at the main
+menu regardless of what that field says.
 
 ## Not ported
 

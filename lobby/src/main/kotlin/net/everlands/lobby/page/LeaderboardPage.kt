@@ -41,7 +41,7 @@ class LeaderboardPage(
     playerRef, CustomPageLifetime.CanDismiss, PageData.CODEC
 ) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun build(
         ref: Ref<EntityStore>,
@@ -93,7 +93,7 @@ class LeaderboardPage(
         // worked, and every one after it did nothing.
         runCatching {
             player.pageManager.openCustomPage(ref, ref.store, LeaderboardPage(player, playerRef, service, action))
-        }.onFailure { log.warn("could not switch leaderboard tab: ${it.message}") }
+        }.onFailure { logger.warn("could not switch leaderboard tab: ${it.message}") }
     }
 
     /**

@@ -1,3 +1,19 @@
-*.bin filter=lfs diff=lfs merge=lfs -text
-*.db filter=lfs diff=lfs merge=lfs -text
-*.zip filter=lfs diff=lfs merge=lfs -text
+# No Git LFS.
+#
+# This used to route *.bin through LFS, which covers the world chunk files --
+# moshpit/server/universe/**/*.region.bin, about 80 MB across 40 files. They are
+# committed as ordinary blobs instead: LFS would need git-lfs installed on every
+# clone plus quota (GitHub's free tier is 1 GB, and re-adding the world costs
+# 80 MB each time), and the world changes rarely enough that plain git is fine.
+#
+# Leaving the rule in place while the files were already committed as blobs was
+# the actual hazard: the next `git add` on a machine WITH git-lfs would rewrite
+# them as pointers and produce a mixed history.
+
+# Binary. Never normalise line endings in these.
+*.bin      -text
+*.png      -text
+*.ogg      -text
+*.zip      -text
+*.blockymodel  -text
+*.blockyanim   -text

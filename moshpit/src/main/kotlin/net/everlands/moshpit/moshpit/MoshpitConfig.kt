@@ -55,19 +55,15 @@ private fun defaultIconFor(game: MoshpitGame): String = when (game) {
     else -> "Armor_Copper_Head"
 }
 
-/** Arenas with team spawns and hardpoint markers -- safe for every mode. */
-private val TEAM_READY_ARENAS = listOf("mirage", "dust2", "raid", "rust", "hijacked")
-
 /**
- * Nuketown has plain spawns but no team spawns and no hardpoint markers, so it
- * is offered for FFA only. Handing it to TDM would leave both teams without
- * spawn points, and Hardpoint would fail outright with no capture point.
+ * Arenas with team spawns and hardpoint markers -- safe for every mode.
+ *
+ * Nuketown joined this list when it was rebuilt: the new one carries 8 ODA and 8
+ * SENTINEL spawns plus 3 hardpoint markers, where the original had plain spawns
+ * only and had to be held back to the free-for-all modes.
  */
-private fun defaultArenasFor(game: MoshpitGame): List<String> = when (game) {
-    // OitC is free-for-all on random spawns, exactly like FFA, so it can use
-    // every arena including the ones with no team spawns or capture points.
-    // Free-for-all modes run on random spawns, so they can also use the arenas
-    // that have no team spawns or capture points.
-    MoshpitGame.FFA, MoshpitGame.OITC, MoshpitGame.GUNGAME -> TEAM_READY_ARENAS + "nuketown"
-    else -> TEAM_READY_ARENAS
-}
+private val TEAM_READY_ARENAS =
+    listOf("mirage", "dust2", "raid", "rust", "hijacked", "nuketown")
+
+/** Every arena is team-capable, so every mode gets the full rotation. */
+private fun defaultArenasFor(game: MoshpitGame): List<String> = TEAM_READY_ARENAS

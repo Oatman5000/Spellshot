@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
 @EcsService
 class VoidReturnSystem : DelayedEntitySystem<EntityStore>(0.5f) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun tick(
         delta: Float,
@@ -59,7 +59,7 @@ class VoidReturnSystem : DelayedEntitySystem<EntityStore>(0.5f) {
                 Teleport(world, target.position, target.rotation)
             )
         } catch (e: Exception) {
-            log.warn("VoidReturnSystem failed: ${e.message}")
+            logger.warn("VoidReturnSystem failed: ${e.message}")
         }
     }
 

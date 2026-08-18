@@ -48,7 +48,13 @@ class MoshpitVoteManager(val manager: MoshpitManager) {
                             }
                         }
                         pages.add(page)
-                        player.pageManager.openCustomPage(ref, player.world!!.entityStore.store, page)
+                        // return@onWorld, not continue -- this is inside a lambda, and
+                        // Kotlin does not allow a non-local continue there. Skipped
+                        // rather than asserted: a player between worlds has no world,
+                        // and `!!` threw a NullPointerException that the catch below
+                        // reported only as "null".
+                        val playerWorld = player.world ?: return@onWorld
+                        player.pageManager.openCustomPage(ref, playerWorld.entityStore.store, page)
                     } catch (e: Exception) {
                         logger.warn("Error opening vote page context for player ${playerRef.username}: ${e.message}")
                     }

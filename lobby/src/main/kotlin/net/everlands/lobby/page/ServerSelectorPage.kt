@@ -39,7 +39,7 @@ class ServerSelectorPage(
     playerRef, CustomPageLifetime.CanDismiss, PageData.CODEC
 ) {
 
-    private val log = org.slf4j.LoggerFactory.getLogger(javaClass)
+    private val logger = org.slf4j.LoggerFactory.getLogger(javaClass)
 
     override fun build(
         ref: Ref<EntityStore>,
@@ -98,12 +98,11 @@ class ServerSelectorPage(
         val server = cfg.serverById(action) ?: return
 
         if (!server.isConfigured) {
-            // Ships blank so a fresh clone does not refer players to whatever host
-            // happened to be committed. Say so rather than attempting a referral to
-            // an empty address, which fails with a far less obvious message.
+            // Only reachable if someone deliberately blanks the host. Kept because a
+            // referral to an empty address fails with a far less obvious message.
             playerRef.sendRawMessage("<7><c>${server.name}<7> has no address configured.")
-            playerRef.sendRawMessage("<7>Set <c>EVERLANDS_GAME_HOST<7> on this instance.")
-            log.warn("Server entry '${server.id}' has no host - set EVERLANDS_GAME_HOST")
+            playerRef.sendRawMessage("<7>Set its host in <c>LobbyConfig<7> or <c>EVERLANDS_GAME_HOST<7>.")
+            logger.warn("Server entry '${server.id}' has no host configured")
             close()
             return
         }
@@ -119,7 +118,7 @@ class ServerSelectorPage(
                 playerRef.sendRawMessage("<7>Sending you to <c>${server.name}<7>...")
                 runCatching { playerRef.referToServer(server.effectiveHost, server.effectivePort) }
                     .onFailure {
-                        log.warn("referToServer(${server.address}) failed: ${it.message}")
+                        logger.warn("referToServer(${server.address}) failed: ${it.message}")
                         playerRef.sendRawMessage("<7>Could not send you over. Connect to <c>${server.address}<7> directly.")
                     }
             }
@@ -136,7 +135,7 @@ class ServerSelectorPage(
                         DisconnectType.Disconnect
                     )
                 )
-            }.onFailure { log.warn("clean disconnect failed: ${it.message}") }
+            }.onFailure { logger.warn("clean disconnect failed: ${it.message}") }
 
             HandoffMode.DropConnection -> runCatching {
                 // No disconnect packet -- drop the transport underneath the client
@@ -146,7 +145,7 @@ class ServerSelectorPage(
                     QuicApplicationErrorCode.Timeout,
                     "handoff to ${server.address}"
                 )
-            }.onFailure { log.warn("connection drop failed: ${it.message}") }
+            }.onFailure { logger.warn("connection drop failed: ${it.message}") }
         }
     }
 

@@ -22,14 +22,14 @@ import org.springframework.stereotype.Service
 @Service
 class PlayerReadyListener(val plugin: JavaPlugin, val config: LobbyConfig.Binder) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @OnStart
     fun start() {
         plugin.eventRegistry.registerGlobal(PlayerReadyEvent::class.java) { event ->
             event.playerRef.store.externalData.world.execute {
                 runCatching { apply(event) }
-                    .onFailure { log.warn("lobby setup failed: ${it.message}") }
+                    .onFailure { logger.warn("lobby setup failed: ${it.message}") }
             }
         }
     }
@@ -46,11 +46,11 @@ class PlayerReadyListener(val plugin: JavaPlugin, val config: LobbyConfig.Binder
         if (hotbar != null) {
             cfg.navigatorItemId?.let { id ->
                 runCatching { hotbar.addItemStack(ItemStack(id)) }
-                    .onFailure { log.warn("could not give $id: ${it.message}") }
+                    .onFailure { logger.warn("could not give $id: ${it.message}") }
             }
             cfg.leaderboardItemId?.let { id ->
                 runCatching { hotbar.addItemStack(ItemStack(id)) }
-                    .onFailure { log.warn("could not give $id: ${it.message}") }
+                    .onFailure { logger.warn("could not give $id: ${it.message}") }
             }
         }
 

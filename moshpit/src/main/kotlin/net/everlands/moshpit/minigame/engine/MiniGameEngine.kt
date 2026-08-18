@@ -39,7 +39,12 @@ class MiniGameEngine(
     }
 
     fun setup() {
-        arenaManager.setup()
+        // arenaManager.setup() is NOT called here. It carries @OnSetup, so the
+        // framework already runs it -- and calling it twice is what produced
+        // "id 'MiniGameArenaResource' already exists!", which left the resource
+        // type unregistered and let a world save wipe every arena marker on disk.
+        // The registration is idempotent now as well, but one path is better than
+        // two plus a guard.
         plugin.entityStoreRegistry.registerSystem(MiniGameDamageHandler(this))
         plugin.entityStoreRegistry.registerSystem(MiniGameDeathHandler(this))
         plugin.entityStoreRegistry.registerSystem(MiniGameRespawnHandler(this))

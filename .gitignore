@@ -75,3 +75,12 @@ moshpit/server/universe.zip
 # lobby-universe/ is just an extraction of lobby-universe.zip; the canonical
 # copy is lobby/server/universe/. Committing both doubles 8 MB for nothing.
 lobby/lobby-universe/
+
+# Scratch server created by run-local.ps1. Holds a copy of the world plus
+# hardlinks to a 3.2 GB Assets.zip and the server jar. Disposable.
+.local-test/
+
+# Debris from recovering the arena markers after the registration bug wiped them.
+# Kept on disk locally as a fallback, not worth publishing.
+*.wiped
+*.with-old-nuketown

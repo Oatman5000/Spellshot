@@ -34,10 +34,10 @@ data class LeaderboardSnapshot(
             runCatching { JSON.decodeFromString<LeaderboardSnapshot>(raw) }
                 // Null here renders as "waiting for data from the game server", which
                 // is indistinguishable from Redis simply being empty. Say which it is.
-                .onFailure { log.warn("Discarding unreadable leaderboard snapshot: {}", it.message) }
+                .onFailure { logger.warn("Discarding unreadable leaderboard snapshot: {}", it.message) }
                 .getOrNull()
 
-        private val log = org.slf4j.LoggerFactory.getLogger("everlands.leaderboard")
+        private val logger = org.slf4j.LoggerFactory.getLogger("everlands.leaderboard")
     }
 
     fun encode(): String = JSON.encodeToString(this)

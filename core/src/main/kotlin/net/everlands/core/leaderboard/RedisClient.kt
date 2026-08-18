@@ -73,7 +73,7 @@ data class RedisConfig(
 @Component
 class RedisClient(private val config: RedisConfig.Binder) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Volatile
     private var pool: JedisPool? = null
@@ -100,9 +100,9 @@ class RedisClient(private val config: RedisConfig.Binder) {
                     JedisPool(poolConfig, cfg.effectiveHost, cfg.effectivePort, CONNECT_TIMEOUT_MS, cfg.effectivePassword)
                 }
                 pool = created
-                log.info("Redis pool created for {}:{}", cfg.effectiveHost, cfg.effectivePort)
+                logger.info("Redis pool created for {}:{}", cfg.effectiveHost, cfg.effectivePort)
                 created
-            }.onFailure { log.warn("Could not create Redis pool: ${it.message}") }.getOrNull()
+            }.onFailure { logger.warn("Could not create Redis pool: ${it.message}") }.getOrNull()
         }
     }
 
@@ -139,7 +139,7 @@ class RedisClient(private val config: RedisConfig.Binder) {
     private fun warnOnce(op: String, t: Throwable) {
         if (warnedUnreachable) return
         warnedUnreachable = true
-        log.warn("Redis $op failed (further failures suppressed): ${t.message}")
+        logger.warn("Redis $op failed (further failures suppressed): ${t.message}")
     }
 
     fun shutdown() {

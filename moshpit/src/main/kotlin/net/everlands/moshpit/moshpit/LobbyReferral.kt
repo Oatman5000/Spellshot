@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service
 /**
  * Where `/lobby` sends players from the game server.
  *
- * Ships blank, which makes `/lobby` answer "standalone" rather than referring
- * anyone anywhere. It used to default to a specific public server, which meant a
- * fresh clone of this repo shipped players to somebody else's instance.
+ * Blank by default, which makes `/lobby` answer "standalone" rather than referring
+ * anyone anywhere -- correct for a single instance, and it keeps a real address out
+ * of the published source.
  *
- * Point it at your lobby with an environment variable rather than a rebuild:
+ * Point it at your lobby without a rebuild:
  *
  *   EVERLANDS_LOBBY_HOST   overrides host
  *   EVERLANDS_LOBBY_PORT   overrides port
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service
 @Serializable
 @SerialName("minigame.LobbyReferralConfig")
 data class LobbyReferralConfig(
-    @Description("Lobby server host. Blank disables /lobby referral. Prefer EVERLANDS_LOBBY_HOST.")
+    @Description("Lobby server host. Blank disables /lobby referral. Set EVERLANDS_LOBBY_HOST.")
     val host: String = "",
 
     @Description("Lobby server port.")
@@ -50,17 +50,17 @@ data class LobbyReferralConfig(
 @Service
 class LobbyReferral(val config: LobbyReferralConfig.Binder) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @OnStart
     fun start() {
         val cfg = config.value
         val host = cfg.effectiveHost
         if (host.isBlank()) {
-            log.info("/lobby referral disabled - set EVERLANDS_LOBBY_HOST to enable it")
+            logger.info("/lobby referral disabled - no lobby host configured")
             return
         }
         EverlandsLeave.target = EverlandsLeave.Target(host, cfg.effectivePort)
-        log.info("/lobby will refer players to {}:{}", host, cfg.effectivePort)
+        logger.info("/lobby will refer players to {}:{}", host, cfg.effectivePort)
     }
 }

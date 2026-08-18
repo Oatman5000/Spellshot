@@ -1,13 +1,13 @@
 package net.everlands.moshpit.progression
 
 import com.hypixel.hytale.server.core.universe.PlayerRef
-import net.everlands.core.ext.playerRefOrNull
 import net.everlands.core.framework.ChatModule
 import net.everlands.core.framework.MessageContext
 import net.everlands.core.framework.EverlandsUser
 import net.everlands.core.ext.play2DSound
 import net.everlands.moshpit.item.skin.PermissionSkinsProvider
 import net.everlands.moshpit.item.skin.SkinProvider
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlin.math.pow
 
@@ -17,27 +17,44 @@ class ProgressionManager(
     val experienceConfig: ExperienceConfig.Binder, val chatModule: ChatModule
 ) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun canPrestigeLevelUp(user: EverlandsUser): Boolean {
         val config = config.value
         return user.level >= config.maxLevel && user.prestige < config.maxPrestige
     }
 
+    /**
+     * Every skin available to a player for one item.
+     *
+     * This type-switches on the provider rather than asking it, which is backwards:
+     * a provider knows how to describe its own skins, so `provide` returning
+     * `ItemSkinProgressionConfig` directly would delete this branch entirely.
+     *
+     * The concrete hazard is the missing `else`. A third provider type silently
+     * contributes nothing -- no error, no log, its skins just never appear in the
+     * menu. Two providers exist today, so this is latent rather than live, but it
+     * fails quietly if that changes.
+     */
     fun getSkins(user: EverlandsUser, playerRef: PlayerRef, itemId: String): List<ItemSkinProgressionConfig> {
         return buildList {
             for (provider in skinProviders) {
                 val skins = provider.provide(user, playerRef, itemId)
-                if (provider is ProgressionSkinProvider) {
-                    for (skin in skins) {
+                when (provider) {
+                    // Progression skins are described by config, keyed on item id.
+                    is ProgressionSkinProvider -> for (skin in skins) {
                         val config = getSkinConfig(skin.itemId) ?: continue
                         add(config)
                     }
-                } else if (provider is PermissionSkinsProvider) { // TODO: Refactor permission skin provider
-                    for (skin in skins) {
+                    // Permission skins have no unlock requirement, hence 0/0.
+                    is PermissionSkinsProvider -> for (skin in skins) {
                         add(ItemSkinProgressionConfig(skin.itemId, skin.name, 0, 0))
                     }
+                    else -> if (skins.isNotEmpty()) logger.warn(
+                        "Skin provider {} returned {} skins that cannot be described; they will not be shown",
+                        provider::class.simpleName, skins.size
+                    )
                 }
-
             }
         }
     }

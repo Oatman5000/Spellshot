@@ -63,7 +63,12 @@ class ThrowExplosiveSystem : DelayedEntitySystem<EntityStore>(0.1f) {
             return
         }
         val playerEntityRef = playerRef.referenceOrNull ?: return
-        // TODO: refactor later
+
+        // Two unrelated fuse models share this tick: IMPACT watches velocity for a
+        // sudden stop, TIMED just waits for a deadline. They have no code in common
+        // beyond the guards above, so the natural shape is one strategy per type on
+        // ThrowExplosiveType rather than a branch here. Left as-is deliberately --
+        // it is two branches, not six, and splitting it buys little.
         if (comp.type == ThrowExplosiveType.IMPACT) {
             val velocity = chunk.velocityOrNull(index) ?: return
             val currentVelocityLength = velocity.velocity.length()
@@ -77,8 +82,10 @@ class ThrowExplosiveSystem : DelayedEntitySystem<EntityStore>(0.1f) {
             } else {
                 comp.ticksAtZero = 0
             }
-            if (comp.lastVelocityLength != null) {
-                val delta = abs(comp.lastVelocityLength!! - currentVelocityLength)
+            // Bound to a local so it smart-casts; the property read needed a !!.
+            val lastVelocityLength = comp.lastVelocityLength
+            if (lastVelocityLength != null) {
+                val delta = abs(lastVelocityLength - currentVelocityLength)
                 if (delta > IMPACT_DELTA_THRESHOLD) {
                     explode(ref, playerEntityRef, transform.transform, comp, buffer)
                     return

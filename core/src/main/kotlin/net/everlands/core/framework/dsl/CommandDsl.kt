@@ -103,7 +103,7 @@ class SpecCommand(private val spec: CommandSpec) : AbstractPlayerCommand(spec.na
         // otherwise identical-looking failures: no line at all means the command
         // never resolved; a line with no follow-up means the handler was queued but
         // never ran; a line followed by the catch below means the handler threw.
-        log.info("Executing command '{}'", spec.name)
+        logger.info("Executing command '{}'", spec.name)
         spec.live = context
         val scope = HandleScope(context, store, ref, playerRef, world)
         // Hytale calls execute() on the owning world thread, and the ECS store
@@ -123,7 +123,7 @@ class SpecCommand(private val spec: CommandSpec) : AbstractPlayerCommand(spec.na
                 // throw never reaches an uncaught-exception handler. Nothing is
                 // logged, nothing is sent, the command just appears to do nothing.
                 // That is how `/arena loc set` looked when it was actually throwing.
-                log.error("Command '${spec.name}' failed", t)
+                logger.error("Command '${spec.name}' failed", t)
                 // Unlogged on purpose: the error is already in the console above, and
                 // if the sender has gone away there is nothing useful to add.
                 runCatching {
@@ -142,7 +142,7 @@ class SpecCommand(private val spec: CommandSpec) : AbstractPlayerCommand(spec.na
     override fun canGeneratePermission(): Boolean = false
 
     private companion object {
-        private val log = org.slf4j.LoggerFactory.getLogger(SpecCommand::class.java)
+        private val logger = org.slf4j.LoggerFactory.getLogger(SpecCommand::class.java)
     }
 }
 
