@@ -118,7 +118,7 @@ class FFAMiniGameSession(
             // same work a tick later, once the teleport below has been applied.
             val world = ref.store.externalData.world
             world.execute { giveLoadout(player, participant.playerRef) }
-            val spawn = spawnStrategy.getSpawn(event.team, participant)
+            val spawn = spawnStrategy.getSpawn(event.team, participant) ?: return@subscribeToEvent
             event.buffer.addComponent(
                 ref,
                 Teleport.getComponentType(),

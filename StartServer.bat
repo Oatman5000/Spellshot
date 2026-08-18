@@ -72,6 +72,14 @@ goto :install
 
 :reuse
 echo   Reusing existing .local-test - delete that folder to reset it.
+REM  Always re-copy the markers. The scratch server saves its world on shutdown,
+REM  so a previous run can leave .local-test holding markers that no longer match
+REM  the source -- which is indistinguishable from the plugin failing to load
+REM  them, and is exactly the confusion this whole exercise started with.
+set "MARKERS=universe\worlds\Moshpit\resources\MiniGameArenaResource.json"
+if not exist "moshpit\server\%MARKERS%" goto :install
+copy /Y "moshpit\server\%MARKERS%" "%TEST%\%MARKERS%" >nul
+echo   Refreshed arena markers from the source world.
 
 :install
 copy /Y "moshpit\build\libs\moshpit-plugin.jar" "%TEST%\mods\moshpit-plugin.jar" >nul
@@ -89,6 +97,10 @@ echo     "Setup phase completed"                        it booted
 echo.
 echo   If you see "ARENAS ARE DISABLED" then nothing will teleport - that is
 echo   the arena marker store failing to register.
+echo.
+echo   Once you join, each arena reports itself exactly once:
+echo     "Arena 'nuketown' loaded 51 markers from world 'Moshpit'"    good
+echo     "Arena 'nuketown' (Nuketown) has no usable markers: ..."     the cause
 echo.
 echo   Everything is also written to .local-test\server.log
 echo.

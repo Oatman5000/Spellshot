@@ -140,7 +140,7 @@ class OITCMiniGameSession(
             // made items vanish from the hotbar on respawn.
             val world = ref.store.externalData.world
             world.execute { giveKit(player, participant.playerRef) }
-            val spawn = spawnStrategy.getSpawn(event.team, participant)
+            val spawn = spawnStrategy.getSpawn(event.team, participant) ?: return@subscribeToEvent
             event.buffer.addComponent(
                 ref,
                 Teleport.getComponentType(),
