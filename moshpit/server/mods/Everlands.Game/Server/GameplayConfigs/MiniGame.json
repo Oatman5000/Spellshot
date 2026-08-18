@@ -18,6 +18,7 @@
   },
   "ShowItemPickupNotifications": false,
   "Player": {
-    "ArmorVisibilityOption": "None"
+    "ArmorVisibilityOption": "None",
+    "MovementConfig": "Default"
   }
 }

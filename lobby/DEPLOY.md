@@ -47,19 +47,33 @@ nobody gets winded walking around.
 
 ## Configure your servers
 
-The server list lives in `LobbyConfig`. Defaults ship one placeholder entry —
-change `host` and `port` to your moshpit instance:
+**Addresses ship blank and must be set, or nothing hands off.** They used to
+default to a specific public server, which meant anyone cloning this repo ran a
+lobby that referred their players onto somebody else's instance.
 
-```kotlin
-LobbyServerEntry(
-    id = "moshpit",
-    name = "Moshpit",
-    description = "FFA, TDM, Hardpoint, OitC, Elimination and Gun Game",
-    host = "change-me.example.com",
-    port = 25565,
-    iconItemId = "AR14"
-)
+Set them as environment variables on the AMP instance — no rebuild, and the two
+instances can be repointed by restarting:
+
+| Instance | Variable | What it does |
+|---|---|---|
+| **Lobby** | `EVERLANDS_GAME_HOST` | Where the Navigator sends players |
+| **Lobby** | `EVERLANDS_GAME_PORT` | Defaults to 5524 |
+| **Lobby** | `EVERLANDS_DISCORD_INVITE` | Printed by the Discord button; blank hides it |
+| **Moshpit** | `EVERLANDS_LOBBY_HOST` | Where `/lobby` sends players back to |
+| **Moshpit** | `EVERLANDS_LOBBY_PORT` | Defaults to 5523 |
+
+In AMP: *Configuration → Environment Variables* on each instance, then restart.
+
+Without these you get, and the console says the same:
+
 ```
+Navigator  ->  "PVP has no address configured. Set EVERLANDS_GAME_HOST."
+/lobby     ->  "This server is standalone - there is nowhere to return to."
+```
+
+The literal values are still editable in `LobbyConfig` and `LobbyReferralConfig`
+if you would rather bake them in, but the environment overrides win and keep the
+addresses out of the published source.
 
 ## What players get
 

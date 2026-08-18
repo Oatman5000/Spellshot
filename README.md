@@ -97,20 +97,28 @@ people's data and are not published here; `universe/players/` and
 
 ### Building your own arenas
 
-An arena is a set of named markers in a world, placed in-game:
+An arena is a set of named markers in a world, placed in-game by standing where
+the marker should go:
 
 ```
-/arena <id> set spawn:1          # free-for-all spawns
-/arena <id> set team:ODA:spawn:1 # team spawns (TDM, Elimination)
-/arena <id> set team:SENTINEL:spawn:1
-/arena entries                   # list what is placed
-/arena debug                     # visualise them
+/arena loc set <id> spawn:1              # free-for-all spawns
+/arena loc set <id> team:ODA:spawn:1     # team spawns (TDM, Elimination)
+/arena loc set <id> team:SENTINEL:spawn:1
+/arena loc set <id> hardpoint:1          # capture point
+/arena loc del <id> <marker>             # remove one
+/arena entries                           # arenas in this world
+/arena info <id>                         # every marker with coordinates
+/arena debug <id>                        # visualise for 30 seconds
 ```
 
-Then register the ids in `MiniGameArenasConfig`, and list which modes may use
-each one in `MoshpitConfig`. Team modes need `team:` spawns; Hardpoint needs a
-capture marker. Vote-screen previews go in
+Then register the id in `MiniGameArenasConfig`, and list which modes may use it
+in `MoshpitConfig`. Team modes need `team:` spawns; Hardpoint needs a
+`hardpoint:` marker. Vote-screen previews go in
 `Everlands.Game/Common/UI/Custom/Maps/` as `<id>.png`.
+
+**[`moshpit/ARENAS.md`](moshpit/ARENAS.md) is the full walkthrough** — marker
+counts per mode, the airstrike box, how to clear an arena before rebuilding it,
+and the failure modes that produce no error message.
 
 ---
 

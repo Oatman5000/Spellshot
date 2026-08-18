@@ -34,7 +34,15 @@ auth.key
 # lobby/server/universe/players/ or moshpit/server/universe/players/. Those only
 # stayed out because one had its own .gitignore and the other happened to be
 # empty. Now that the worlds are committed, these have to match at any depth.
-everlands/
+# The progression store, written next to the server jar at runtime.
+#
+# ANCHORED WITH A LEADING SLASH, and scoped to the server directories. It was
+# once a bare `everlands/`, which matches at ANY depth -- and since every source
+# file lives under `net/everlands/`, that one line silently excluded the entire
+# Kotlin codebase from the repository. 161 source files, no warning, and a
+# published repo that built nothing.
+/everlands/
+*/server/everlands/
 **/universe/players/
 **/universe/memories*
 users.json*
