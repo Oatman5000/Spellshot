@@ -24,7 +24,9 @@ data class StarterLoadoutConfig(
     @Description("Default secondary gun for players to use if none is selected")
     val secondaryGun: String? = "M1911",
     val melee: String? = "CombatKnife",
-    val utility: String? = "FragGrenade"
+    val utility: String? = "FragGrenade",
+    @Description("Default One in the Chamber gun. That mode only; ignored everywhere else.")
+    val oitcGun: String? = "Revolver"
 ) {
     @Component
     class Binder : Config<StarterLoadoutConfig>(StarterLoadoutConfig())

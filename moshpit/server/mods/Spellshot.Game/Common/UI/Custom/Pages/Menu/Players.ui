@@ -1,0 +1,68 @@
+// The Tab menu's player list card, split out of Menu.ui so it can be appended and
+// removed whole.
+//
+// It started as a group inside Menu.ui that LoadoutPage emptied when the edit panel
+// opened. That worked while it was bare text, but once it gained a frame, emptying it
+// left a styled empty card on screen -- the rows were gone and the chrome was not.
+// Clearing a container it lives inside removes both together.
+//
+// Hiding it with Visible would be the obvious alternative and is exactly what broke
+// the client on 0.6.0; see Edit.ui.
+//
+// STYLING: this screen's frame is the chamfered octagon -- Slot.png at border 24 for
+// containers, SlotSmall.png at border 12 for rows -- the same pair the loadout cards
+// and the stats boxes use. It is deliberately NOT Panel.png: that is a plain square
+// with corner dots, nothing else on this screen uses it, and it read as a different
+// UI bolted on. Section label above the frame, matching "LOADOUT #1" and
+// "EDITING: LOADOUT #1" rather than a centred cyan title.
+//
+// Border 24 must be at most half the rendered size in both axes, so the frame below
+// must stay at least 48px tall. Rows use the border-12 variant for the same reason.
+
+Group {
+  LayoutMode: Top;
+  Anchor: (Width: 700);
+
+  Label #PlayersTitle {
+    Text: "";
+    Padding: (Bottom: 6);
+    Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+  }
+
+  Group {
+    LayoutMode: Top;
+    Anchor: (Width: 700);
+    Padding: (Full: 20);
+    Background: (TexturePath: "../../Images/Hextech/Slot.png", Border: 24);
+
+    // Column widths must match PlayerRow.ui exactly -- two elements, one table.
+    Group #PlayersHeader {
+      LayoutMode: Left;
+      Padding: (Bottom: 6, Horizontal: 12);
+      Label #HeaderName {
+        Text: "";
+        Anchor: (Width: 250);
+        Style: (TextColor: #00D4FF, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+      Label #HeaderTeam {
+        Text: "";
+        Anchor: (Width: 110);
+        Style: (TextColor: #00D4FF, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+      Label #HeaderKD {
+        Text: "";
+        Anchor: (Width: 160);
+        Style: (TextColor: #00D4FF, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+      Label #HeaderPing {
+        Text: "";
+        Anchor: (Width: 110);
+        Style: (TextColor: #00D4FF, FontSize: 13, RenderBold: true, RenderUppercase: true);
+      }
+    }
+
+    Group #Players {
+      LayoutMode: Top;
+    }
+  }
+}

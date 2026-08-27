@@ -29,6 +29,11 @@ object TeamAnnouncer {
     /**
      * The side's display name for the modes that have real sides, or null.
      *
+     * Public because the Tab menu's player list needs the same answer for its team
+     * column, and "is this a mode with real sides?" is a question that must be
+     * answered identically in both places -- two copies would drift the first time a
+     * fourth team mode is added.
+     *
      * The three team classes each carry their own `def` enum with the same fields and
      * no common supertype, so this matches on the concrete type. Returning null for
      * anything else is what keeps FFA quiet -- it is the check, not an oversight.
@@ -38,7 +43,7 @@ object TeamAnnouncer {
      * `Message.raw`, so there is no colour to be had on either surface. The colours are
      * written onto the HUD instead, and the team's armour is the in-world signal.
      */
-    private fun identity(team: MiniGameTeam): String? = when (team) {
+    fun displayNameOf(team: MiniGameTeam): String? = when (team) {
         is TDMTeam -> team.def.displayName
         is HardpointTeam -> team.def.displayName
         is EliminationTeam -> team.def.displayName
@@ -54,7 +59,7 @@ object TeamAnnouncer {
      * per-join action in this codebase defers for the same reason.
      */
     fun announce(team: MiniGameTeam, participant: MiniGameParticipant) {
-        val name = identity(team) ?: return
+        val name = displayNameOf(team) ?: return
         val playerRef = participant.playerRef
         val ref = playerRef.referenceOrNull ?: return
 

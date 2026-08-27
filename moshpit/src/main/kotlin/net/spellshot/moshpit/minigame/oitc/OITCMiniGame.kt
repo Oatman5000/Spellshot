@@ -14,6 +14,7 @@ import net.spellshot.core.framework.Users.userOrNull
 import net.spellshot.core.framework.context
 import net.spellshot.core.framework.launchGlobal
 import net.spellshot.moshpit.item.ammo.AmmoProvider
+import net.spellshot.moshpit.loadout.LoadoutService
 import net.spellshot.moshpit.minigame.engine.MiniGameEngine
 import net.spellshot.moshpit.minigame.engine.MiniGameKillEvent
 import net.spellshot.moshpit.minigame.engine.MiniGameRespawnEvent
@@ -36,7 +37,9 @@ import org.springframework.stereotype.Service
  * Free-for-all, timed, most kills wins -- the same shape as [net.spellshot.moshpit.minigame.ffa.FFAMiniGame]
  * so it drops into the existing rotation and vote flow. What differs is the kit:
  *
- *  * everyone gets the same gun and knife, ignoring their saved loadout entirely
+ *  * the kit is one gun and a knife, and nothing else from your saved loadout: the
+ *    only thing carried over is the One in the Chamber row, where you pick which of
+ *    the mode's guns you want
  *  * you spawn with a single bullet and reloading is disabled ([OITCRules])
  *  * any bullet that connects is lethal, wherever it hits ([net.spellshot.moshpit.minigame.engine.handler.MiniGameDamageHandler])
  *  * a kill refunds a bullet, so accuracy is the only thing keeping you armed
@@ -52,6 +55,7 @@ class OITCMiniGame(
     val progressionManager: ProgressionManager,
     val ammoProvider: AmmoProvider,
     val oitcConfig: OITCConfig.Binder,
+    val loadoutService: LoadoutService,
 ) : MiniGame<OITCMiniGameSession>(engine) {
 
     init {
@@ -93,7 +97,7 @@ class OITCMiniGame(
     )
 
     override fun createSession(arena: MiniGameArena): OITCMiniGameSession {
-        val session = OITCMiniGameSession(this, arena, ammoProvider, oitcConfig)
+        val session = OITCMiniGameSession(this, arena, ammoProvider, oitcConfig, loadoutService)
         sessions.add(session)
         return session
     }
@@ -104,6 +108,7 @@ class OITCMiniGameSession(
     arena: MiniGameArena,
     val ammoProvider: AmmoProvider,
     val oitcConfig: OITCConfig.Binder,
+    val loadoutService: LoadoutService,
 ) : MiniGameSession(game, arena) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -218,12 +223,46 @@ class OITCMiniGameSession(
     }
 
     /**
-     * The fixed OitC kit: gun in slot 0, knife in slot 1, nothing else.
+     * The gun this player chose in the loadout menu's One in the Chamber row.
+     *
+     * Validated against [OITCConfig.gunItemIds] rather than trusted. A saved loadout
+     * outlives the config that produced it, so a gun dropped from the whitelist -- or
+     * renamed, or removed from the pack -- would otherwise be handed out anyway and
+     * fail at the item lookup, leaving the player with a knife and no explanation.
+     * Anything unrecognised falls back to the first configured gun.
+     *
+     * This is the whole of the mode's weapon logic: no roll, no per-life variance.
+     * Two players who chose the same gun are on identical equipment, which is what
+     * keeps it One in the Chamber rather than a loadout shooter.
+     */
+    private fun chosenGun(playerRef: PlayerRef): String {
+        val guns = oitcConfig.value.gunItemIds
+        if (guns.isEmpty()) {
+            logger.warn("OitC has no gunItemIds configured; falling back to $FALLBACK_GUN_ITEM_ID")
+            return FALLBACK_GUN_ITEM_ID
+        }
+        val chosen = runCatching {
+            val user = playerRef.userOrNull ?: return@runCatching null
+            loadoutService.getSelectedLoadout(user).oitc
+        }.getOrNull()
+        if (chosen != null && chosen in guns) return chosen
+        if (chosen != null) {
+            logger.warn(
+                "{} has '{}' selected for OitC but it is not in gunItemIds; issuing {}",
+                playerRef.username, chosen, guns.first()
+            )
+        }
+        return guns.first()
+    }
+
+    /**
+     * The OitC kit: one rolled gun in slot 0, knife in slot 1, nothing else.
      *
      * The player's saved loadout is ignored on purpose -- LoadoutService is never
-     * consulted. Everyone is on identical equipment, which is the point of the
-     * mode, and it also means an unlocked-weapon check can never hand someone an
-     * assault rifle here.
+     * consulted. Everyone is on the same terms, which is the point of the mode, and
+     * it also means an unlocked-weapon check can never hand someone an assault rifle
+     * here. Which of the configured guns you get is your own pick, read by
+     * [chosenGun] from the loadout menu -- one gun, chosen up front, never two.
      */
     private fun giveKit(player: Player, playerRef: PlayerRef) {
         if (state == OITCMiniGame.STATE_VOTE) {
@@ -238,14 +277,19 @@ class OITCMiniGameSession(
             player.heal()
             return
         }
+        // Roll this life's gun and remember it. Everything downstream reads the
+        // participant, never the config, so the weapon cannot change until you die.
+        val gunItemId = chosenGun(playerRef)
+        (getTeamAndParticipantByUUID(playerRef.uuid)?.second as? OITCParticipant)?.gunItemId = gunItemId
+
         runCatching {
             // Built with the starting bullet count rather than a full magazine --
             // buildItemStackWithAmmo stamps the per-stack ammoId the provider keys
             // its cache on, so this is what makes "1 bullet" stick.
             hotbar.addItemStack(
-                ammoProvider.buildItemStackWithAmmo(ItemStack(config.gunItemId), config.startingBullets)
+                ammoProvider.buildItemStackWithAmmo(ItemStack(gunItemId), config.startingBullets)
             )
-        }.onFailure { logger.warn("Could not give ${config.gunItemId} to ${playerRef.username}: ${it.message}") }
+        }.onFailure { logger.warn("Could not give $gunItemId to ${playerRef.username}: ${it.message}") }
         runCatching {
             hotbar.addItemStack(ItemStack(config.meleeItemId))
         }.onFailure { logger.warn("Could not give ${config.meleeItemId} to ${playerRef.username}: ${it.message}") }
@@ -290,11 +334,17 @@ class OITCMiniGameSession(
         val config = oitcConfig.value
         val ref = player.referenceOrNull
 
+        // Whatever was rolled for this life. Falling back to a fresh roll covers a
+        // participant that somehow reached here without a kit; leaving it blank
+        // instead would match no item, so the scan below would report an empty
+        // chamber every tick and confiscate a gun the player is visibly holding.
+        val gunItemId = participant.gunItemId.ifEmpty { chosenGun(playerRef).also { participant.gunItemId = it } }
+
         var slot = -1
         var stack: ItemStack? = null
         for (i in 0 until HOTBAR_SCAN_SLOTS) {
             val candidate = runCatching { hotbar.getItemStack(i.toShort()) }.getOrNull() ?: continue
-            if (candidate.itemId == config.gunItemId) {
+            if (candidate.itemId == gunItemId) {
                 slot = i
                 stack = candidate
                 break
@@ -310,7 +360,7 @@ class OITCMiniGameSession(
                 // Hand it back loaded -- the whole loop of the mode.
                 runCatching {
                     hotbar.addItemStack(
-                        ammoProvider.buildItemStackWithAmmo(ItemStack(config.gunItemId), owed)
+                        ammoProvider.buildItemStackWithAmmo(ItemStack(gunItemId), owed)
                     )
                     ref?.let { ammoProvider.setClientAmmo(it, owed) }
                 }.onFailure { logger.warn("Could not return the gun to ${playerRef.username}: ${it.message}") }
@@ -363,6 +413,9 @@ class OITCMiniGameSession(
 
         /** Used only if the configured gun has no 'ammo' tag to read a magazine size from. */
         const val DEFAULT_MAX_BULLETS = 4
+
+        /** Issued only when gunItemIds is empty, which is a misconfiguration. */
+        const val FALLBACK_GUN_ITEM_ID = "Revolver"
     }
 }
 
@@ -378,4 +431,18 @@ class OITCParticipant(
      * note on reconcileAmmo for the race it avoids.
      */
     var bulletsOwed: Int = 0
+
+    /**
+     * The gun rolled for this life, out of [OITCConfig.gunItemIds].
+     *
+     * Held on the participant rather than re-rolled where it is needed, because it
+     * is needed twice and the two must agree. [OITCMiniGameSession.reconcileAmmo]
+     * both scans the hotbar for your gun and hands it back after a knife kill;
+     * rolling again at the hand-back would swap your weapon mid-life, and rolling
+     * again at the scan would look straight past the gun you are holding and
+     * quietly decide you had none.
+     *
+     * Empty until the first kit is issued.
+     */
+    var gunItemId: String = ""
 }

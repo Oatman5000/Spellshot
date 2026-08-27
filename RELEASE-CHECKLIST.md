@@ -1,9 +1,24 @@
 # Release checklist
 
-Getting this build onto AMP. Roughly 15 minutes.
+Getting this build onto AMP. Roughly 30 minutes for this release.
 
-**Three things go up:** two jars and one world file. No AMP configuration --
+**Four things go up:** two jars and two asset packs. No AMP configuration --
 addresses are baked into the jars you build (step 4 explains how).
+
+## 0. Before anything — this release only
+
+Both instances must be on **Hytale 0.6.0** before the plugins go anywhere near
+them. Every manifest now declares `ServerVersion: ^0.6.0`, and the code is
+compiled against the 0.6.0 API; on 0.5.x the plugin either refuses to load or
+dies on a missing method.
+
+Back up first, because this release renames things that hold player data:
+
+- [ ] `universe/` copied down from both instances
+- [ ] the moshpit instance's `everlands/` directory copied down — this is every
+      player's level, prestige and stats. The server moves it to `spellshot/` on
+      first boot and that migration is one-way.
+- [ ] Both instances updated to 0.6.0
 
 ---
 
@@ -35,30 +50,49 @@ Use AMP's **Stop**, not a kill — the world flushes on a clean shutdown.
 
 ## 3. Upload
 
+> ⚠ **This release is not like the last one.** Previous releases shipped the jars
+> alone. This one changes the asset packs *and renames them*, so both packs go up
+> and both old ones must be deleted. Skipping either half leaves the server
+> loading two copies of every asset.
+
 ### Moshpit instance
 
 | From | To |
 |---|---|
 | `moshpit\build\libs\moshpit-plugin.jar` | `mods/moshpit-plugin.jar` |
+| `moshpit\server\mods\Spellshot.Game\` | `mods/Spellshot.Game/` |
+
+Then **delete `mods/Everlands.Game`**.
+
+The pack must go up this time. It carries the nine ADS interactions, the rewired
+firearm items, the grenade cook step, the M40's reticle fix and the whole loadout
+menu — the jar references all of them and none of it exists in the old pack.
 
 **Markers only if they are missing up there.** Do not copy
 `MiniGameArenaResource.json` into `universe/` on a running server — see below.
-
-
 
 ### Lobby instance
 
 | From | To |
 |---|---|
 | `lobby\build\libs\lobby-plugin.jar` | `mods/lobby-plugin.jar` |
+| `lobby\server\mods\Spellshot.Lobby\` | `mods/Spellshot.Lobby/` |
+
+Then **delete `mods/Everlands.Lobby`**.
+
+The lobby jar on AMP predates the 0.6.0 port entirely — it was built against
+0.5.7 and will not run. Rebuild it even if nothing in `lobby/` looks changed:
+`:core` is shaded into it and did change.
 
 ### Do NOT upload
 
 - **World chunk files.** AMP's copy is authoritative; the local `.region.bin`
   files have been modified by local testing. The Nuketown *build* is already on
   AMP — only its markers were missing.
-- **The asset pack.** Nothing in it changed that the server needs. Twelve unused
-  images were deleted locally for tidiness; leaving them on AMP is harmless.
+- **`spellshot/` or `everlands/`.** Player progression lives there and AMP's copy
+  is the real one. The server renames the directory itself on first boot; creating
+  `spellshot/` by hand makes it skip the migration and every player starts at
+  level 1 with their real data stranded in the old folder.
 
 ---
 
@@ -149,6 +183,16 @@ compiled value.
 
 ### Moshpit console
 
+- [ ] `Loaded pack: Spellshot:Game from Spellshot.Game` — and no second pack line
+      for `Everlands.Game`. If both appear, the old folder is still there.
+- [ ] `Migrated progression directory ...everlands -> ...spellshot` on the first
+      boot only. If instead you see `No saved progression at ...` then the
+      migration did not happen and **stop before anyone logs in** — a save will
+      write a fresh file over the empty one.
+- [ ] `Spellshot: NN beans initialised` — proves the bean scan found the renamed
+      package. Zero beans is silent otherwise.
+- [ ] `Registered interaction codec 'CookExplosiveInteraction'` and
+      `'ThrowExplosiveInteraction'` — without these the grenades do nothing.
 - [ ] No `Failed to setup plugin Spellshot:Moshpit`
 - [ ] **`Arena marker store registered`** — the one that matters. If you see
       `ARENAS ARE DISABLED` instead, **stop the server immediately**, before it
@@ -167,8 +211,24 @@ compiled value.
 - [ ] Die once — you get teleported to a spawn
 - [ ] Disconnect and rejoin — no `Assert not in thread!` in the console
 - [ ] Navigator sends you to moshpit; `/lobby` sends you back
-- [ ] Tab opens the loadout page
+- [ ] Tab opens the loadout page, with the player list showing name, team, K/D
+      and a **sane ping** — three digits at most. A four-digit ping means the
+      microsecond conversion regressed.
+- [ ] Clicking a loadout replaces the player list with the edit panel, and the
+      Primary/Secondary/Melee/Utility buttons respond. Dead buttons mean the
+      event bindings did not ride along with the appended panel.
 - [ ] Leaderboard opens and shows data
+
+### New this release
+
+- [ ] Right-click aims on every gun, and firing does not drop the zoom
+- [ ] M40 appears in the loadout menu at level 26 and scopes to 10x
+- [ ] Hold a grenade past three seconds: it kills you, and it is gone from your
+      hotbar afterwards
+- [ ] Killing yourself with your own grenade awards **no** kill, no XP and no
+      Gun Game tier — but still costs a death
+- [ ] The One in the Chamber row in the loadout menu offers Revolver and M40, and
+      OitC issues whichever you picked
 
 ---
 

@@ -5,6 +5,7 @@ import com.hypixel.hytale.codec.Codec
 import com.hypixel.hytale.codec.builder.BuilderCodec
 import com.hypixel.hytale.component.Ref
 import com.hypixel.hytale.component.Store
+import com.hypixel.hytale.protocol.packets.connection.PongType
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType
 import com.hypixel.hytale.server.core.entity.entities.Player
@@ -25,7 +26,11 @@ import net.spellshot.core.ext.play2DSound
 import net.spellshot.core.ext.sendEventTitle
 import net.spellshot.core.ext.sendRawMessage
 import net.spellshot.moshpit.loadout.*
+import net.spellshot.moshpit.minigame.engine.MiniGameEngine
+import net.spellshot.moshpit.minigame.engine.model.StatisticalMiniGameParticipant
+import net.spellshot.moshpit.minigame.engine.ui.TeamAnnouncer
 import org.slf4j.LoggerFactory
+import kotlin.math.roundToInt
 
 class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUser, val loadoutService: LoadoutService) :
     InteractiveCustomUIPage<LoadoutPage.PageData>(
@@ -51,22 +56,28 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
         stats.updateStats(user, builder)
         updateLoadoutBoxes(builder, eventBuilder)
 
-        builder.set("#Edit.Visible", false)
-        builder.set("#ItemSelection.Visible", false)
-        builder.set("#ItemSkins.Visible", false)
+        // The edit panel starts empty and is appended by updateEditLoadout when a
+        // loadout is clicked. Nothing here hides it.
+        //
+        // It used to be part of Menu.ui, hidden with #Edit.Visible = false in this very
+        // batch and revealed on click. On 0.6.0 that disconnects the client:
+        //
+        //   Selected element in CustomUI command was not found. Selector: #Edit.Visible
+        //
+        // An element hidden in the same batch that appends its document is never
+        // materialised, so no later command can address it -- and #ItemSelection and
+        // #ItemSkins live inside #Edit, so they went with it. The event bindings for
+        // the panel's buttons moved into updateEditLoadout for the same reason: the
+        // buttons do not exist yet at this point.
 
+        // Shown by default; updateEditLoadout empties it when a loadout is opened.
+        updatePlayers(builder)
 
         if (loadoutService.progressionManager.canPrestigeLevelUp(user)) {
             builder.set("#PrestigeLevelUpContainer.Visible", true)
             eventBuilder.addEventBinding(
                 CustomUIEventBindingType.Activating, "#PrestigeLevelUpContainer #Button",
                 EventData.of("Action", "prestige"), false
-            )
-        }
-        for (type in LoadoutItemType.entries) {
-            eventBuilder.addEventBinding(
-                CustomUIEventBindingType.Activating, "#Edit #${type.displayName} #Button",
-                EventData.of("Action", "select:${type.name}"), false
             )
         }
     }
@@ -179,9 +190,13 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
             val loadout = loadoutService.getLoadout(user, index) ?: return
             currentLoadoutIndex = index
             val builder = UICommandBuilder()
-            updateEditLoadout(loadout, builder)
+            // The panel is appended here, so its button bindings have to ride along in
+            // the same update. Without the event builder the icons would draw but
+            // clicking Primary/Secondary/Melee/Utility would do nothing at all.
+            val eventBuilder = UIEventBuilder()
+            updateEditLoadout(loadout, builder, eventBuilder)
             updateSkinsContainer(false, builder)
-            sendUpdate(builder)
+            sendUpdate(builder, eventBuilder, false)
             return
         }
         if (action.startsWith("select:")) {
@@ -224,9 +239,136 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
         }
     }
 
+    /**
+     * Draws the online player list: name, K/D this match, ping.
+     *
+     * Scoped to the caller's own session rather than everyone on the server, because
+     * "K/D for the game" only means anything within one match -- a player in another
+     * arena has stats from a game this one is not part of.
+     *
+     * Sorted by kills so the list reads like a scoreboard. Ties keep whatever order
+     * the teams iterate in, which is stable enough for a panel that redraws each time
+     * the menu opens.
+     */
+    private fun updatePlayers(builder: UICommandBuilder) {
+        // Rebuilt from nothing each time rather than updated in place, so the card's
+        // frame is created and destroyed along with its contents.
+        builder.clear("#PlayersHost")
+
+        val session = runCatching {
+            val game = MiniGameEngine.instance.getGameByPlayerUUID(playerRef.uuid) ?: return@runCatching null
+            game.getSessionByUUID(playerRef.uuid)
+        }.getOrNull()
+        // In the lobby or between matches: no card at all, rather than an empty one.
+        if (session == null) return
+
+        builder.append("#PlayersHost", "Pages/Menu/Players.ui")
+
+        // Kept paired with their team rather than flattened, because the side is a
+        // property of the team object and is unrecoverable from the participant alone.
+        val players = session.teams
+            .flatMap { team ->
+                team.participants.values
+                    .filterIsInstance<StatisticalMiniGameParticipant>()
+                    .map { TeamAnnouncer.displayNameOf(team) to it }
+            }
+            .sortedByDescending { (_, participant) -> participant.kills }
+
+        // Free-for-all modes give every player a single-member team, so every side
+        // comes back null. Leaving the heading blank in that case is what keeps the
+        // column from reading as a bug: an empty column under "TEAM" looks broken,
+        // an empty column under nothing looks like spacing.
+        val hasTeams = players.any { (team, _) -> team != null }
+
+        builder.set("#PlayersTitle.Text", "PLAYERS (${players.size})")
+        builder.set("#PlayersHeader #HeaderName.Text", "Player")
+        builder.set("#PlayersHeader #HeaderTeam.Text", if (hasTeams) "Team" else "")
+        builder.set("#PlayersHeader #HeaderKD.Text", "K / D")
+        builder.set("#PlayersHeader #HeaderPing.Text", "Ping")
+
+        for ((index, entry) in players.withIndex()) {
+            val (team, participant) = entry
+            builder.append("#Players", "Pages/Menu/PlayerRow.ui")
+            builder.set("#Players[$index] #Name.Text", participant.playerRef.username)
+            builder.set("#Players[$index] #Team.Text", team.orEmpty())
+            builder.set("#Players[$index] #KD.Text", formatKd(participant.kills, participant.deaths))
+            builder.set("#Players[$index] #Ping.Text", formatPing(participant.playerRef))
+        }
+    }
+
+    /**
+     * Kills, deaths and the ratio between them.
+     *
+     * Zero deaths is not a divide-by-zero to dodge quietly -- it is the score of
+     * someone who has not died yet, and reporting it as their kill count is the
+     * convention every shooter uses. Guarding with `coerceAtLeast(1)` gives the same
+     * number without a special case.
+     */
+    private fun formatKd(kills: Int, deaths: Int): String =
+        "$kills / $deaths  (%.2f)".format(kills.toDouble() / deaths.coerceAtLeast(1))
+
+    /**
+     * Round-trip time in milliseconds, or an em dash.
+     *
+     * [PongType.Raw] is the network round trip -- the number players mean by "ping".
+     * The other two, Direct and Tick, fold in server tick scheduling and read higher.
+     * Period 0 is the shortest averaging window the metric keeps, so this tracks a
+     * connection going bad rather than smoothing it away over minutes.
+     *
+     * **The metric is in MICROSECONDS**, not milliseconds. PingInfo times with
+     * System.nanoTime and converts to its own TIME_UNIT of MICROSECONDS before
+     * recording. Printing the raw average as "ms" showed a local test client at
+     * "2958 ms" -- a number wrong by a factor of a thousand, and one that looks
+     * plausible enough as a bad connection that it could have shipped unnoticed.
+     *
+     * Wrapped because this reaches through four objects into engine internals for a
+     * cosmetic number. If any link changes, the column should read "--" rather than
+     * take the whole menu down with it.
+     */
+    private fun formatPing(ref: PlayerRef): String = runCatching {
+        val micros = ref.packetHandler.getPingInfo(PongType.Raw).pingMetricSet.getAverage(0)
+        if (micros.isNaN() || micros <= 0.0) return@runCatching "--"
+        val millis = micros / 1000.0
+        // Rounding a sub-millisecond connection to "0 ms" reads as no data rather
+        // than as a very good connection, which is what it actually is.
+        if (millis < 1.0) "<1 ms" else "${millis.roundToInt()} ms"
+    }.getOrElse { "--" }
+
+    /**
+     * Empties a container instead of hiding it.
+     *
+     * A group with no title and no rows occupies nothing, so this reads the same to
+     * the player as the old `Visible = false` -- but it leaves the element in the
+     * client's tree, which is the whole point. See the note in [build].
+     */
+    private fun hideItemSelection(builder: UICommandBuilder) {
+        builder.set("#ItemSelection #Title.Text", "")
+        builder.clear("#ItemSelection #Items")
+    }
+
+    private fun hideItemSkins(builder: UICommandBuilder) {
+        builder.set("#ItemSkins #SkinsTitle.Text", "")
+        builder.clear("#ItemSkins #Skins")
+    }
+
+    /**
+     * Removes the player list entirely, frame included.
+     *
+     * Clearing the host rather than the rows: the card carries a panel background and
+     * a divider, so emptying its contents left the chrome behind as a styled empty box
+     * on the weapon select screen.
+     */
+    private fun hidePlayers(builder: UICommandBuilder) {
+        builder.clear("#PlayersHost")
+    }
+
     private fun updateSkinsContainer(value: Boolean, providedBuilder: UICommandBuilder? = null) {
         val builder = providedBuilder ?: UICommandBuilder()
-        builder.set("#ItemSkins.Visible", value)
+        if (value) {
+            builder.set("#ItemSkins #SkinsTitle.Text", "SELECT SKIN")
+        } else {
+            hideItemSkins(builder)
+        }
         if (providedBuilder == null) {
             sendUpdate(builder)
         }
@@ -276,6 +418,7 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
             LoadoutItemType.SECONDARY -> loadout.copy(secondary = itemId)
             LoadoutItemType.MELEE -> loadout.copy(melee = itemId)
             LoadoutItemType.UTILITY -> loadout.copy(utility = itemId)
+            LoadoutItemType.OITC -> loadout.copy(oitc = itemId)
         }
         // Commit before rendering: an async save here used to be overwritten by
         // a stale write queued during a page rebuild.
@@ -283,12 +426,43 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
         val builder = UICommandBuilder()
         val eventBuilder = UIEventBuilder()
         updateLoadoutBoxes(builder, eventBuilder, loadouts = savedLoadouts)
-        updateEditLoadout(nextLoadout, builder)
+        updateEditLoadout(nextLoadout, builder, eventBuilder)
         sendUpdate(builder, eventBuilder, false)
     }
 
-    private fun updateEditLoadout(loadout: Loadout, providedBuilder: UICommandBuilder? = null) {
+    /**
+     * Draws the edit panel for [loadout], creating it if it is not already on screen.
+     *
+     * The panel is a document appended into the empty `#Edit` container rather than a
+     * permanent part of Menu.ui that gets shown and hidden -- see the note in [build].
+     * Re-appending from scratch each time is what makes that safe: every element below
+     * is guaranteed to exist in this same batch, so no command can reference something
+     * the client pruned.
+     *
+     * The buttons are new elements each time, so their bindings have to be re-added
+     * with them. A stale binding is not an error the client reports; the button simply
+     * stops responding, which is indistinguishable from a UI that has frozen.
+     */
+    private fun updateEditLoadout(
+        loadout: Loadout,
+        providedBuilder: UICommandBuilder? = null,
+        providedEventBuilder: UIEventBuilder? = null,
+    ) {
         val builder = providedBuilder ?: UICommandBuilder()
+        val eventBuilder = providedEventBuilder ?: UIEventBuilder()
+
+        // The player list and the edit panel are alternatives, not neighbours: opening
+        // a loadout empties the list, and reopening the menu rebuilds it.
+        hidePlayers(builder)
+
+        builder.clear("#Edit")
+        builder.append("#Edit", "Pages/Menu/Edit.ui")
+        for (type in LoadoutItemType.entries) {
+            eventBuilder.addEventBinding(
+                CustomUIEventBindingType.Activating, "#Edit #${type.displayName} #Button",
+                EventData.of("Action", "select:${type.name}"), false
+            )
+        }
 
         val primaryPath = loadout.primary?.let {
             "Images/Guns/${loadoutService.getItemByAllowance(user, playerRef, it, { sel -> sel.primaryGun })}.png"
@@ -306,26 +480,38 @@ class LoadoutPage(val player: Player, val ref: PlayerRef, val user: SpellshotUse
             "Images/Utility/${loadoutService.getItemByAllowance(user, playerRef, it, { sel -> sel.utility })}.png"
         } ?: "Images/Empty.png"
 
-        builder.set("#Edit.Visible", true)
+        // Deliberately not run through getItemByAllowance, unlike the four above.
+        //
+        // That check calls isItemLocked, which searches every row by item id and takes
+        // the first hit -- it has no idea which row is being drawn. The Revolver and
+        // the M40 each appear twice now, as a secondary/primary and again here, so the
+        // lookup finds the other row's level (5 and 26) and reports both as locked for
+        // a new player. The icon would then fall back to the starter gun while OitC
+        // actually issued what they picked: the menu would show one gun and the mode
+        // would hand them another.
+        //
+        // Nothing is bypassed by skipping it. Both entries are level 0 in the OITC row
+        // by design, and chosenGun validates the saved id against gunItemIds before
+        // issuing anything, so that is where this slot's authority lives.
+        val oitcPath = loadout.oitc?.let { "Images/Guns/$it.png" } ?: "Images/Empty.png"
+
         builder.set("#Edit #EditLabel.Text", "EDITING: LOADOUT #${currentLoadoutIndex + 1}")
         builder.set("#Edit #Primary #Icon.Background", primaryPath)
         builder.set("#Edit #Secondary #Icon.Background", secondaryPath)
         builder.set("#Edit #Melee #Icon.Background", meleePath)
         builder.set("#Edit #Utility #Icon.Background", utilityPath)
+        builder.set("#Edit #Oitc #Icon.Background", oitcPath)
 
-        builder.clear("#ItemSelection #Items")
-        builder.clear("#ItemSkins #Skins")
-        builder.set("#ItemSelection.Visible", false)
-        builder.set("#ItemSkins.Visible", false)
+        hideItemSelection(builder)
+        hideItemSkins(builder)
 
         if (providedBuilder == null) {
-            sendUpdate(builder)
+            sendUpdate(builder, eventBuilder, false)
         }
     }
 
     private fun updateItemSelection(title: String, items: List<LoadoutPreviewItem>, type: LoadoutItemType) {
         val builder = UICommandBuilder()
-        builder.set("#ItemSelection.Visible", true)
         builder.set("#ItemSelection #Title.Text", title)
         builder.clear("#ItemSelection #Items")
         updateSkinsContainer(false, builder)

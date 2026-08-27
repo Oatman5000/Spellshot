@@ -1,6 +1,6 @@
 {
   "Base": [
-    "UI/Reticles/Group 1(2).png"
+    "UI/Reticles/Default.png"
   ],
   "ServerEvents": {
     "OnHit": {

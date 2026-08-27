@@ -18,9 +18,8 @@ import org.springframework.stereotype.Component
  * Item ids must match the filenames under Server/Item/Items/Weapons -- note the
  * Thompson's id is "Thompson" even though its model file is Tomy.blockymodel.
  *
- * This is every firearm in the mod except the M40, which stays out for the same
- * reason it is commented out of ProgressionConfig. Re-add "M40" below to bring
- * it back; nothing else needs changing, the ladder length is read from the list.
+ * This is every firearm in the mod. The ladder length is read from the list, so
+ * adding or removing a rung needs no other change.
  */
 @Serializable
 @SerialName("minigame.GunGameConfig")
@@ -35,8 +34,9 @@ data class GunGameConfig(
         "DoubleBarrel",   //  6   2 rnd shotgun
         "Remington870",   //  7   5 rnd shotgun
         "Famas",          //  8  30 rnd rifle
-        "ImpactGrenade",  //  9  detonates on contact
-        "FragGrenade",    // 10  timed fuse -- the last rung
+        "M40",            //  9   2 rnd sniper, 10x scope on Secondary
+        "ImpactGrenade",  // 10  detonates on contact
+        "FragGrenade",    // 11  timed fuse -- the last rung
     ),
 
     @Description("Always carried alongside the tier weapon, in the second slot. Null to disable.")

@@ -224,7 +224,8 @@ class LoadoutService(
             primary = config.primaryGun,
             secondary = config.secondaryGun,
             melee = config.melee,
-            utility = config.utility
+            utility = config.utility,
+            oitc = config.oitcGun
         )
     }
 

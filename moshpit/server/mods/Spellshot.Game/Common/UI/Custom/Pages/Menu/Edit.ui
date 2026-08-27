@@ -1,0 +1,92 @@
+// The loadout edit panel, split out of Menu.ui so it can be appended on demand.
+//
+// It used to live inside Menu.ui and be shown and hidden with #Edit.Visible. On
+// 0.6.0 an element hidden in the same batch that appends its document never gets
+// materialised client-side, so the later "show it" command failed to resolve and
+// the client dropped the connection with:
+//
+//   Selected element in CustomUI command was not found. Selector: #Edit.Visible
+//
+// Menu.ui now holds an empty Group #Edit. Clicking a loadout appends this file
+// into it; leaving edit mode clears it. Nothing is ever hidden, so nothing can
+// go missing.
+
+$C = "MenuCommon.ui";
+
+Group {
+  Padding: (Horizontal: 100, Top: 150);
+  LayoutMode: Left;
+  Group {
+    LayoutMode: Top;
+    Label #EditLabel {
+      Text: "";
+      Padding: (Bottom: 6);
+      Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+    }
+    $C.@ListItem #Primary {}
+    $C.@ListItem #Secondary {
+      #Type {
+        Text: "Secondary";
+      }
+      #Icon {
+        Background: "../../Images/Guns/M1911.png";
+        Anchor: (Width: 50, Height: 50, Right: 0);
+      }
+    }
+    $C.@ListItem #Melee {
+      #Type {
+        Text: "Melee";
+      }
+      #Icon {
+        Background: "../../Images/Melee/CombatKnife.png";
+        Anchor: (Width: 40, Height: 40, Right: 0);
+      }
+    }
+    $C.@ListItem #Utility {
+      #Type {
+        Text: "Utility";
+      }
+      #Icon {
+        Background: "../../Images/Utility/FragGrenade.png";
+        Anchor: (Width: 35, Height: 35, Right: 0);
+      }
+    }
+    // One in the Chamber only. The id must stay "Oitc" -- LoadoutItemType.OITC
+    // splices its displayName straight into the selector for this row.
+    $C.@ListItem #Oitc {
+      #Type {
+        Text: "One in the Chamber";
+      }
+      #Icon {
+        Background: "../../Images/Guns/Revolver.png";
+        Anchor: (Width: 50, Height: 50, Right: 0);
+      }
+    }
+  }
+
+  Group #ItemSelection {
+    LayoutMode: Top;
+    Padding: (Left: 20);
+    Label #Title {
+      Text: "";
+      Padding: (Bottom: 6);
+      Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+    }
+    Group #Items {
+      LayoutMode: Top;
+    }
+  }
+
+  Group #ItemSkins {
+    LayoutMode: Top;
+    Padding: (Left: 20);
+    Label #SkinsTitle {
+      Text: "";
+      Padding: (Bottom: 6);
+      Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
+    }
+    Group #Skins {
+      LayoutMode: Top;
+    }
+  }
+}

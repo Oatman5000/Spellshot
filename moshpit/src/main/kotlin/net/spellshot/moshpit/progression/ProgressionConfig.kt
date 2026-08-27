@@ -23,8 +23,13 @@ data class ProgressionConfig(
             ItemProgressionConfig("Famas", 12),
             ItemProgressionConfig("Thompson", 10),
             ItemProgressionConfig("FAMP10", 18),
-            // M40 pulled from selection for now. The item, animations and lang
-            // entry are all still in place -- re-add this line to bring it back.
+            // The M40 fires with Revolver_Shoot rather than an interaction of its
+            // own -- 150 head, 85 chest, 80 blocks -- so the two guns are welded
+            // together and retuning either one moves both. What makes it a sniper
+            // rather than a second revolver is its two-round magazine and the 10x
+            // scope on Secondary, not its damage. Give it M40_Shoot before touching
+            // those numbers.
+            ItemProgressionConfig("M40", 26),
             ItemProgressionConfig("Remington870", 34),
             ItemProgressionConfig("DoubleBarrel", 42)
         ),
@@ -41,6 +46,15 @@ data class ProgressionConfig(
             ItemProgressionConfig("FragGrenade", 0),
             ItemProgressionConfig("ImpactGrenade", 8),
             ItemProgressionConfig("Syringe", 16)
+        ),
+        // One in the Chamber picks from here and nowhere else. Both are unlocked
+        // from level 1 on purpose: OitC is meant to put everyone on equal terms, so
+        // gating the sniper behind a level would hand veterans a scope in the one
+        // mode built on nobody having an advantage. It is a choice, not a reward --
+        // four shots and no scope, or two shots and a 10x.
+        LoadoutItemType.OITC to listOf(
+            ItemProgressionConfig("Revolver", 0),
+            ItemProgressionConfig("M40", 0)
         )
     ),
 ) {

@@ -1,0 +1,44 @@
+// One line of the Tab menu's player list: name, side, this match's K/D, ping.
+//
+// SlotSmall.png at border 12 is the same frame Stats.ui gives its LEVEL / KILLS /
+// DEATHS boxes, which is what a short labelled row looks like on this screen. The
+// full-size Slot.png would be wrong twice over: it is the container frame, and its
+// border 24 must be at most half the rendered size, so at 38px tall the chamfer
+// would be over-stretched.
+//
+// Column widths match the header in Players.ui exactly -- they are two separate
+// elements drawing one table, so a width changed in one has to change in both or
+// the headings stop sitting over their columns.
+
+Group #PlayerRow {
+  LayoutMode: Left;
+  Padding: (Vertical: 2, Horizontal: 12);
+  Anchor: (Height: 38);
+  Background: (TexturePath: "../../Images/Hextech/SlotSmall.png", Border: 12);
+
+  Label #Name {
+    Text: "";
+    Anchor: (Width: 250);
+    Style: (VerticalAlignment: Center, TextColor: #FFFFFF, FontSize: 16, RenderBold: true);
+  }
+
+  // Blank in the free-for-all modes, where every player is their own team and a
+  // side would be meaningless. LoadoutPage decides; see TeamAnnouncer.displayNameOf.
+  Label #Team {
+    Text: "";
+    Anchor: (Width: 110);
+    Style: (VerticalAlignment: Center, TextColor: #8FA3B8, FontSize: 14, RenderBold: true, RenderUppercase: true);
+  }
+
+  Label #KD {
+    Text: "";
+    Anchor: (Width: 160);
+    Style: (VerticalAlignment: Center, TextColor: #FFFFFF, FontSize: 16, RenderBold: true);
+  }
+
+  Label #Ping {
+    Text: "";
+    Anchor: (Width: 110);
+    Style: (VerticalAlignment: Center, TextColor: #8FA3B8, FontSize: 14, RenderBold: true);
+  }
+}

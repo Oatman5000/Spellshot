@@ -12,71 +12,34 @@ Group {
     LayoutMode: Left;
   }
 
+  // Filled by appending Pages/Menu/Edit.ui when a loadout is clicked, and
+  // emptied again on the way out. Deliberately left as a bare container: an
+  // element hidden in the batch that creates it is not addressable later on
+  // 0.6.0, which disconnected the client. See Edit.ui.
   Group #Edit {
-    Padding: (Horizontal: 100, Top: 150);
     LayoutMode: Left;
-    Group {
-      LayoutMode: Top;
-      Label #EditLabel {
-        Text: "EDITING: LOADOUT #1";
-        Padding: (Bottom: 6);
-        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
-      }
-      $C.@ListItem #Primary {}
-      $C.@ListItem #Secondary {
-        #Type {
-          Text: "Secondary";
-        }
-        #Icon {
-          Background: "../../Images/Guns/M1911.png";
-          Anchor: (Width: 50, Height: 50, Right: 0);
-        }
-      }
-      $C.@ListItem #Melee {
-        #Type {
-          Text: "Melee";
-        }
-        #Icon {
-          Background: "../../Images/Melee/CombatKnife.png";
-          Anchor: (Width: 40, Height: 40, Right: 0);
-        }
-      }
+  }
 
-      $C.@ListItem #Utility {
-        #Type {
-          Text: "Utility";
-        }
-        #Icon {
-          Background: "../../Images/Utility/FragGrenade.png";
-          Anchor: (Width: 35, Height: 35, Right: 0);
-        }
-      }
-    }
-    Group #ItemSelection {
-      LayoutMode: Top;
-      Padding: (Left: 20);
-      Label #Title {
-        Text: "SELECT YOUR PRIMARY WEAPON";
-        Padding: (Bottom: 6);
-        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
-      }
-      Group #Items {
-        LayoutMode: Top;
-      }
-    }
+  // Who is online, their K/D this match and their ping. Filled by LoadoutPage on
+  // build and emptied when the edit panel opens, so the two never share the screen.
+  // Emptied, not hidden: an element hidden in the batch that creates it stops being
+  // addressable on 0.6.0, which is what disconnected the client. See Edit.ui.
+  // Host for the player list. Empty here: LoadoutPage appends Players.ui into it on
+  // build and clears it when a loadout is opened, so the card and its frame come and
+  // go together. Nothing is hidden -- see Edit.ui for why.
+  //
+  // Centred with MiddleCenter, the way Pages/Vote/Menu.ui centres its card, then
+  // biased upward by reserving space at the bottom. Anchor Bottom shrinks the box
+  // this centres within, so the midpoint rises by half the value: 330 lifts it about
+  // 165px and clears the loadout cards. Expressed as a reservation rather than a
+  // fixed top offset so it stays put across resolutions.
+  Group {
+    FlexWeight: 1;
+    LayoutMode: MiddleCenter;
+    Anchor: (Top: 0, Bottom: 330);
 
-
-    Group #ItemSkins {
+    Group #PlayersHost {
       LayoutMode: Top;
-      Padding: (Left: 20);
-      Label {
-        Text: "SELECT SKIN";
-        Padding: (Bottom: 6);
-        Style: (TextColor: #8FA3B8(0.6), FontSize: 18, RenderBold: true, RenderUppercase: true);
-      }
-      Group #Skins {
-        LayoutMode: Top;
-      }
     }
   }
   $Stats.@StatsContainer {}

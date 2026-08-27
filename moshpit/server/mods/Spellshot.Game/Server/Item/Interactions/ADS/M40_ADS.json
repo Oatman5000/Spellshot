@@ -1,0 +1,23 @@
+{
+  "$Comment": "Scoped aim for the M40. Wielding here, unlike the other guns: the sniper hides the first-person weapon and covers the screen with the scope overlay, so the guard reticle Wielding draws is not visible anyway. Heavy slowdown and no sprint are the cost of a 10x scope. CancelOnOtherClick is false so firing does not drop the scope. ScreenEffects/Sniper.png is a vanilla texture -- deliberately, since this pack's own reticle images were deleted.",
+  "Type": "Wielding",
+  "CancelOnOtherClick": false,
+  "HorizontalSpeedMultiplier": 0.35,
+  "Effects": {
+    "MovementEffects": {
+      "DisableSprint": true
+    },
+    "HideFirstPersonHeldItem": true,
+    "Zoom": {
+      "MagnificationMultiplier": 10,
+      "MouseSensitivityMultiplier": 0.15,
+      "OverlayTexture": "ScreenEffects/Sniper.png",
+      "DepthOfField": false,
+      "ForcePerspective": "FirstPerson",
+      "InLerp": 0.18,
+      "OutLerp": 0.25,
+      "OverlayFade": true,
+      "OverlayFadePerSecond": 8
+    }
+  }
+}

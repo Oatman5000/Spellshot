@@ -14,12 +14,21 @@ import org.springframework.stereotype.Component
  * power-ups, killstreak rewards -- is switched off elsewhere in the mode rather
  * than being made configurable, because turning any of them back on stops it
  * being One in the Chamber.
+ *
+ * [gunItemIds] does not weaken that. It is still one gun, one knife; the player
+ * chooses which gun in the loadout menu rather than being handed a fixed one.
+ * Nobody carries two, and the choice is made before the match, not during it.
  */
 @Serializable
 @SerialName("minigame.OITCConfig")
 data class OITCConfig(
-    @Description("Item given as the primary weapon. Must be a gun with an 'ammo' tag.")
-    val gunItemId: String = "Revolver",
+    @Description(
+        "Guns this mode will issue. Which one a player gets is their own choice, made " +
+            "in the loadout menu's One in the Chamber row; this list is the whitelist " +
+            "that choice is checked against, so a player who picks something not named " +
+            "here falls back to the first entry. Each must be a gun with an 'ammo' tag."
+    )
+    val gunItemIds: List<String> = listOf("Revolver", "M40"),
 
     @Description("Item given as the fallback melee weapon.")
     val meleeItemId: String = "CombatKnife",

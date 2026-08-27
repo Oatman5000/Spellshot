@@ -12,6 +12,12 @@ import java.util.concurrent.ConcurrentHashMap
  */
 data class CookingExplosive(
     val explodeAt: Instant,
+    /**
+     * The hotbar item the pin was pulled on, so a grenade that goes off in your hand
+     * can still be taken off you. By then the interaction that held the item context
+     * is long gone, and the blast has no other way to know what to consume.
+     */
+    val itemId: String?,
     val projectileConfigId: String,
     val explosionParticleId: String,
     val explosionSoundId: String,

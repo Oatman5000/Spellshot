@@ -1,0 +1,22 @@
+{
+  "$Comment": "Aim-down-sights for the Famas. Charging rather than Wielding on purpose: Wielding draws the block/guard reticle, which is wrong on a gun and would sit visibly on screen the whole time you aim. AllowIndefiniteHold keeps it up for as long as Secondary is held and there is no Next entry, so releasing clears the zoom immediately with no timer to wait out. CancelOnOtherClick is false so firing does not drop the aim.",
+  "Type": "Charging",
+  "AllowIndefiniteHold": true,
+  "DisplayProgress": false,
+  "CancelOnOtherClick": false,
+  "HorizontalSpeedMultiplier": 0.65,
+  "Effects": {
+    "MovementEffects": {
+      "DisableSprint": true
+    },
+    "Zoom": {
+      "MagnificationMultiplier": 1.6,
+      "MouseSensitivityMultiplier": 0.75,
+      "DepthOfField": false,
+      "ForcePerspective": "FirstPerson",
+      "InLerp": 0.08,
+      "OutLerp": 0.12,
+      "OverlayFade": false
+    }
+  }
+}

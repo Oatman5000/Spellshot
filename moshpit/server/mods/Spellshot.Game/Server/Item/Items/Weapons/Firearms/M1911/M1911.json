@@ -42,7 +42,19 @@
           "Next": "M1911_Shoot",
           "Failed": "M1911_Reload"
         }
-      ]
+      ],
+      "Rules": {
+        "BlockedBy": [
+          "Primary",
+          "Ability1",
+          "Ability2",
+          "Ability3",
+          "Use",
+          "Pick",
+          "SwapFrom",
+          "SwapTo"
+        ]
+      }
     },
     "Ability3": {
       "Interactions": [
@@ -111,6 +123,24 @@
           "SwapFrom"
         ]
       }
+    },
+    "Secondary": {
+      "$Comment": "Hold to aim. BlockedBy is the standard input set minus Primary, so aiming is not interrupted by firing; the Primary above drops Secondary from its own list for the same reason in the other direction. Get either one wrong and the two chains block each other: the zoom snaps off on every shot, or the gun will not fire while aimed.",
+      "Rules": {
+        "BlockedBy": [
+          "Secondary",
+          "Ability1",
+          "Ability2",
+          "Ability3",
+          "Use",
+          "Pick",
+          "SwapFrom",
+          "SwapTo"
+        ]
+      },
+      "Interactions": [
+        "M1911_ADS"
+      ]
     }
   },
   "Tags": {

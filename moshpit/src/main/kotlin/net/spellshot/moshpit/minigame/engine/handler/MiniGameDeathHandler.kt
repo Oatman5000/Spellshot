@@ -73,7 +73,19 @@ class MiniGameDeathHandler(val engine: MiniGameEngine) : DeathSystems.OnDeathSys
             val killerRef = source.ref
             if (killerRef.isValid) {
                 val killer = store.getComponent(killerRef, PlayerRef.getComponentType())
-                if (killer != null) {
+                // Killing yourself credits you with nothing.
+                //
+                // Your own grenade, your own airstrike and an OitC bullet that comes
+                // back at you all arrive here with the killer resolving to the victim,
+                // and the whole block below then treats it as a normal kill: +1 kill,
+                // a heal, the kill sound, a killcam of yourself, and a
+                // MiniGameKillEvent -- which is what pays XP, refunds an OitC bullet
+                // and advances a Gun Game tier. Suicide was a reward in every mode.
+                //
+                // Gated here rather than at the +1 so all of it goes, not just the
+                // counter. The death itself is unaffected: MiniGameDeathEvent fires
+                // above this, so it still costs you a death and a respawn.
+                if (killer != null && killer.uuid != playerRef.uuid) {
                     val killerPair = session.getTeamAndParticipantByUUID(killer.uuid)
                     if (killerPair != null) {
                         if (killerPair.second is StatisticalMiniGameParticipant) {

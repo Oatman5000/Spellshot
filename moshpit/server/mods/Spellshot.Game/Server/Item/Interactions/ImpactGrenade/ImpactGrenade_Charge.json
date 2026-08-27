@@ -2,6 +2,15 @@
   "Type": "Serial",
   "Interactions": [
     {
+      "Type": "CookExplosiveInteraction",
+      "TimerInMillis": 3000,
+      "DamageRadius": 10,
+      "DamageAmount": 250,
+      "DamageFalloff": 32,
+      "ExplosionParticleId": "Explosion_Big",
+      "ExplosionSoundId": "FragGrenade_Explode"
+    },
+    {
       "Type": "Charging",
       "FailOnDamage": false,
       "DisplayProgress": true,

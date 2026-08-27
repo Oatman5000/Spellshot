@@ -46,6 +46,11 @@ Group {
         Anchor: (Width: 35, Height: 35, Right: 0);
         Background: "../../Images/Guns/AR14.png";
       }
+      Group #OitcIcon {
+        Visible: true;
+        Anchor: (Width: 50, Height: 50, Right: 0);
+        Background: "../../Images/Guns/AR14.png";
+      }
     }
   }
 }
