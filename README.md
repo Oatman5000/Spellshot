@@ -1,6 +1,6 @@
 # Spellshot
 
-A multi-mode PvP server for **Hytale**, running on Update 6 / Server `0.5.7`.
+A multi-mode PvP server for **Hytale**, running on Update 6 / Server `0.6.0`.
 
 Six game modes, a persistent progression and loadout system, a hextech-styled
 HUD, and a separate lobby instance with a cross-server leaderboard.
