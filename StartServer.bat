@@ -96,6 +96,16 @@ mklink /H "%TEST%\HytaleServer.jar" "%SRVJAR%" >nul 2>&1
 if not exist "%TEST%\HytaleServer.jar" copy "%SRVJAR%" "%TEST%\HytaleServer.jar" >nul
 echo   Linked the current server jar.
 
+REM  RESYNC THE ASSET PACKS, removing any that no longer exist in source.
+REM
+REM  mods\ used to be copied only when .local-test was created. A pack that was
+REM  renamed -- Everlands.Game -> Spellshot.Game -- then left BOTH folders in the
+REM  scratch server, so the old pack kept loading alongside the new one and every
+REM  asset in it resolved twice. Mirroring the directory deletes the stale copy.
+echo   Syncing asset packs...
+robocopy "moshpit\server\mods" "%TEST%\mods" /MIR /XF "*.jar" /NFL /NDL /NJH /NJS /NP >nul
+copy /Y "moshpit\server\mods\spark-1.10.165-beta2-hytale.jar" "%TEST%\mods\" >nul 2>&1
+
 copy /Y "moshpit\build\libs\moshpit-plugin.jar" "%TEST%\mods\moshpit-plugin.jar" >nul
 echo   Installed the freshly built plugin.
 

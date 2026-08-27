@@ -114,7 +114,7 @@ the marker should go:
 Then register the id in `MiniGameArenasConfig`, and list which modes may use it
 in `MoshpitConfig`. Team modes need `team:` spawns; Hardpoint needs a
 `hardpoint:` marker. Vote-screen previews go in
-`Everlands.Game/Common/UI/Custom/Maps/` as `<id>.png`.
+`Spellshot.Game/Common/UI/Custom/Maps/` as `<id>.png`.
 
 **[`moshpit/ARENAS.md`](moshpit/ARENAS.md) is the full walkthrough** — marker
 counts per mode, the airstrike box, how to clear an arena before rebuilding it,
@@ -148,7 +148,7 @@ Everlands ran on Spookline's `hyboot` platform. This port stands alone:
 
 | Upstream | Here |
 |---|---|
-| `HUsers` — cross-server user store | `UserStore` — per-instance `everlands/users.json` |
+| `HUsers` — cross-server user store | `UserStore` — per-instance `spellshot/users.json` |
 | `HMatchmakingService` — queue-based server transfer | `PlayerRef.referToServer` — Hytale's native referral |
 | `HRemoteConfigs` — remote config service | `Config<T>` — in-code defaults, some env-overridable |
 | `kotale` — Kotlin plugin framework | `EverlandsPlugin` — Spring context in the Hytale classloader |

@@ -1,0 +1,44 @@
+{
+  "TranslationProperties": {
+    "Name": "spellshot.items.ImpactGrenade.name"
+  },
+  "Categories": [
+    "Items.Weapons"
+  ],
+  "Quality": "Epic",
+  "ItemLevel": 20,
+  "PlayerAnimationsId": "Item",
+  "Interactions": {
+    "Primary": {
+      "Interactions": [
+        "ImpactGrenade_Charge"
+      ],
+      "RequireNewClick": true
+    }
+  },
+  "MaxStack": 2,
+  "IconProperties": {
+    "Scale": 1.3,
+    "Rotation": [
+      5,
+      42,
+      5
+    ],
+    "Translation": [
+      0,
+      -8
+    ]
+  },
+  "Model": "Items/ImpactGrenade/Impact_Grenade.blockymodel",
+  "Texture": "Items/ImpactGrenade/impact_grenade.png",
+  "Icon": "Icons/ItemsGenerated/ImpactGrenade.png",
+  "Tags": {
+    "Type": [
+      "Weapon"
+    ],
+    "Family": [
+      "Bomb"
+    ]
+  },
+  "Weapon": {}
+}

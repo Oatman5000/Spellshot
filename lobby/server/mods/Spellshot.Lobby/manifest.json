@@ -1,0 +1,15 @@
+{
+  "Group": "Spellshot",
+  "Name": "Lobby",
+  "Version": "0.3.0",
+  "Description": "Spellshot lobby assets and UI",
+  "ServerVersion": "^0.6.0",
+  "Authors": [{ "Name": "XiaBit" }],
+  "Website": "",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "SubPlugins": []
+}

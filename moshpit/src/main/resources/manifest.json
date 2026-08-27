@@ -1,9 +1,9 @@
 {
-  "Group": "Everlands",
+  "Group": "Spellshot",
   "Name": "Moshpit",
-  "Version": "0.3.0.0",
-  "Description": "Everlands Moshpit",
-  "Main": "net.everlands.moshpit.MoshpitPlugin",
+  "Version": "0.3.0",
+  "Description": "Spellshot Moshpit",
+  "Main": "net.spellshot.moshpit.MoshpitPlugin",
   "ServerVersion": "^0.6.0",
   "Authors": [{ "Name": "XiaBit" }],
   "Dependencies": {},

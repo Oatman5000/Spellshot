@@ -25,8 +25,13 @@ auth.key
 *.pem
 .env
 
-# Player data. everlands/users.json is the progression store (levels, stats,
+# Player data. spellshot/users.json is the progression store (levels, stats,
 # saved loadouts); universe/players holds Hytale's own per-player saves.
+#
+# Both names are listed. The directory was called everlands/ before the rename,
+# and UserStore migrates it on first boot -- but a server that has not booted
+# since, or a backup taken before it did, still has the old name. Ignoring only
+# the new one would quietly start committing player data on those.
 #
 # The `**/` prefixes matter. A pattern containing a slash is anchored to the
 # directory holding the .gitignore, so a bare `universe/players/` here only ever
@@ -41,6 +46,8 @@ auth.key
 # file lives under `net/everlands/`, that one line silently excluded the entire
 # Kotlin codebase from the repository. 161 source files, no warning, and a
 # published repo that built nothing.
+/spellshot/
+*/server/spellshot/
 /everlands/
 */server/everlands/
 **/universe/players/

@@ -1,4 +1,4 @@
-# Everlands Lobby — deployment
+# Spellshot Lobby — deployment
 
 A standalone lobby for its own Hytale instance. Salvaged from the `lobby/`
 module of the original Everlands source, which was dropped during the standalone
@@ -18,7 +18,7 @@ Output: `lobby\build\libs\lobby-plugin.jar`
 | From | To |
 |---|---|
 | `lobby\build\libs\lobby-plugin.jar` | `/<instance>/hytale/Server/mods/lobby-plugin.jar` |
-| `lobby\server\mods\Everlands.Lobby\` | `/<instance>/hytale/Server/mods/Everlands.Lobby/` |
+| `lobby\server\mods\Spellshot.Lobby\` | `/<instance>/hytale/Server/mods/Spellshot.Lobby/` |
 
 **Do not also install `moshpit-plugin.jar`.** Moshpit creates a match on
 `PlayerSetupConnectEvent` and calls `error("No arenas available")` on a world
@@ -54,15 +54,15 @@ nobody gets winded walking around.
 
 | File | Field |
 |---|---|
-| `lobby/src/main/kotlin/net/everlands/lobby/LobbyConfig.kt` | `servers[0].host`, and `discordInvite` |
-| `moshpit/src/main/kotlin/net/everlands/moshpit/moshpit/LobbyReferral.kt` | `host` |
+| `lobby/src/main/kotlin/net/spellshot/lobby/LobbyConfig.kt` | `servers[0].host`, and `discordInvite` |
+| `moshpit/src/main/kotlin/net/spellshot/moshpit/moshpit/LobbyReferral.kt` | `host` |
 
 To keep your address out of commits while still building with it, mark both files
 `skip-worktree` after editing:
 
 ```powershell
-git update-index --skip-worktree lobby/src/main/kotlin/net/everlands/lobby/LobbyConfig.kt
-git update-index --skip-worktree moshpit/src/main/kotlin/net/everlands/moshpit/moshpit/LobbyReferral.kt
+git update-index --skip-worktree lobby/src/main/kotlin/net/spellshot/lobby/LobbyConfig.kt
+git update-index --skip-worktree moshpit/src/main/kotlin/net/spellshot/moshpit/moshpit/LobbyReferral.kt
 ```
 
 Git then ignores your local edits entirely — `git status` stays clean and pushes
@@ -76,11 +76,11 @@ are only usable if you launch the server yourself or run it under Docker:
 
 | Instance | Variable | What it does |
 |---|---|---|
-| **Lobby** | `EVERLANDS_GAME_HOST` | Where the Navigator sends players |
-| **Lobby** | `EVERLANDS_GAME_PORT` | Defaults to 5524 |
-| **Lobby** | `EVERLANDS_DISCORD_INVITE` | Printed by the Discord button |
-| **Moshpit** | `EVERLANDS_LOBBY_HOST` | Where `/lobby` sends players back to |
-| **Moshpit** | `EVERLANDS_LOBBY_PORT` | Defaults to 5523 |
+| **Lobby** | `SPELLSHOT_GAME_HOST` | Where the Navigator sends players |
+| **Lobby** | `SPELLSHOT_GAME_PORT` | Defaults to 5524 |
+| **Lobby** | `SPELLSHOT_DISCORD_INVITE` | Printed by the Discord button |
+| **Moshpit** | `SPELLSHOT_LOBBY_HOST` | Where `/lobby` sends players back to |
+| **Moshpit** | `SPELLSHOT_LOBBY_PORT` | Defaults to 5523 |
 
 Blank the host deliberately and the lobby says the server has no address, while
 `/lobby` reports the game server is standalone. Both log it too.
@@ -135,7 +135,7 @@ you can deploy this and turn it on later.
 Any Redis 6+ will do. It only ever holds one key.
 
 ```
-everlands:leaderboard:v1   →  JSON snapshot, 900s TTL
+spellshot:leaderboard:v1   →  JSON snapshot, 900s TTL
 ```
 
 The TTL matters: if the game server goes down, the board expires rather than the
@@ -151,7 +151,7 @@ blank by default, which disables everything.
 | `host` | Blank = leaderboard off entirely |
 | `port` | 6379 |
 | `password` | Blank for none |
-| `leaderboardKey` | `everlands:leaderboard:v1` |
+| `leaderboardKey` | `spellshot:leaderboard:v1` |
 | `snapshotTtlSeconds` | 900 |
 
 Game server also has `LeaderboardPublisherConfig`:

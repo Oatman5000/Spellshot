@@ -1,9 +1,9 @@
 {
-  "Group": "Everlands",
+  "Group": "Spellshot",
   "Name": "LobbyPlugin",
-  "Version": "0.3.0.0",
-  "Description": "Everlands lobby",
-  "Main": "net.everlands.lobby.LobbyPlugin",
+  "Version": "0.3.0",
+  "Description": "Spellshot lobby",
+  "Main": "net.spellshot.lobby.LobbyPlugin",
   "ServerVersion": "^0.6.0",
   "Authors": [{ "Name": "XiaBit" }],
   "Dependencies": {},

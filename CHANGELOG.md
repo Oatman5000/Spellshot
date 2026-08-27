@@ -170,8 +170,8 @@ Two things it has to get right, both of which cost time to find:
 
 ### Changed — configuration
 
-Server addresses can be overridden by environment variable (`EVERLANDS_GAME_HOST`,
-`EVERLANDS_LOBBY_HOST`, `EVERLANDS_DISCORD_INVITE`). Nothing is required — the
+Server addresses can be overridden by environment variable (`SPELLSHOT_GAME_HOST`,
+`SPELLSHOT_LOBBY_HOST`, `SPELLSHOT_DISCORD_INVITE`). Nothing is required — the
 compiled defaults still point at the Spellshot deployment and work unchanged.
 
 > Note for forks: those defaults are a **live public server**. Change

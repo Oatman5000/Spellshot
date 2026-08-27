@@ -265,7 +265,7 @@ it, which currently explains why Nuketown is excluded.
 ./gradlew :moshpit:shadowJar
 ```
 
-Optional: a `<id>.png` in `Everlands.Game/Common/UI/Custom/Maps/` for the vote
+Optional: a `<id>.png` in `Spellshot.Game/Common/UI/Custom/Maps/` for the vote
 screen, and `dieOnWater` / `dieOnWaterHeight` on the `MiniGameArena` entry if the
 map has water or a kill floor.
 

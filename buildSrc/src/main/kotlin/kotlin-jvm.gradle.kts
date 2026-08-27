@@ -10,8 +10,8 @@ kotlin {
     jvmToolchain(25)
 }
 
-group = "net.everlands"
-version = "0.3.0.0"
+group = "net.spellshot"
+version = "0.3.0"
 
 repositories {
     mavenCentral()

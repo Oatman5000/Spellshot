@@ -139,7 +139,7 @@ Two things to know about this arrangement: a `git pull` that changes either file
 will fail with a confusing message until you unprotect it, and a fresh clone of
 your own repo will have blanks and need the values re-entered.
 
-`EVERLANDS_GAME_HOST`, `EVERLANDS_LOBBY_HOST` and `EVERLANDS_DISCORD_INVITE`
+`SPELLSHOT_GAME_HOST`, `SPELLSHOT_LOBBY_HOST` and `SPELLSHOT_DISCORD_INVITE`
 still work if you ever run somewhere that can set them — they win over the
 compiled value.
 
@@ -149,7 +149,7 @@ compiled value.
 
 ### Moshpit console
 
-- [ ] No `Failed to setup plugin Everlands:Moshpit`
+- [ ] No `Failed to setup plugin Spellshot:Moshpit`
 - [ ] **`Arena marker store registered`** — the one that matters. If you see
       `ARENAS ARE DISABLED` instead, **stop the server immediately**, before it
       saves and overwrites the marker file with an empty one.
@@ -181,7 +181,7 @@ no-op or a fix for something subtly wrong that nobody noticed.
 
 | From | To |
 |---|---|
-| `moshpit\server\mods\Everlands.Game\Server\GameplayConfigs\MiniGame.json` | same path under `mods/` |
+| `moshpit\server\mods\Spellshot.Game\Server\GameplayConfigs\MiniGame.json` | same path under `mods/` |
 
 - [ ] Uploaded, restarted, sprint still behaves
 

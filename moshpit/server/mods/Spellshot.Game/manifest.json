@@ -1,0 +1,18 @@
+{
+  "Group": "Spellshot",
+  "Name": "Game",
+  "Version": "0.3.0",
+  "Description": "",
+  "ServerVersion": "^0.6.0",
+  "Authors": [
+  {
+	  "Name": "XiaBit"
+    }],
+  "Website": "",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "SubPlugins": []
+}

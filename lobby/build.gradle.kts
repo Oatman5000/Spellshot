@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.kotlinPluginSpring)
     alias(libs.plugins.springDependencyManagement)
 }
-group = "net.everlands"
-version = "0.3.0.0"
+group = "net.spellshot"
+version = "0.3.0"
 dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.springframework:spring-context")
@@ -24,7 +24,7 @@ dependencies {
     implementation("org.mongodb:bson:5.2.1")
 }
 tasks.shadowJar {
-    relocate("com.google.common", "net.everlands.shaded.guava")
+    relocate("com.google.common", "net.spellshot.shaded.guava")
     archiveFileName.set("lobby-plugin.jar")
     // Bundle kotlin-stdlib, exclude kotlin-reflect. Both halves matter, and the
     // two runtimes pull in opposite directions:

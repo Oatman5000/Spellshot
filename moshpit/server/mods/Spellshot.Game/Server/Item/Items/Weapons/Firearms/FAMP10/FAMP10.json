@@ -1,0 +1,131 @@
+{
+  "Model": "Items/FAMP10/FAMP10.blockymodel",
+  "Icon": "Icons/ItemsGenerated/FAMP10.png",
+  "IconProperties": {
+    "Scale": 0.8,
+    "Rotation": [
+      216,
+      269,
+      178
+    ],
+    "Translation": [
+      -3,
+      -17
+    ]
+  },
+  "UsePlayerAnimations": true,
+  "PlayerAnimationsId": "FAMP10",
+  "Reticle": "FirearmReticle",
+  "Utility": {
+    "Usable": false
+  },
+  "MaxStack": 1,
+  "DropOnDeath": false,
+  "ClipsGeometry": false,
+  "Texture": "Items/FAMP10/FAMP10.png",
+  "TranslationProperties": {
+    "Name": "spellshot.items.FAMP10.name"
+  },
+  "Quality": "Rare",
+  "Tags": {
+    "ammo": [
+      "15"
+    ],
+    "slot": [
+      "primary"
+    ]
+  },
+  "Interactions": {
+    "Primary": {
+      "Cooldown": {
+        "Cooldown": 0.001,
+        "SkipCooldownReset": true,
+        "InterruptRecharge": true,
+        "ClickBypass": false
+      },
+      "RequireNewClick": false,
+      "Interactions": [
+        {
+          "Type": "StatsCondition",
+          "LessThan": false,
+          "Costs": {
+            "GunAmmo": 1
+          },
+          "Next": "FAMP10_Shoot",
+          "Failed": "FAMP10_Reload"
+        }
+      ]
+    },
+    "Ability3": {
+      "Interactions": [
+        {
+          "Type": "CheckAmmo",
+          "CheckType": "FULL",
+          "Next": "FAMP10_Reload"
+        }
+      ]
+    },
+    "SwapTo": {
+      "Interactions": [
+        {
+          "Type": "Simple",
+          "Effects": {
+            "ItemPlayerAnimationsId": "FAMP10",
+            "ItemAnimationId": "Equip",
+            "WaitForAnimationToFinish": false,
+            "LocalSoundEventId": "SFX_Drop_Items_Gadget"
+          },
+          "RunTime": 0.9,
+          "Camera": {
+            "FirstPerson": [
+              {
+                "Time": 0.1,
+                "Rotation": {
+                  "Pitch": 0
+                }
+              },
+              {
+                "Time": 0.2,
+                "Rotation": {
+                  "Pitch": -0.5,
+                  "Roll": 0.2
+                }
+              },
+              {
+                "Time": 0.3,
+                "Rotation": {
+                  "Pitch": 0.5,
+                  "Roll": 1
+                }
+              },
+              {
+                "Time": 0.5,
+                "Rotation": {
+                  "Pitch": 1,
+                  "Roll": 0.2
+                }
+              },
+              {
+                "Time": 0.6,
+                "Rotation": {
+                  "Pitch": 0.5
+                }
+              },
+              {
+                "Time": 0.7
+              }
+            ]
+          }
+        }
+      ],
+      "Rules": {
+        "InterruptedBy": [
+          "SwapFrom"
+        ]
+      }
+    }
+  },
+  "Categories": [
+    "Items.Weapons"
+  ]
+}

@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.kotlinPluginSpring)
     alias(libs.plugins.springDependencyManagement)
 }
-group = "net.everlands"
-version = "0.3.0.0"
+group = "net.spellshot"
+version = "0.3.0"
 dependencies {
     api("org.slf4j:slf4j-api:2.0.9")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
