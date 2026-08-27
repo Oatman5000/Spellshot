@@ -3,7 +3,7 @@
   "Name": "Game",
   "Version": "0.1.1",
   "Description": "",
-  "ServerVersion": "^0.5.7",
+  "ServerVersion": "^0.6.0",
   "Authors": [
   {
 	  "Name": "XiaBit"

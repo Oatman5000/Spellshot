@@ -4,7 +4,7 @@
   "Version": "0.1.0",
   "Description": "Everlands lobby",
   "Main": "net.everlands.lobby.LobbyPlugin",
-  "ServerVersion": "^0.5.7",
+  "ServerVersion": "^0.6.0",
   "Authors": [{ "Name": "XiaBit" }],
   "Dependencies": {},
   "OptionalDependencies": {},
