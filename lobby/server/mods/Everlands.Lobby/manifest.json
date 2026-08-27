@@ -1,7 +1,7 @@
 {
   "Group": "Everlands",
   "Name": "Lobby",
-  "Version": "0.1.0",
+  "Version": "0.3.0.0",
   "Description": "Everlands lobby assets and UI",
   "ServerVersion": "^0.6.0",
   "Authors": [{ "Name": "XiaBit" }],

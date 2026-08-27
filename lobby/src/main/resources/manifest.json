@@ -1,7 +1,7 @@
 {
   "Group": "Everlands",
   "Name": "LobbyPlugin",
-  "Version": "0.1.0",
+  "Version": "0.3.0.0",
   "Description": "Everlands lobby",
   "Main": "net.everlands.lobby.LobbyPlugin",
   "ServerVersion": "^0.6.0",

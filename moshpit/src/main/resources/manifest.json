@@ -1,7 +1,7 @@
 {
   "Group": "Everlands",
   "Name": "Moshpit",
-  "Version": "0.1.0",
+  "Version": "0.3.0.0",
   "Description": "Everlands Moshpit",
   "Main": "net.everlands.moshpit.MoshpitPlugin",
   "ServerVersion": "^0.6.0",

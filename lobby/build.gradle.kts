@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.springDependencyManagement)
 }
 group = "net.everlands"
-version = "0.1.0"
+version = "0.3.0.0"
 dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.springframework:spring-context")

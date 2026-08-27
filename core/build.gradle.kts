@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.springDependencyManagement)
 }
 group = "net.everlands"
-version = "0.1.0"
+version = "0.3.0.0"
 dependencies {
     api("org.slf4j:slf4j-api:2.0.9")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
