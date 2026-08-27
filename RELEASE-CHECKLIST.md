@@ -250,11 +250,22 @@ no-op or a fix for something subtly wrong that nobody noticed.
 ## Publishing to GitHub *(independent of the deployment)*
 
 ```powershell
-git push --force origin main
+git push origin main
 ```
 
-Force is required — history was replaced. Your host and Discord invite are not in
-the published source; `skip-worktree` keeps them local (step 4).
+**Not `--force`.** That was needed once, when history had been replaced, and the
+instruction outlived the situation. The remote is now a plain ancestor of your
+branch, so this fast-forwards. Force-pushing over a remote you have not checked
+is how commits get lost; if a push is ever rejected, find out why before reaching
+for it.
+
+Your host and Discord invite are not in the published source; `skip-worktree`
+keeps them local (step 4). Worth confirming before a push that changes them:
+
+```powershell
+git ls-files -v | Select-String "^S"                    # both files still protected
+git log -p origin/main..HEAD | Select-String "oathosting"   # no hits = clean
+```
 
 ---
 
