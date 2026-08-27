@@ -170,14 +170,16 @@ class EliminationMiniGameSession(
             val eliminated = (participant as? EliminationParticipant)?.eliminated ?: false
 
             if (eliminated) {
-                // No loadout, no revival for the rest of THIS round. The body is
-                // teleported back to the team spawn purely to get it out of the
-                // firefight -- a player entity cannot be despawned without
-                // disconnecting them.
+                // No loadout, no revival for the rest of THIS round.
                 //
-                // No nameplate call here: removeNameplate is a no-op in this
-                // build (see EcsExtensions), so a spectator keeps their nameplate
-                // and pretending otherwise would just be a misleading line.
+                // Deliberately NOT teleported. On 0.5.7 the body was moved to the team
+                // spawn to get it out of the firefight, because a player entity could
+                // not be despawned and spectating was only a camera attached to a
+                // team-mate. 0.6.0's Spectating component takes the body out of the
+                // world properly, and adding a Teleport in the same tick fights it --
+                // the entity gets yanked to a spawn point while the spectator systems
+                // are trying to attach it to someone else, which is what makes it look
+                // like spectator mode never engaged.
                 world.execute {
                     runCatching { player.inventory.clear() }
                         .onFailure { logger.warn("could not clear inventory for spectator: ${it.message}") }
@@ -186,6 +188,7 @@ class EliminationMiniGameSession(
                         event.team as? EliminationTeam ?: return@execute
                     )
                 }
+                return@subscribeToEvent
             } else {
                 // Deferred for the same reason as TDM: this runs inside
                 // RespawnSystems' onComponentRemoved while the Store is

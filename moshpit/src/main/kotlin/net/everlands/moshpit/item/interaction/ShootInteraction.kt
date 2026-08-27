@@ -29,6 +29,9 @@ import net.everlands.core.ext.estimateWorldTickLatency
 import net.everlands.core.ext.playerRefOrNull
 import net.everlands.core.ext.transform
 import net.everlands.moshpit.item.InteractionRegistry
+import com.hypixel.hytale.server.core.universe.PlayerRef
+import net.everlands.moshpit.minigame.engine.KillWeapon
+import net.everlands.moshpit.minigame.engine.KillWeapons
 
 class ShootInteraction(
     var bulletsPerShot: Int? = null,
@@ -99,15 +102,34 @@ class ShootInteraction(
                     }
                     headshotHit = damage >= (headDamage ?: 3f)
                     val nextHealth = statMap.get(DefaultEntityStatTypes.getHealth())?.get()?.minus(damage) ?: continue
-                    if (nextHealth <= 0f) {
-                        world.execute {
-                            val dmg = Damage(Damage.EntitySource(context.entity), gunDamageCauseIndex, damage)
-                            DamageSystems.executeDamage(entity, entity.store, dmg)
-                        }
-                        break
+
+                    // ALWAYS go through world.execute. This used to branch: a shot
+                    // predicted to kill was deferred to the world thread, and every
+                    // other shot called executeDamage inline, off-thread.
+                    //
+                    // Damage is an ECS mutation. Off the world thread the pipeline
+                    // does not run properly -- MiniGameDamageHandler never sees it, so
+                    // friendly fire is not filtered and, in One in the Chamber, the
+                    // lethal override never lands. Any failure was swallowed by the
+                    // per-pellet catch below as a single "Damage application failed".
+                    //
+                    // Guns do 3/2/1 by body part, so ONLY a headshot predicted a kill.
+                    // That is why OitC registered headshots and quietly ate body shots:
+                    // the bullet was spent, no kill was attributed, and the ammo watcher
+                    // confiscated the gun a tick later for an empty chamber.
+                    //
+                    // The prediction is now only used to stop firing further pellets.
+                    // It is a shotgun optimisation, not a correctness check -- and in
+                    // OitC it is wrong anyway, since the real damage is overridden to
+                    // lethal after this point.
+                    // Mark before damage: if this shot kills, the death handler reads
+                    // this back to tell a bullet from a knife or a grenade.
+                    entity.store.getComponent(entity, PlayerRef.getComponentType())?.let {
+                        KillWeapons.mark(it.uuid, KillWeapon.GUN)
                     }
                     val dmg = Damage(Damage.EntitySource(context.entity), gunDamageCauseIndex, damage)
-                    DamageSystems.executeDamage(entity, entity.store, dmg)
+                    world.execute { DamageSystems.executeDamage(entity, entity.store, dmg) }
+                    if (nextHealth <= 0f) break
                 } catch (ex: Exception) {
                     // Per pellet, per shot. Keep it to one line -- a full trace here
                     // during a shotgun burst buries everything else in the console.

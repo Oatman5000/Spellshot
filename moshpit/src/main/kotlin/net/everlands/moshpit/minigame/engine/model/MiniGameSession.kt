@@ -21,6 +21,7 @@ import net.everlands.moshpit.minigame.engine.countdown.MiniGameCountdown
 import net.everlands.moshpit.minigame.engine.strategy.spawn.RandomSpawnStrategy
 import net.everlands.moshpit.minigame.engine.strategy.spawn.SpawnStrategy
 import net.everlands.moshpit.minigame.engine.strategy.team.SingleTeamPerPlayerTeamStrategy
+import net.everlands.moshpit.minigame.engine.ui.TeamAnnouncer
 import net.everlands.moshpit.minigame.engine.strategy.team.TeamStrategy
 import java.awt.Color
 import java.util.*
@@ -98,6 +99,9 @@ open class MiniGameSession(
         val team = teamStrategy.distributePlayer(playerRef)
         val participant = team.participants[playerRef.uuid] ?: error("Participant ${playerRef.uuid} not found!")
         engine.eventPublisher.publishEvent(MiniGameAddParticipantEvent(this, team, participant))
+        // Flash the side on screen. No-ops in FFA/OitC/Gun Game, where every player is
+        // their own team and there is nothing to announce.
+        TeamAnnouncer.announce(team, participant)
         if (hudProvider != null) {
             val player = playerRef.playerOrNull
             if (player != null) {

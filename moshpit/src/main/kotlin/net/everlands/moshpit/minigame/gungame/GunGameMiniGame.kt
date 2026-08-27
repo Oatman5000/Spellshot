@@ -19,6 +19,8 @@ import net.everlands.moshpit.item.ammo.hytale.UnlimitedAmmoComponent
 import net.everlands.moshpit.minigame.engine.MiniGameDeathEvent
 import net.everlands.moshpit.minigame.engine.MiniGameEngine
 import net.everlands.moshpit.minigame.engine.MiniGameKillEvent
+import net.everlands.moshpit.minigame.engine.KillWeapon
+import net.everlands.moshpit.minigame.engine.KillWeapons
 import net.everlands.moshpit.minigame.engine.MiniGameRespawnEvent
 import net.everlands.moshpit.minigame.engine.arena.MiniGameArena
 import net.everlands.moshpit.minigame.engine.ext.setTimeLeft
@@ -30,20 +32,36 @@ import net.everlands.moshpit.moshpit.MoshpitManager
 import net.everlands.moshpit.moshpit.vote.MoshpitVoteCountdown
 import net.everlands.moshpit.progression.ProgressionManager
 import net.everlands.moshpit.progression.applyStats
+import net.everlands.core.ext.sendRawMessage
+import net.everlands.moshpit.progression.recordWin
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 /**
  * Gun Game.
  *
- * Timed free-for-all scored on total kills, with a weapon ladder layered on top:
- * you carry exactly one weapon, each kill promotes you to the next one up
- * ([GunGameConfig.ladder]), and dying drops you all the way back to the knife.
+ * Free-for-all with a weapon ladder ([GunGameConfig.ladder]). You carry one tier
+ * weapon plus a permanent knife, and each kill moves you one rung up.
  *
- * Note the ladder is NOT the scoreboard. The winner is whoever has the most
- * kills when the clock runs out, exactly like FFA -- reaching the Famas is a
- * reward for a streak, not a win condition. That also means the tier reset on
- * death costs you firepower but never costs you points.
+ * **Completing the ladder wins the match outright.** The last two rungs are the
+ * impact grenade and then the frag grenade, and those two only advance on a kill with
+ * that exact explosive -- so the ladder ends on a deliberate act rather than on
+ * whichever gun you happened to be holding. Every firearm rung accepts any kill,
+ * knife included.
+ *
+ * Dying costs you ground rather than everything:
+ *
+ * | Killed by | Result |
+ * |---|---|
+ * | Knife | Back to tier 0 |
+ * | Anything else | Back one rung |
+ *
+ * "Anything else" covers gunfire, grenades, the airstrike, falling, and your own
+ * cooked frag. Only the knife is a full reset, which is what makes knifing worth the
+ * risk when you could just shoot.
+ *
+ * The clock still runs, and if it expires with nobody finished the mode falls back to
+ * the FFA rule: most kills wins. Kills are never lost, only rungs.
  */
 @Service
 class GunGameMiniGame(
@@ -149,17 +167,39 @@ class GunGameMiniGameSession(
             )
         }
 
-        // Reset on death rather than on being killed, so falling, the airstrike
-        // and self-damage demote you too. The weapon itself is re-issued by the
-        // respawn subscriber above, which runs a moment later.
+        // Demotion, and the record of what did it.
+        //
+        // MiniGameDeathHandler publishes the death event BEFORE the kill event in the
+        // same tick, so this consumes the weapon mark and stashes it for the kill
+        // subscriber below -- which needs to know what the killer used in order to
+        // decide whether a grenade tier is satisfied.
         subscribeToEvent<MiniGameDeathEvent> { event ->
-            (event.participant as? GunGameParticipant)?.tier = 0
+            val participant = event.participant as? GunGameParticipant ?: return@subscribeToEvent
+            val weapon = KillWeapons.consume(participant.playerRef.uuid)
+            participant.lastKilledBy = weapon
+            val before = participant.tier
+            participant.tier = if (weapon == KillWeapon.KNIFE) {
+                0
+            } else {
+                // Everything that is not a knife costs one rung: gunfire, grenades,
+                // the airstrike, falling off Rust, and your own cooked frag.
+                (participant.tier - 1).coerceAtLeast(0)
+            }
+            if (participant.tier != before) {
+                val reason = if (weapon == KillWeapon.KNIFE) "HUMILIATED" else "SET BACK"
+                participant.playerRef.sendEventTitle(
+                    reason,
+                    "WEAPON ${participant.tier + 1} OF ${gunGameConfig.value.ladder.size}",
+                    duration = 1.5f
+                )
+            }
         }
 
         subscribeToEvent<MiniGameKillEvent> { event ->
             val killerParticipant = event.killerParticipant
             val world = arena.world
-            world.execute { promote(killerParticipant) }
+            val usedWeapon = (event.entityParticipant as? GunGameParticipant)?.lastKilledBy
+            world.execute { promote(killerParticipant, usedWeapon) }
             launchGlobal {
                 killerParticipant.playerRef.userOrNull?.run {
                     runLockGuarded {
@@ -192,10 +232,37 @@ class GunGameMiniGameSession(
      * Already at the top: no promotion, no title card, they simply keep the
      * Famas and carry on scoring.
      */
-    private fun promote(participant: MiniGameParticipant) {
+    /**
+     * Advances [participant] one rung, if [usedWeapon] satisfies their current tier.
+     *
+     * Firearm tiers accept any kill -- including a knife kill, which is deliberate:
+     * knifing someone both resets them and moves you up.
+     *
+     * The two grenade tiers are the exception and the whole point of them. They only
+     * advance on a kill with that exact explosive, so the ladder ends with a genuine
+     * skill gate rather than trailing off on whichever gun you happened to be holding.
+     *
+     * A kill at the top rung ends the match outright.
+     */
+    private fun promote(participant: MiniGameParticipant, usedWeapon: KillWeapon?) {
         val gunGameParticipant = participant as? GunGameParticipant ?: return
         val config = gunGameConfig.value
-        if (gunGameParticipant.tier >= config.topTier) return
+
+        val required = config.explosiveFor(gunGameParticipant.tier)
+        if (required != null && usedWeapon != required) {
+            // Not a failure worth a title card -- they killed someone, it just was not
+            // with the right tool. Say so quietly so the tier does not look broken.
+            participant.playerRef.sendRawMessage(
+                "That tier needs a ${config.weaponFor(gunGameParticipant.tier)} kill."
+            )
+            return
+        }
+
+        if (gunGameParticipant.tier >= config.topTier) {
+            win(gunGameParticipant)
+            return
+        }
+
         gunGameParticipant.tier += 1
         val player = participant.playerRef.playerOrNull ?: return
         giveTierWeapon(player, participant.playerRef)
@@ -210,6 +277,30 @@ class GunGameMiniGameSession(
         }
         if (config.announceFinalTier && gunGameParticipant.tier == config.topTier) {
             sendFormattedMessage("<c>${participant.playerRef.username}<7> reached the final weapon: <c>$weapon<7>!")
+        }
+    }
+
+    /**
+     * Ends the match: someone completed the ladder.
+     *
+     * Moving to STATE_VOTE is how every mode here finishes -- it stops the countdown
+     * and opens the map vote. Guarded against a double call, because two players
+     * finishing in the same tick would otherwise both announce.
+     */
+    private fun win(winner: GunGameParticipant) {
+        if (state == GunGameMiniGame.STATE_VOTE) return
+        state = GunGameMiniGame.STATE_VOTE
+        val username = winner.playerRef.username
+        sendTitle("$username WINS", "COMPLETED THE LADDER")
+        sendFormattedMessage(
+            "\n<c><b>Game Over!</b></c>\n<7><c>$username</c><7> ran the whole ladder " +
+                "and finished on the frag grenade!\n"
+        )
+        val user = winner.playerRef.userOrNull ?: return
+        launchGlobal {
+            // recordWin applies its own stats block; wrapping it in another would
+            // nest the lock.
+            user.runLockGuarded { user.recordWin(MoshpitGame.GUNGAME) }
         }
     }
 
@@ -240,6 +331,19 @@ class GunGameMiniGameSession(
         }
         player.inventory.clear()
         runCatching {
+            // The knife first, so it always sits in slot 1. Carried at every tier --
+            // it is not a rung on the ladder, it is the permanent fallback, and the
+            // thing that fully resets whoever you hit with it.
+            config.sidearmItemId?.let { hotbar.addItemStack(ItemStack(it)) }
+
+            if (config.isExplosiveTier(tier)) {
+                // Grenades come as a stack rather than a single item, refreshed every
+                // spawn. Running dry at a grenade tier would leave you unable to
+                // advance at all, since only that explosive satisfies the rung.
+                hotbar.addItemStack(ItemStack(weapon, config.grenadesPerLife))
+                return@runCatching
+            }
+
             val stack = ItemStack(weapon)
             // Full magazine on issue. Guns get an ammo tag, the knife does not,
             // and buildItemStackWithAmmo is what stamps the per-stack ammoId the
@@ -296,4 +400,13 @@ class GunGameParticipant(
      * while the tier resets to 0 on every death.
      */
     var tier: Int = 0
+
+    /**
+     * What killed this player most recently, stashed by the death subscriber.
+     *
+     * MiniGameKillEvent carries no damage cause, and the mark in [KillWeapons] is
+     * single-shot, so the death subscriber -- which fires first -- reads it and parks
+     * it here for the kill subscriber to decide whether a grenade tier was satisfied.
+     */
+    var lastKilledBy: KillWeapon? = null
 }

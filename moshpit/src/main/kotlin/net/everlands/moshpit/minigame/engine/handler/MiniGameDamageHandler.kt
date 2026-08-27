@@ -15,6 +15,8 @@ import net.everlands.moshpit.minigame.elimination.EliminationMiniGameSession
 import net.everlands.moshpit.minigame.engine.MiniGameEngine
 import net.everlands.moshpit.minigame.oitc.OITCMiniGameSession
 import net.everlands.moshpit.minigame.oitc.OITCRules
+import net.everlands.moshpit.minigame.engine.KillWeapon
+import net.everlands.moshpit.minigame.engine.KillWeapons
 
 class MiniGameDamageHandler(val engine: MiniGameEngine) : DamageEventSystem() {
 
@@ -65,8 +67,22 @@ class MiniGameDamageHandler(val engine: MiniGameEngine) : DamageEventSystem() {
                 engine.plugin.logger.atWarning().log("Damager is null")
                 return
             }
-            if (session.isInSameTeam(playerRef.uuid, damager.uuid)) {
+            // You are trivially "in the same team" as yourself, so this used to cancel
+            // all self-damage as friendly fire -- your own grenade, your own airstrike.
+            // Excluding self means blast radius applies to the thrower like anyone else.
+            if (damager.uuid != playerRef.uuid && session.isInSameTeam(playerRef.uuid, damager.uuid)) {
                 dmg.isCancelled = !stateConfig.friendlyFire
+            }
+
+            // Melee, recorded centrally because nothing else can: the knife runs the
+            // stock DamageEntity interaction, which is engine code we do not touch.
+            // Firearms and explosives stamp the "Gun" cause and mark themselves at the
+            // point of damage, so anything left over from a player is a melee hit.
+            //
+            // Marked on every hit, not just lethal ones -- the most recent damage is
+            // what killed you, so a shot followed by a knife reads as a knife kill.
+            if (!dmg.isCancelled && dmg.damageCauseIndex != OITCRules.gunDamageCauseIndex) {
+                KillWeapons.mark(playerRef.uuid, KillWeapon.KNIFE)
             }
         }
 
