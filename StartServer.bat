@@ -66,11 +66,6 @@ echo   Copying world, about 55 MB...
 xcopy "moshpit\server\universe\worlds\Moshpit" "%TEST%\universe\worlds\Moshpit\" /E /I /Q >nul
 if exist "moshpit\server\universe\warps.json" copy "moshpit\server\universe\warps.json" "%TEST%\universe\" >nul
 
-REM Hardlink rather than copy -- the server only reads the jar.
-REM Assets.zip is NOT copied here at all; it is passed with --assets below.
-echo   Linking server jar...
-mklink /H "%TEST%\HytaleServer.jar" "%SRVJAR%" >nul 2>&1
-if not exist "%TEST%\HytaleServer.jar" copy "%SRVJAR%" "%TEST%\HytaleServer.jar" >nul
 goto :install
 
 :reuse
@@ -85,6 +80,22 @@ copy /Y "moshpit\server\%MARKERS%" "%TEST%\%MARKERS%" >nul
 echo   Refreshed arena markers from the source world.
 
 :install
+REM  RELINK THE SERVER JAR EVERY RUN. Do not move this back into the create block.
+REM
+REM  This is a hardlink, not a copy -- the server only reads the jar. But when the
+REM  launcher updates Hytale it writes a NEW file, so an old hardlink keeps
+REM  pointing at the previous version's bytes forever. That is how a .local-test
+REM  created under 0.5.9 kept booting 0.5.9 long after the install was 0.6.0,
+REM  while --assets pointed at the live 0.6.0 Assets.zip.
+REM
+REM  The result compiles clean and dies at boot with NoSuchMethodError on whatever
+REM  API the newer version added -- the plugin is built against one version and run
+REM  against another, which is the single hazard this script exists to avoid.
+if exist "%TEST%\HytaleServer.jar" del /Q "%TEST%\HytaleServer.jar" >nul 2>&1
+mklink /H "%TEST%\HytaleServer.jar" "%SRVJAR%" >nul 2>&1
+if not exist "%TEST%\HytaleServer.jar" copy "%SRVJAR%" "%TEST%\HytaleServer.jar" >nul
+echo   Linked the current server jar.
+
 copy /Y "moshpit\build\libs\moshpit-plugin.jar" "%TEST%\mods\moshpit-plugin.jar" >nul
 echo   Installed the freshly built plugin.
 
@@ -94,6 +105,7 @@ echo  4/4  Starting the server
 echo ============================================================
 echo.
 echo   Watch for:
+echo     "Booting up HytaleServer - Version: 0.6.0"     jar matches the build
 echo     "Loaded pack: Hytale:Hytale from Assets.zip"   vanilla assets OK
 echo     "Everlands: registered NN component classes"   plugin loaded
 echo     "Setup phase completed"                        it booted
