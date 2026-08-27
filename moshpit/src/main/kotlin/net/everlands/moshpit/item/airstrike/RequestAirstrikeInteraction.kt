@@ -17,6 +17,7 @@ import net.everlands.core.ext.playerRefOrNull
 import net.everlands.core.ext.property
 import net.everlands.core.ext.transformOrNull
 import net.everlands.core.ext.referenceOrNull
+import net.everlands.core.ext.sendRawMessage
 import net.everlands.moshpit.item.InteractionRegistry
 import net.everlands.moshpit.minigame.engine.model.MiniGameSession
 import org.slf4j.LoggerFactory
@@ -33,12 +34,36 @@ class RequestAirstrikeInteraction(
 
     override fun firstRun(type: InteractionType, context: InteractionContext, cooldownHandler: CooldownHandler) {
         try {
-            val playerRef = context.entity.playerRefOrNull ?: return
-            val transform = context.entity.transformOrNull ?: return
-            val buffer = context.commandBuffer ?: return
+            val playerRef = context.entity.playerRefOrNull ?: run {
+                logger.warn("Airstrike used by a non-player entity; ignoring")
+                return
+            }
+            val transform = context.entity.transformOrNull ?: run {
+                logger.warn("Airstrike: no transform on {}", playerRef.uuid)
+                return
+            }
+            val buffer = context.commandBuffer ?: run {
+                logger.warn("Airstrike: no command buffer in this interaction context")
+                return
+            }
 
             val engine = InteractionRegistry.instance.engine
-            val session = engine.getSessionByPlayerUUID<MiniGameSession>(playerRef.uuid) ?: return
+            // The arena, and therefore every marker the strike needs, comes from the
+            // caller's session. Outside a match -- spectating, or flying around in
+            // creative to test -- there is nothing to read, so the item does nothing.
+            // That used to be a bare `?: return` with no output at all, which is
+            // indistinguishable from the item being broken.
+            val session = engine.getSessionByPlayerUUID<MiniGameSession>(playerRef.uuid) ?: run {
+                logger.warn(
+                    "Airstrike: {} is not in a minigame session, so there is no arena to " +
+                        "strike. The item only works inside a match.",
+                    playerRef.uuid
+                )
+                runCatching {
+                    playerRef.sendRawMessage("Airstrike only works during a match - it needs an arena to target.")
+                }
+                return
+            }
             val arena = session.arena
 
             val planeStart = arena.locations["plane"]

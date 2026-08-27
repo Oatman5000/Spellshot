@@ -87,10 +87,27 @@ class CommandCollectionSpec(name: String, description: String = "") : CommandSpe
 class SpecCommandCollection(spec: CommandCollectionSpec) :
     AbstractCommandCollection(spec.name, spec.description) {
 
-    override fun canGeneratePermission(): Boolean = false
+    // 0.6.0 removed the `canGeneratePermission()` hook this used to override and
+    // replaced it with a call: requireNoPermission(). Same effect -- suppress the
+    // auto-generated permission node -- but it is now imperative rather than a
+    // template method, so it has to run during construction.
+    //
+    // Anything that wants a real permission still calls requirePermission() after
+    // the fact, as ArenaCommand does with requireGamePermission("arena"); that runs
+    // later and wins. It must happen before registration completes, though --
+    // AbstractCommand throws "Cannot change permissions when a command has already
+    // completed registration" otherwise.
+    init {
+        requireNoPermission()
+    }
 }
 
 class SpecCommand(private val spec: CommandSpec) : AbstractPlayerCommand(spec.name, spec.description) {
+
+    /** See the note on [SpecCommandCollection]; 0.6.0 turned this into a call. */
+    init {
+        requireNoPermission()
+    }
 
     override fun execute(
         context: CommandContext,
@@ -138,8 +155,6 @@ class SpecCommand(private val spec: CommandSpec) : AbstractPlayerCommand(spec.na
             }
         }
     }
-
-    override fun canGeneratePermission(): Boolean = false
 
     private companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(SpecCommand::class.java)

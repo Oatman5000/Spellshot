@@ -55,7 +55,10 @@ class LobbyCommand(
         }
     }
 
-    override fun canGeneratePermission(): Boolean = false
+    /** 0.6.0 replaced the `canGeneratePermission()` override with this call. */
+    init {
+        requireNoPermission()
+    }
 
     private companion object {
         private val logger = LoggerFactory.getLogger(LobbyCommand::class.java)

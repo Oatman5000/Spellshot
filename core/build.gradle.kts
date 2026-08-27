@@ -10,7 +10,7 @@ version = "0.1.0"
 dependencies {
     api("org.slf4j:slf4j-api:2.0.9")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    compileOnly("com.hypixel.hytale:Server:0.5.7")
+    compileOnly(libs.hytaleServer)
     api(libs.springBoot)
     api("org.springframework:spring-context")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

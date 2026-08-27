@@ -2,9 +2,9 @@
 REM ---------------------------------------------------------------------------
 REM  Local test server for the moshpit plugin.
 REM
-REM  Runs Hytale 0.5.7 -- the version AMP runs -- from the Gradle cache, against
-REM  a COPY of the world in .local-test\. Nothing here touches the real world or
-REM  the AMP instance. Delete .local-test to reset.
+REM  Runs the installed Hytale server -- 0.6.0, Update 6 -- against a COPY of the
+REM  world in .local-test\. Nothing here touches the real world or the AMP
+REM  instance. Delete .local-test to reset.
 REM
 REM  Written without parenthesised if/else blocks on purpose: those need escaped
 REM  parens and break on "||" chaining, which is what produced
@@ -17,15 +17,18 @@ set "TEST=%CD%\.local-test"
 
 REM  SERVER JAR AND ASSETS.ZIP MUST BE THE SAME VERSION.
 REM
-REM  This uses the game install's own jar, so the pair always matches -- currently
-REM  0.5.9. Pointing the 0.5.7 jar from the Gradle cache at a 0.5.9 Assets.zip
+REM  This uses the game install's own jar, so the pair always matches. Mixing them
 REM  fails with "Skipping pack at HytaleAssets: missing or invalid manifest.json",
 REM  and then EVERY vanilla asset is missing: DamageCause, Weather, ItemQuality,
 REM  every animation. The boot dies on "Missing default DamageCause assets".
 REM
-REM  AMP runs 0.5.7. To test that exact version you would need a 0.5.7 Assets.zip,
-REM  which is not on this machine -- download it from the AMP instance if it ever
-REM  matters. For checking that the plugin loads and commands work, 0.5.9 is fine.
+REM  The build now targets 0.6.0 too (gradle/libs.versions.toml), so for the first
+REM  time the compiled plugin, the server jar and Assets.zip are all the same
+REM  version. Previously the build was 0.5.7 against a 0.5.9 install, which meant
+REM  local testing never exercised the API the plugin was actually compiled for.
+REM
+REM  If the launcher updates the install past 0.6.0, bump hytaleServer in
+REM  libs.versions.toml to match, or you are back to testing a mismatched pair.
 set "SRVJAR=%APPDATA%\Hytale\install\release\package\game\latest\Server\HytaleServer.jar"
 set "ASSETS=%APPDATA%\Hytale\install\release\package\game\latest\Assets.zip"
 

@@ -5,6 +5,17 @@
 # was removed from every build script.
 
 [versions]
+# The Hytale server API, compileOnly in all three modules.
+#
+# MUST match the server the plugin actually runs on. A mismatch does not fail the
+# build -- it fails at runtime, usually as NoSuchMethodError deep inside a tick, or
+# as assets that silently refuse to load.
+#
+# Was 0.5.7 (Update 5) while the local install ran 0.5.9, which is why
+# StartServer.bat had to launch the install's own jar rather than this one. Both
+# sides are 0.6.0 now.
+hytaleServer = "0.6.0"
+
 kotlin = "2.3.0"
 kotlinSpring = "2.3.0-RC3"
 kotlinxSerialization = "1.9.0"
@@ -13,6 +24,7 @@ shadow = "9.3.1"
 slf4j = "2.0.9"
 
 [libraries]
+hytaleServer = { module = "com.hypixel.hytale:Server", version.ref = "hytaleServer" }
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 springBoot = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }

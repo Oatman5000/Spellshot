@@ -14,7 +14,6 @@ import com.hypixel.hytale.server.core.util.EventTitleUtil
 import net.everlands.core.ext.sendMessage
 import net.everlands.core.ext.play2DSound
 import net.everlands.core.ext.playerOrNull
-import net.everlands.core.ext.referenceOrNull
 import net.everlands.moshpit.item.airstrike.AirstrikeKills
 import net.everlands.moshpit.minigame.engine.MiniGameDeathEvent
 import net.everlands.moshpit.minigame.engine.MiniGameKillEvent
@@ -114,12 +113,14 @@ class KillstreakManager(val plugin: JavaPlugin, val killStreakConfig: KillStreak
         val titlePrimaryMessage = streakConfig.titlePrimaryMessage
         val titleSecondaryMessage = streakConfig.titleSecondaryMessage
         if (titlePrimaryMessage != null && titleSecondaryMessage != null) {
-            val reference = player.referenceOrNull ?: return entry
+            // 0.6.0 changed the last parameter from Store to World. player.world is
+            // the same one the streak message above already broadcasts to.
+            val world = player.world ?: return entry
             EventTitleUtil.showEventTitleToWorld(
                 Message.raw(titlePrimaryMessage.processMessage(player, entry.amount)),
                 Message.raw(titleSecondaryMessage.processMessage(player, entry.amount)),
                 true, null, 4f,
-                1f, 1f, reference.store
+                1f, 1f, world
             )
         }
         return entry

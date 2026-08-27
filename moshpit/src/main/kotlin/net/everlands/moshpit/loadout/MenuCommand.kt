@@ -31,7 +31,8 @@ class MenuCommand(val plugin: JavaPlugin, val loadoutService: LoadoutService) :
         player.pageManager.openCustomPage(refStore, store, LoadoutPage(player, ref, user, loadoutService))
     }
 
-    override fun canGeneratePermission(): Boolean {
-        return false
+    /** 0.6.0 replaced the `canGeneratePermission()` override with this call. */
+    init {
+        requireNoPermission()
     }
 }

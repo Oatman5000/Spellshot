@@ -3,6 +3,7 @@ package net.everlands.core.framework
 import com.hypixel.hytale.component.Ref
 import com.hypixel.hytale.math.iterator.BlockIterator
 import com.hypixel.hytale.math.shape.Box
+import com.hypixel.hytale.math.util.ChunkUtil
 import com.hypixel.hytale.server.core.asset.type.blockhitbox.BlockBoundingBoxes
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.selector.Selector
@@ -119,7 +120,14 @@ object BlockBoxRaycaster {
             val type = world.getBlockType(bx, by, bz) ?: return FULL_CUBE
             val asset = BlockBoundingBoxes.getAssetMap()
                 .getAsset(type.hitboxTypeIndex) as? BlockBoundingBoxes ?: return FULL_CUBE
-            val variant = asset.get(world.getBlockRotationIndex(bx, by, bz)) ?: return FULL_CUBE
+            // 0.6.0 dropped IChunkAccessorSync.getBlockRotationIndex(x, y, z). The
+            // chunk still exposes it; only the World-level convenience wrapper went,
+            // so do the lookup the wrapper used to do. getChunkIfLoaded rather than
+            // getChunk because this runs on the shooting path -- a ray that leaves
+            // loaded terrain should fall back to a cube, not block on chunk loading.
+            val chunk = world.getChunkIfLoaded(ChunkUtil.indexChunkFromBlock(bx, bz))
+                ?: return FULL_CUBE
+            val variant = asset.get(chunk.getRotationIndex(bx, by, bz)) ?: return FULL_CUBE
             if (variant.hasDetailBoxes()) variant.detailBoxes else arrayOf(variant.boundingBox)
         } catch (ex: Exception) {
             // Never let a shape lookup break shooting; fall back to a solid cube.

@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import net.everlands.core.ext.builderCodec
 import net.everlands.core.ext.property
+import com.hypixel.hytale.server.core.Message
 import net.everlands.core.ext.sendRawMessage
 import net.everlands.core.framework.MessageParser
 import net.everlands.lobby.HandoffMode
@@ -141,9 +142,10 @@ class ServerSelectorPage(
                 // No disconnect packet -- drop the transport underneath the client
                 // with a Timeout code, so it looks like the server vanished rather
                 // than kicked. That is the condition FallbackServer is meant for.
+                // 0.6.0 takes a FormattedMessage here rather than a raw String.
                 playerRef.packetHandler.channel.closeApplicationConnection(
                     QuicApplicationErrorCode.Timeout,
-                    "handoff to ${server.address}"
+                    Message.raw("handoff to ${server.address}").formattedMessage
                 )
             }.onFailure { logger.warn("connection drop failed: ${it.message}") }
         }
