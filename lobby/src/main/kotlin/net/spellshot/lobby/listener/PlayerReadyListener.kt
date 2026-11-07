@@ -55,8 +55,21 @@ class PlayerReadyListener(val plugin: JavaPlugin, val config: LobbyConfig.Binder
         }
 
         val ref = player.reference ?: return
-        val spawn = ref.store.externalData.world.worldConfig.spawnProvider
-        if (spawn != null) ref.addTeleport(spawn.getSpawnPoint(ref, ref.store))
+        val world = ref.store.externalData.world
+        val spawn = world.worldConfig.spawnProvider
+        // Async as of Update 7 -- getSpawnPoint became getSpawnPointAsync, because
+        // resolving a spawn can require a chunk that is not loaded yet. addTeleport
+        // writes a component straight to the store, so it has to run back on the
+        // world thread rather than on whichever thread completes the future.
+        if (spawn != null) {
+            spawn.getSpawnPointAsync(ref, ref.store).thenAccept { target ->
+                if (target == null) return@thenAccept
+                world.execute {
+                    runCatching { ref.addTeleport(target) }
+                        .onFailure { logger.warn("could not teleport to spawn: ${it.message}") }
+                }
+            }
+        }
 
         if (cfg.welcomeMessage.isNotBlank()) playerRef.sendRawMessage(cfg.welcomeMessage)
     }

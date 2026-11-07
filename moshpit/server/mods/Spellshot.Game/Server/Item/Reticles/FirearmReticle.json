@@ -13,7 +13,7 @@
       "HideBase": true,
       "Parts": [
         "UI/Reticles/ServerEvents/OnKill/Default.png",
-        "UI/Reticles/ServerEvents/OnKill/Melee.png"
+        "UI/Reticles/Melee.png"
       ]
     }
   },

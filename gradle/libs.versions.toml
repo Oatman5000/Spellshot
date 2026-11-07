@@ -12,9 +12,14 @@
 # as assets that silently refuse to load.
 #
 # Was 0.5.7 (Update 5) while the local install ran 0.5.9, which is why
-# StartServer.bat had to launch the install's own jar rather than this one. Both
-# sides are 0.6.0 now.
-hytaleServer = "0.6.0"
+# StartServer.bat had to launch the install's own jar rather than this one.
+#
+# 0.7.6 is Update 7 (Chapter I), patch 6. That jump removed API this mod used:
+# World.getChunkIfLoaded and WorldChunk's getRotationIndex / getFluidId / getWorld
+# are all gone, replaced by a new world.accessor package (BlockReader,
+# SectionReader). Update 7 also changed the client/server protocol, so a 0.7.x
+# server will not accept Update 6 clients and vice versa.
+hytaleServer = "0.7.6"
 
 kotlin = "2.3.0"
 kotlinSpring = "2.3.0-RC3"

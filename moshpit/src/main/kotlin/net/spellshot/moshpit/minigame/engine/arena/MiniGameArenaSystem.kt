@@ -4,13 +4,13 @@ import com.hypixel.hytale.component.ArchetypeChunk
 import com.hypixel.hytale.component.CommandBuffer
 import com.hypixel.hytale.component.Store
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem
-import com.hypixel.hytale.math.util.ChunkUtil
 import com.hypixel.hytale.server.core.entity.entities.Player
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent
 import com.hypixel.hytale.server.core.universe.PlayerRef
+import com.hypixel.hytale.server.core.universe.world.accessor.SectionReader
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import net.spellshot.core.framework.EcsService
 import net.spellshot.moshpit.minigame.engine.MiniGameEngine
@@ -37,27 +37,30 @@ class MiniGameArenaSystem(val engine: MiniGameEngine) : DelayedEntitySystem<Enti
             val world = store.externalData.world
             val pos = transform.position
 
-            // Read the fluid from the chunk directly, and only if it is already loaded.
+            // Read the fluid only if the section is already in memory.
             //
-            // world.getFluidId() routes through ChunkAccessor -> IWorldChunks.getChunk,
-            // which BLOCKS on a future and drains the world task queue while waiting.
-            // Called from inside a system tick -- which is where this runs -- that
-            // re-enters the Store mid-processing and throws
+            // The original sin here was world.getFluidId(), which routed through
+            // ChunkAccessor -> IWorldChunks.getChunk and BLOCKED on a future, draining
+            // the world task queue while it waited. Called from inside a system tick --
+            // which is where this runs -- that re-entered the Store mid-processing:
             //
             //   IllegalStateException: Store is currently processing!
             //
-            // The damage is not limited to this system: draining the queue here runs
-            // every pending world.execute task in an illegal context, so unrelated work
-            // (chunk ticking, teleport completion, spectator components) fails too. The
-            // 0.6.0 logs were full of "Failed to load chunk" and "Failed to set chunk
-            // ticking" traces that all bottom out in this one call.
+            // The damage was never limited to this system: draining the queue ran every
+            // pending world.execute task in an illegal context, so unrelated work
+            // (chunk ticking, teleport completion, spectator components) failed too.
             //
-            // A player standing in an unloaded chunk is not somewhere we need to check
-            // for water anyway; the check resumes as soon as the chunk is in memory.
-            val worldChunk = world.getChunkIfLoaded(
-                ChunkUtil.indexChunkFromBlock(pos.x.toInt(), pos.z.toInt())
-            ) ?: return
-            val fluidId = worldChunk.getFluidId(pos.x.toInt(), pos.y.toInt(), pos.z.toInt())
+            // 0.6.0 was fixed by going through getChunkIfLoaded. Update 7 removed that
+            // too, so the same guarantee now comes from SectionReader.hasStorageInMemory:
+            // check first, read second, never block. A player standing in an unloaded
+            // section is not somewhere we need to check for water anyway; the check
+            // resumes as soon as it is in memory.
+            val reader = SectionReader(world.chunkStore)
+            val bx = pos.x.toInt()
+            val by = pos.y.toInt()
+            val bz = pos.z.toInt()
+            if (!reader.hasStorageInMemory(bx, by, bz)) return
+            val fluidId = reader.getFluidId(bx, by, bz)
             if (fluidId != 0) {
                 val ref = chunk.getReferenceTo(index)
                 val session = engine.getSessionByPlayerUUID<MiniGameSession>(playerRef.uuid) ?: return

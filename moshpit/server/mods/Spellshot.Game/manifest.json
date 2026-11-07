@@ -3,11 +3,12 @@
   "Name": "Game",
   "Version": "0.3.0",
   "Description": "",
-  "ServerVersion": "^0.6.0",
+  "ServerVersion": "^0.7.6",
   "Authors": [
-  {
-	  "Name": "XiaBit"
-    }],
+    {
+      "Name": "XiaBit"
+    }
+  ],
   "Website": "",
   "Dependencies": {},
   "OptionalDependencies": {},

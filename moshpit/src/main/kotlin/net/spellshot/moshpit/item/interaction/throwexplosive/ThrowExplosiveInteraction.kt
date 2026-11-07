@@ -89,9 +89,16 @@ class ThrowExplosiveInteraction(
         val lookVec = TargetUtil.getLook(ref, buffer)
         val projectile = ProjectileModule.get()
             .spawnProjectile(ref, buffer, projectileConfig, lookVec.position, lookVec.direction)
-        if (projectile == null) {
+        // Checked with isValid, not against null.
+        //
+        // spawnProjectile was @Nullable in 0.6.0 and returns a non-null Ref in 0.7.5,
+        // so the old `== null` guard became dead code -- the compiler flagged it as
+        // always false. Leaving it would have silently restored the bug it was written
+        // to fix: a spawn that fails consumes the grenade and throws nothing. A Ref
+        // that was never populated is invalid rather than null, so that is the test.
+        if (!projectile.isValid) {
             logger.error(
-                "Explosive: spawnProjectile returned null for '{}' - {} keeps the grenade",
+                "Explosive: spawnProjectile gave an invalid ref for '{}' - {} keeps the grenade",
                 projectileConfigId, playerRef.username
             )
             return

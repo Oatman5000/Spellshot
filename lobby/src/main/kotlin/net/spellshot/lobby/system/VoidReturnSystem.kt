@@ -8,6 +8,7 @@ import com.hypixel.hytale.component.system.tick.DelayedEntitySystem
 import com.hypixel.hytale.server.core.entity.entities.Player
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent
 import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport
+import com.hypixel.hytale.server.core.universe.world.accessor.SectionReader
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import net.spellshot.core.framework.EcsService
 import org.slf4j.LoggerFactory
@@ -35,8 +36,12 @@ class VoidReturnSystem : DelayedEntitySystem<EntityStore>(0.5f) {
             val transform = chunk.getComponent(index, TransformComponent.getComponentType()) ?: return
             val world = store.externalData.world
             val pos = transform.position
+            // Update 7 removed World.getFluidId along with the rest of World's block
+            // access. SectionReader is the replacement; it is cheap to build and this
+            // reads one block every half second, so there is nothing to cache.
             val inFluid = runCatching {
-                world.getFluidId(pos.x.toInt(), pos.y.toInt(), pos.z.toInt()) != 0
+                SectionReader(world.chunkStore)
+                    .getFluidId(pos.x.toInt(), pos.y.toInt(), pos.z.toInt()) != 0
             }.getOrDefault(false)
             // Below the build floor counts as the void; the fluid check alone
             // misses a lobby that simply has nothing underneath it.
@@ -44,20 +49,33 @@ class VoidReturnSystem : DelayedEntitySystem<EntityStore>(0.5f) {
 
             val spawn = world.worldConfig.spawnProvider ?: return
             val ref = chunk.getReferenceTo(index)
-            val target = spawn.getSpawnPoint(ref, store)
-            // Through the CommandBuffer, NOT Ref.addTeleport.
+
+            // The spawn point is resolved asynchronously as of Update 7:
+            // ISpawnProvider.getSpawnPoint is gone, replaced by getSpawnPointAsync
+            // returning a CompletableFuture<Transform>. It has to be async now
+            // because resolving a spawn can need a chunk that is not in memory.
             //
-            // addTeleport calls store.addComponent directly, and this runs inside
-            // tick() while the Store is mid-processing -- that throws "Store is
-            // currently processing!", which the catch below then swallowed into a
-            // warn line. The teleport never landed and falling in water did
-            // nothing. The minigames queue the same component through the buffer
-            // for exactly this reason.
-            buffer.addComponent(
-                ref,
-                Teleport.getComponentType(),
-                Teleport(world, target.position, target.rotation)
-            )
+            // That rules out the CommandBuffer this used to queue through -- the
+            // buffer belongs to the tick that is long finished by the time the future
+            // completes. Hopping back onto the world thread with world.execute is the
+            // equivalent, and is what the minigames already do for deferred work.
+            spawn.getSpawnPointAsync(ref, store).thenAccept { target ->
+                if (target == null) return@thenAccept
+                world.execute {
+                    runCatching {
+                        // Remove-then-add, not a bare add. A component that is already
+                        // present makes addComponent throw -- the lesson Spectating
+                        // taught -- and a player sitting in the void can have a
+                        // teleport queued from the previous half-second tick.
+                        ref.store.removeComponentIfExists(ref, Teleport.getComponentType())
+                        ref.store.addComponent(
+                            ref,
+                            Teleport.getComponentType(),
+                            Teleport(world, target.position, target.rotation)
+                        )
+                    }.onFailure { logger.warn("VoidReturnSystem teleport failed: ${it.message}") }
+                }
+            }
         } catch (e: Exception) {
             logger.warn("VoidReturnSystem failed: ${e.message}")
         }

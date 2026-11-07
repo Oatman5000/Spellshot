@@ -4,8 +4,12 @@
   "Version": "0.3.0",
   "Description": "Spellshot lobby",
   "Main": "net.spellshot.lobby.LobbyPlugin",
-  "ServerVersion": "^0.6.0",
-  "Authors": [{ "Name": "XiaBit" }],
+  "ServerVersion": "^0.7.6",
+  "Authors": [
+    {
+      "Name": "XiaBit"
+    }
+  ],
   "Dependencies": {},
   "OptionalDependencies": {},
   "LoadBefore": {},

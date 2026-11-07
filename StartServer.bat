@@ -2,7 +2,7 @@
 REM ---------------------------------------------------------------------------
 REM  Local test server for the moshpit plugin.
 REM
-REM  Runs the installed Hytale server -- 0.6.0, Update 6 -- against a COPY of the
+REM  Runs the installed Hytale server -- 0.7.5, Update 7 -- against a COPY of the
 REM  world in .local-test\. Nothing here touches the real world or the AMP
 REM  instance. Delete .local-test to reset.
 REM
@@ -22,23 +22,76 @@ REM  fails with "Skipping pack at HytaleAssets: missing or invalid manifest.json
 REM  and then EVERY vanilla asset is missing: DamageCause, Weather, ItemQuality,
 REM  every animation. The boot dies on "Missing default DamageCause assets".
 REM
-REM  The build now targets 0.6.0 too (gradle/libs.versions.toml), so for the first
+REM  The build now targets 0.7.5 too (gradle/libs.versions.toml), so for the first
 REM  time the compiled plugin, the server jar and Assets.zip are all the same
 REM  version. Previously the build was 0.5.7 against a 0.5.9 install, which meant
 REM  local testing never exercised the API the plugin was actually compiled for.
 REM
-REM  If the launcher updates the install past 0.6.0, bump hytaleServer in
+REM  If the launcher updates the install past 0.7.5, bump hytaleServer in
 REM  libs.versions.toml to match, or you are back to testing a mismatched pair.
 set "SRVJAR=%APPDATA%\Hytale\install\release\package\game\latest\Server\HytaleServer.jar"
 set "ASSETS=%APPDATA%\Hytale\install\release\package\game\latest\Assets.zip"
 
 echo.
 echo ============================================================
-echo  1/4  Checking Java
+echo  1/4  Finding a Java 25 runtime
 echo ============================================================
-where java >nul 2>&1
-if errorlevel 1 goto :nojava
-java -version 2>&1
+REM  THE VERSION MATTERS, NOT JUST THE PRESENCE OF java.exe.
+REM
+REM  This used to be `where java` and nothing more, which only proves SOME java
+REM  is on PATH. When PATH started resolving to a Java 8, the build still
+REM  succeeded -- Gradle compiles with its own toolchain, jvmToolchain(25) -- and
+REM  the server then died at launch with
+REM
+REM    UnsupportedClassVersionError: com/hypixel/hytale/Main has been compiled by
+REM    a more recent version of the Java Runtime (class file version 69.0), this
+REM    version of the Java Runtime only recognizes class file versions up to 52.0
+REM
+REM  69.0 is Java 25, 52.0 is Java 8. Nothing in that message says "your PATH is
+REM  wrong", and the successful build immediately above makes it read like a
+REM  problem with the jar.
+REM
+REM  JAVA_HOME first, PATH only as a fallback, then check the major version.
+REM
+REM  Kept in plain batch on purpose. The first attempt at this shelled out to
+REM  PowerShell to search every JDK root on the machine, which was both overkill
+REM  -- JAVA_HOME already points at a JDK 25 here -- and broken, because the pipes
+REM  inside the quoted -Command string were escaped as ^| and PowerShell saw the
+REM  carets as literal tokens. Two layers of escaping, no benefit.
+REM  A trailing backslash on JAVA_HOME is legal and common, and would otherwise
+REM  produce "...hotspot\\bin\java.exe". Strip it before building the path.
+set "JAVA_EXE="
+set "JH=%JAVA_HOME%"
+if defined JH if "%JH:~-1%"=="\" set "JH=%JH:~0,-1%"
+if defined JH if exist "%JH%\bin\java.exe" set "JAVA_EXE=%JH%\bin\java.exe"
+if not defined JAVA_EXE for %%J in (java.exe) do if not "%%~$PATH:J"=="" set "JAVA_EXE=%%~$PATH:J"
+if not defined JAVA_EXE goto :nojava
+
+REM  Parse the major version out of `java -version`. Java 8 and older report
+REM  1.8.0_503, 9 and newer report 25.0.4 -- so a leading "1" is always too old.
+REM
+REM  Run java to a FILE first, then parse the file. Do not try to run it inside
+REM  for /f. Both of the obvious forms fail when the path contains a space, which
+REM  "C:\Program Files\..." always does:
+REM
+REM    for /f ... in ('"%JAVA_EXE%" -version ...')   cmd strips the inner quotes
+REM    for /f "usebackq" ... in (`"%JAVA_EXE%" ...`) same, quoted-command-at-start
+REM
+REM  Both give 'C:\Program' is not recognized, JAVA_VER stays empty, and the
+REM  version check then reports "Java  is too old" about a perfectly good JDK.
+REM  Invoking it as a plain command line sidesteps the whole quoting problem.
+set "JVERFILE=%TEMP%\spellshot_java_version.txt"
+"%JAVA_EXE%" -version > "%JVERFILE%" 2>&1
+set "JAVA_VER="
+for /f "usebackq tokens=3" %%v in (`findstr /i "version" "%JVERFILE%"`) do if not defined JAVA_VER set "JAVA_VER=%%~v"
+del "%JVERFILE%" >nul 2>&1
+for /f "delims=." %%a in ("%JAVA_VER%") do set "JAVA_MAJOR=%%a"
+if "%JAVA_MAJOR%"=="1" goto :oldjava
+if not defined JAVA_MAJOR goto :oldjava
+if %JAVA_MAJOR% LSS 25 goto :oldjava
+
+echo   Using Java %JAVA_VER%
+echo   %JAVA_EXE%
 
 echo.
 echo ============================================================
@@ -115,9 +168,9 @@ echo  4/4  Starting the server
 echo ============================================================
 echo.
 echo   Watch for:
-echo     "Booting up HytaleServer - Version: 0.6.0"     jar matches the build
+echo     "Booting up HytaleServer - Version: 0.7.5"     jar matches the build
 echo     "Loaded pack: Hytale:Hytale from Assets.zip"   vanilla assets OK
-echo     "Everlands: registered NN component classes"   plugin loaded
+echo     "Spellshot: registered NN component classes"   plugin loaded
 echo     "Setup phase completed"                        it booted
 echo.
 echo   If you see "ARENAS ARE DISABLED" then nothing will teleport - that is
@@ -146,13 +199,31 @@ REM Output goes to the console AND to .local-test\server.log, via PowerShell's
 REM Tee-Object -- cmd has no tee. The log file is what to share when something
 REM fails; it beats scrolling a console buffer.
 cd /d "%TEST%"
-powershell -NoProfile -Command "java -jar HytaleServer.jar --assets '%ASSETS%' 2>&1 | Tee-Object -FilePath 'server.log'"
+powershell -NoProfile -Command "& '%JAVA_EXE%' -jar HytaleServer.jar --assets '%ASSETS%' 2>&1 | Tee-Object -FilePath 'server.log'"
+goto :end
+
+:oldjava
+echo.
+echo   ERROR: Java %JAVA_VER% is too old. Hytale 0.7.5 needs Java 25.
+echo     %JAVA_EXE%
+echo.
+echo   Run this to see every JDK Gradle can find, then point JAVA_HOME at a 25:
+echo     .\gradlew -q javaToolchains
+echo     setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-25.0.4.7-hotspot"
+echo   Open a NEW terminal afterwards -- setx does not affect the current one.
 goto :end
 
 :nojava
 echo.
-echo   ERROR: java is not on your PATH.
-echo   Hytale 0.5.7 needs Java 25.
+echo   ERROR: no Java 25 or newer was found.
+echo.
+echo   Hytale 0.7.5 is compiled for Java 25 and will not start on anything older.
+echo   A Java 8 on PATH is the common case: the Gradle build still succeeds,
+echo   because it uses its own toolchain, and only the launch fails.
+echo.
+echo   Searched JAVA_HOME, PATH, the usual install roots and Gradle's own JDKs.
+echo   Fix by installing a JDK 25 or pointing JAVA_HOME at one:
+echo     setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-25"
 goto :end
 
 :buildfail

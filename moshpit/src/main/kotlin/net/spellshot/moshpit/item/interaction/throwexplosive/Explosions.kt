@@ -28,6 +28,9 @@ object Explosions {
 
     private val logger = LoggerFactory.getLogger(Explosions::class.java)
 
+    /** Returned by getIndexOrDefault when an asset id is not registered. Real indices are >= 0. */
+    private const val MISSING_ASSET_INDEX = -1
+
     private val damageCause by lazy { DamageCause.getAssetMap().getIndex("Gun") }
 
     /**
@@ -57,8 +60,15 @@ object Explosions {
         explosionParticleId?.let { ParticleUtil.spawnParticleEffect(it, position, buffer) }
 
         explosionSoundId?.let { soundId ->
-            val soundIndex = SoundEvent.getAssetMap().getIndex(soundId)
-            if (soundIndex == null) {
+            // getIndexOrDefault, not getIndex.
+            //
+            // getIndex returns a primitive int, so the `== null` check this used to do
+            // was dead code -- the compiler reported it as always false. An unknown
+            // sound id would have sailed past the guard and been handed to the sound
+            // system as whatever getIndex returns for a miss. getIndexOrDefault lets us
+            // name the sentinel instead of guessing at one.
+            val soundIndex = SoundEvent.getAssetMap().getIndexOrDefault(soundId, MISSING_ASSET_INDEX)
+            if (soundIndex == MISSING_ASSET_INDEX) {
                 logger.warn("Explosion sound '{}' is not a known SoundEvent", soundId)
             } else {
                 SoundUtil.playSoundEvent3d(soundIndex, SoundCategory.SFX, position, buffer)

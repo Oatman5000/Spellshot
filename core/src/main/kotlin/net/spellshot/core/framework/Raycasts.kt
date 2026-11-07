@@ -3,12 +3,12 @@ package net.spellshot.core.framework
 import com.hypixel.hytale.component.Ref
 import com.hypixel.hytale.math.iterator.BlockIterator
 import com.hypixel.hytale.math.shape.Box
-import com.hypixel.hytale.math.util.ChunkUtil
 import com.hypixel.hytale.server.core.asset.type.blockhitbox.BlockBoundingBoxes
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.selector.Selector
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.World
+import com.hypixel.hytale.server.core.universe.world.accessor.SectionReader
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import net.spellshot.core.ext.transformOrNull
 import org.joml.Vector3d
@@ -55,13 +55,23 @@ object BlockBoxRaycaster {
         dir.normalize()
         val end = Vector3d(origin).add(Vector3d(dir).mul(maxDistance))
 
+        // One reader for the whole ray, not one per block.
+        //
+        // Update 7 removed every block accessor from World -- getBlock, getBlockType
+        // and getChunkIfLoaded all went -- and moved reading onto SectionReader, which
+        // caches the chunk-section refs it resolves. A ray walks many blocks that share
+        // a section, so building it once here and threading it down is both the cheap
+        // option and the lifetime the cache is designed for. Per-block construction
+        // would resolve the same section over and over.
+        val reader = SectionReader(world.chunkStore)
+
         var hit: Vector3d? = null
         val probe = object : BlockIterator.BlockIteratorProcedure {
             override fun accept(
                 x: Int, y: Int, z: Int,
                 a: Double, b: Double, c: Double, d: Double, e: Double, f: Double
             ): Boolean {
-                val t = hitDistance(world, origin, dir, x, y, z) ?: return true
+                val t = hitDistance(reader, origin, dir, x, y, z) ?: return true
                 hit = Vector3d(origin).add(Vector3d(dir).mul(t))
                 return false
             }
@@ -84,10 +94,10 @@ object BlockBoxRaycaster {
      * has no collision boxes.
      */
     private fun hitDistance(
-        world: World, origin: Vector3d, dir: Vector3d, bx: Int, by: Int, bz: Int
+        reader: SectionReader, origin: Vector3d, dir: Vector3d, bx: Int, by: Int, bz: Int
     ): Double? {
         val id = try {
-            world.getBlock(bx, by, bz)
+            reader.getBlock(bx, by, bz)
         } catch (ex: Exception) {
             // Unloaded/out-of-range chunk: treat as empty and keep going.
             return null
@@ -95,7 +105,7 @@ object BlockBoxRaycaster {
         if (id == BlockType.EMPTY_ID) return null
 
         var best: Double? = null
-        for (box in collisionBoxes(world, bx, by, bz)) {
+        for (box in collisionBoxes(reader, bx, by, bz)) {
             // Boxes are block-local, so shift them onto the block's world position.
             val t = rayBox(
                 origin, dir,
@@ -115,19 +125,31 @@ object BlockBoxRaycaster {
      * index matters -- without it an upside-down slab would be treated as a
      * bottom slab and shots would pass through the solid half.
      */
-    private fun collisionBoxes(world: World, bx: Int, by: Int, bz: Int): Array<Box> {
+    private fun collisionBoxes(reader: SectionReader, bx: Int, by: Int, bz: Int): Array<Box> {
         return try {
-            val type = world.getBlockType(bx, by, bz) ?: return FULL_CUBE
+            // This lookup has now been rewritten twice for the same reason, so it is
+            // worth stating plainly: the engine keeps withdrawing the convenience
+            // wrappers and leaving the primitive.
+            //
+            // 0.6.0 dropped IChunkAccessorSync.getBlockRotationIndex and we went
+            // through the chunk instead. Update 7 then took the chunk route too --
+            // World.getBlock, World.getBlockType and World.getChunkIfLoaded are all
+            // gone, and WorldChunk no longer carries getRotationIndex or even a World.
+            // Reading now goes through SectionReader, which is the primitive that
+            // survived, and BlockType is resolved from the id by hand because there is
+            // no getBlockType any more.
+            //
+            // hasStorageInMemory replaces the old getChunkIfLoaded null check and
+            // matters for the same reason: this runs on the shooting path, so a ray
+            // leaving loaded terrain must fall back to a cube rather than block on
+            // chunk loading.
+            if (!reader.hasStorageInMemory(bx, by, bz)) return FULL_CUBE
+            val id = reader.getBlock(bx, by, bz)
+            if (id == BlockType.EMPTY_ID) return FULL_CUBE
+            val type = BlockType.getAssetMap().getAsset(id) as? BlockType ?: return FULL_CUBE
             val asset = BlockBoundingBoxes.getAssetMap()
                 .getAsset(type.hitboxTypeIndex) as? BlockBoundingBoxes ?: return FULL_CUBE
-            // 0.6.0 dropped IChunkAccessorSync.getBlockRotationIndex(x, y, z). The
-            // chunk still exposes it; only the World-level convenience wrapper went,
-            // so do the lookup the wrapper used to do. getChunkIfLoaded rather than
-            // getChunk because this runs on the shooting path -- a ray that leaves
-            // loaded terrain should fall back to a cube, not block on chunk loading.
-            val chunk = world.getChunkIfLoaded(ChunkUtil.indexChunkFromBlock(bx, bz))
-                ?: return FULL_CUBE
-            val variant = asset.get(chunk.getRotationIndex(bx, by, bz)) ?: return FULL_CUBE
+            val variant = asset.get(reader.getRotationIndex(bx, by, bz)) ?: return FULL_CUBE
             if (variant.hasDetailBoxes()) variant.detailBoxes else arrayOf(variant.boundingBox)
         } catch (ex: Exception) {
             // Never let a shape lookup break shooting; fall back to a solid cube.
