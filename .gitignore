@@ -95,3 +95,4 @@ lobby/lobby-universe/
 # Export of the arena markers, for /arena import. Regenerate by copying
 # moshpit/server/universe/worlds/Moshpit/resources/MiniGameArenaResource.json here.
 /arena-markers.json
+_scratch/

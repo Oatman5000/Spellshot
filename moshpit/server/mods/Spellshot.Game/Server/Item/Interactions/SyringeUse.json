@@ -27,7 +27,7 @@
         "ClearAnimationOnFinish": true
       },
       "RunTime": 1,
-      "CancelOnItemChange": true,
+      "OnItemChangeBehavior": "Cancel",
       "CancelOnOtherClick": false,
       "AllowIndefiniteHold": true
     }

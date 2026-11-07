@@ -16,7 +16,7 @@
         "ClearSoundEventOnFinish": true,
         "LocalSoundEventId": "SFX_Blunderbuss_Load"
       },
-      "CancelOnItemChange": true,
+      "OnItemChangeBehavior": "Cancel",
       "CancelOnOtherClick": false,
       "AllowIndefiniteHold": false,
       "Next": {

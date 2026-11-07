@@ -2,7 +2,7 @@
   "Type": "CheckAmmo",
   "CheckType": "FULL",
   "RunTime": 0.1,
-  "CancelOnItemChange": true,
+  "OnItemChangeBehavior": "Cancel",
   "Next": {
     "Type": "Serial",
     "Interactions": [

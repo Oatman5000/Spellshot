@@ -17,7 +17,7 @@ data class MiniGameArenasConfig(
         // Nuketown ships with plain spawns, powerups, airstrike and plane, but no
         // team:ODA/team:SENTINEL spawns and no hardpoint markers -- so it is only
         // offered for FFA. See defaultArenasFor() in MoshpitConfig.
-        MiniGameArena("nuketown", "Nuketown", "everlands")
+        MiniGameArena("nuketown", "Nuketown", "Two Haven")
     ),
 ) {
     @Component

@@ -36,11 +36,16 @@ class CheckAmmoInteraction(
                 return
             }
             context.state.state = InteractionState.Finished
+        } else {
+            // A CheckType the enum does not cover leaves the chain doing nothing at
+            // all, which looks exactly like a broken reload. Worth a line.
+            logger.warn("CheckAmmo: unrecognised CheckType '{}' -- chain does nothing", checkType)
         }
-
     }
 
     companion object {
+        private val logger = org.slf4j.LoggerFactory.getLogger(CheckAmmoInteraction::class.java)
+
         val CODEC: BuilderCodec<CheckAmmoInteraction?> = BuilderCodec.builder<CheckAmmoInteraction?>(
             CheckAmmoInteraction::class.java, { CheckAmmoInteraction() }, SimpleInstantInteraction.CODEC
         )

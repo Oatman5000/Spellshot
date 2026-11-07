@@ -1,6 +1,6 @@
 {
   "Model": "Items/M1911/M1911.blockymodel",
-  "Icon": "Icons/ItemsGenerated/Pistol.png",
+  "Icon": "Icons/ItemsGenerated/Pistol911.png",
   "IconProperties": {
     "Scale": 1,
     "Rotation": [
@@ -56,7 +56,8 @@
         ]
       }
     },
-    "Ability3": {
+    "Ability1": {
+      "$Comment": "Reload sits on Ability1, not Ability3. Vanilla 0.7.6 drives Ability1 on 17 items and drives Ability2/Ability3 on none -- a bare vanilla interaction placed on Ability3 produced no server-side call at all, so the client never sends that slot. Bind 'Use Ability 1' to R in Settings > Controls > Actions.",
       "Interactions": [
         {
           "Type": "CheckAmmo",

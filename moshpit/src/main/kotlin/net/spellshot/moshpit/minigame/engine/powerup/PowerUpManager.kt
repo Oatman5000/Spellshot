@@ -100,9 +100,22 @@ class PowerUpManager(val engine: MiniGameEngine) {
     fun spawn(session: MiniGameSession, key: String, type: PowerUpType, position: Vector3d) {
         val world = session.arena.world
         val holder = EntityStore.REGISTRY.newHolder()
+        // Spawn at the anchor height, not at the marker.
+        //
+        // Markers are recorded standing on a surface, so their Y is ground level.
+        // The entity model's origin is its centre, so placing it at the marker
+        // buries the lower half. The +0.6 lift used to arrive a tick later, from
+        // PowerUpRotationEntitySystem writing transform.position.y -- the power-up
+        // was always spawning sunk and being lifted out. Making the anchor the
+        // spawn position means the correct height is the starting state and does
+        // not depend on a ticking system landing its write.
+        val anchorY = position.y + ANCHOR_LIFT
         holder.addComponent(
             TransformComponent.getComponentType(),
-            TransformComponent(position, com.hypixel.hytale.math.vector.Rotation3f())
+            TransformComponent(
+                Vector3d(position.x, anchorY, position.z),
+                com.hypixel.hytale.math.vector.Rotation3f()
+            )
         )
         holder.addComponent(HeadRotation.getComponentType(), HeadRotation(com.hypixel.hytale.math.vector.Rotation3f()))
         type.componentModifier.invoke(holder)
@@ -113,7 +126,7 @@ class PowerUpManager(val engine: MiniGameEngine) {
                 arenaId = session.arena.id,
                 gameSessionId = session.id,
                 powerUpType = type,
-                anchorY = position.y + 0.6
+                anchorY = anchorY
             )
         )
         holder.addComponent(NetworkId.getComponentType(), NetworkId(world.entityStore.takeNextNetworkId()))
@@ -121,6 +134,19 @@ class PowerUpManager(val engine: MiniGameEngine) {
         holder.ensureComponent(UUIDComponent.getComponentType())
         holder.ensureComponent(PowerUpComponent.componentType)
         world.entityStore.store.addEntity(holder, AddReason.SPAWN)
+    }
+
+    private companion object {
+        /**
+         * How far above the marker the power-up floats.
+         *
+         * Markers sit on the ground and the model is centred on its origin, so
+         * this needs to be at least half the model's height or the lower half
+         * renders inside the floor. The bob in PowerUpRotationEntitySystem swings
+         * +/- 0.2 around it, so the lowest point of the animation is
+         * ANCHOR_LIFT - 0.2 and that is the figure that must clear the ground.
+         */
+        private const val ANCHOR_LIFT = 0.6
     }
 
 }

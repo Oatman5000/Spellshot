@@ -21,7 +21,7 @@
         "ClearSoundEventOnFinish": true,
         "LocalSoundEventId": "SFX_Spear_Throw_Charge_Local"
       },
-      "CancelOnItemChange": true,
+      "OnItemChangeBehavior": "Cancel",
       "CancelOnOtherClick": false,
       "AllowIndefiniteHold": true,
       "Next": {

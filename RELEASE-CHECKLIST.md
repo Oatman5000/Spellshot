@@ -7,18 +7,37 @@ addresses are baked into the jars you build (step 4 explains how).
 
 ## 0. Before anything — this release only
 
-Both instances must be on **Hytale 0.6.0** before the plugins go anywhere near
-them. Every manifest now declares `ServerVersion: ^0.6.0`, and the code is
-compiled against the 0.6.0 API; on 0.5.x the plugin either refuses to load or
-dies on a missing method.
+Both instances must be on **Hytale 0.7.6** (Update 7, Chapter I) before the
+plugins go anywhere near them. Every manifest declares `ServerVersion: ^0.7.6`
+and the code is compiled against the 0.7.6 API; on anything older the plugin
+either refuses to load or dies on a missing method.
 
-Back up first, because this release renames things that hold player data:
+**Update both instances together.** Update 7 changed the client/server protocol:
+a 0.7.x server will not accept Update 6 clients, and an Update 6 server will not
+accept updated ones. Players need the client update before they can connect to
+either instance, so a staggered rollout just means a window where nobody can
+play.
 
-- [ ] `universe/` copied down from both instances
-- [ ] the moshpit instance's `everlands/` directory copied down — this is every
-      player's level, prestige and stats. The server moves it to `spellshot/` on
-      first boot and that migration is one-way.
-- [ ] Both instances updated to 0.6.0
+### Back up — one step here is irreversible
+
+> ⚠ **Update 7 migrates saved worlds to a new, smaller format the first time they
+> load, and it is one-way.** Once an instance boots on 0.7.x you cannot go back to
+> 0.6.0 with that world. Take the copies *before* the server update, not after.
+
+- [ ] `universe/` copied down from **both** instances
+- [ ] the moshpit instance's `spellshot/` directory copied down — every player's
+      level, prestige and stats
+- [ ] Both instances updated to 0.7.6
+- [ ] Both booted once on 0.7.6 with no plugin changes yet, so a world-migration
+      problem is not tangled up with a plugin problem
+
+Also worth knowing before you start:
+
+- **Java 25 is required.** Hytale 0.7.x is compiled for it and will not start on
+  anything older, failing with `UnsupportedClassVersionError` and a class file
+  version number rather than anything that names the real problem. AMP's Java
+  selection needs to point at a 25.
+- A `MaxViewRadius` above 32 is clamped to 32 on Update 7.
 
 ---
 
@@ -80,9 +99,9 @@ menu — the jar references all of them and none of it exists in the old pack.
 
 Then **delete `mods/Everlands.Lobby`**.
 
-The lobby jar on AMP predates the 0.6.0 port entirely — it was built against
-0.5.7 and will not run. Rebuild it even if nothing in `lobby/` looks changed:
-`:core` is shaded into it and did change.
+The lobby jar on AMP predates the 0.7.x port entirely and will not run. Rebuild
+it even if nothing in `lobby/` looks changed: `:core` is shaded into it and did
+change.
 
 ### Do NOT upload
 
